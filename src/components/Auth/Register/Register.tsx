@@ -31,7 +31,7 @@ const Register = () => {
   const handleSelectChange = (value: CustomerType) => {
     setSelectedBusinessType(value);
     reset({
-      type: value,
+      business_type: value,
       first_name: "",
       last_name: "",
       brn: "",
@@ -50,7 +50,6 @@ const Register = () => {
 
   const onSubmit: SubmitHandler<ISignupInputs> = async (data) => {
     await signup(data);
-    // reset({ full_name: "", password: "" });
   };
 
   const renderOptionalFields = useCallback(() => {
@@ -86,6 +85,11 @@ const Register = () => {
       case CustomerType.ORGANIZATION:
         return (
           <>
+            <TextInput
+              label="Username"
+              error={errors.username?.message}
+              {...register("username", { required: "Username is required" })}
+            />
             <FileInput
               label="Business Register Certificate"
               error={errors.brfile?.message}
@@ -117,10 +121,24 @@ const Register = () => {
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
       <Select
         label="Business Type"
-        error={errors.type?.message}
-        {...register("type", { required: "Please select business type" })}
+        error={errors.business_type?.message}
+        {...register("business_type", {
+          required: "Please select business type",
+        })}
         onChange={(e) => handleSelectChange(e.target.value as CustomerType)}
         options={selectOption}
+      />
+
+      <TextInput
+        label="Email"
+        error={errors.email?.message}
+        {...register("email", {
+          required: "Email is required",
+          pattern: {
+            value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+            message: "Invalid email format",
+          },
+        })}
       />
 
       {renderOptionalFields()}

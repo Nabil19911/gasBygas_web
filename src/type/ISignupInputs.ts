@@ -1,7 +1,8 @@
 interface ISignupInputs {
   first_name?: string;
   last_name?: string;
-  type: string;
+  username?: string;
+  business_type: string;
   nic: string;
   brfile: File;
   brn: string;

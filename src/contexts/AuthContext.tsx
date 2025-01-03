@@ -70,7 +70,48 @@ const AuthContext = ({ children }: IAuthContextProps) => {
   };
 
   const signup = async (data: ISignupInputs) => {
-    console.log(data);
+    try {
+      // Send user data excluding the brfile
+      const userData = {
+        first_name: data.first_name,
+        last_name: data.last_name,
+        business_type: data.business_type,
+        nic: data.nic,
+        contact: data.contact,
+        email: data.email,
+        full_address: data.full_address,
+        password: data.password,
+        brn: data.brn,
+        username: data.username,
+      };
+
+      const response = await authAxiosInstance.post(Path.REGISTER, userData);
+
+      // TODO: handle document upload
+
+      // // If brfile exists, upload it separately
+      // if (data.brfile) {
+      //   const formData = new FormData();
+      //   formData.append("brfile", data.brfile);
+
+      //   // Upload the brfile to a separate endpoint
+      //   const fileResponse = await axios.post("/api/upload-brfile", formData, {
+      //     headers: {
+      //       "Content-Type": "multipart/form-data",
+      //     },
+      //   });
+
+      //   console.log("BR File uploaded successfully", fileResponse.data);
+      // }
+
+      console.log("User registered successfully", response.data);
+    } catch (error) {
+      // Handle error (e.g., show error message)
+      console.error("Signup failed", error);
+      if (axios.isAxiosError(error)) {
+        console.log(error.response?.data);
+      }
+    }
   };
 
   const signout = () => {
