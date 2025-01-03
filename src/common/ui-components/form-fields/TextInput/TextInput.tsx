@@ -15,6 +15,7 @@ const TextInput = forwardRef<HTMLInputElement, ITextInputProps>(
           id={"text_input"}
           {...props}
           ref={ref}
+          autoComplete="off"
           className={clsx(
             "w-full px-4 py-2 border rounded-lg focus:outline-none",
             {

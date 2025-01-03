@@ -1,30 +1,26 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import useAuth from "../../../hooks/useAuth";
 import { Button, TextInput } from "../../../common/ui-components/form-fields";
-
-type Inputs = {
-  username: string;
-  password: string;
-};
+import useAuth from "../../../hooks/useAuth";
+import ISigninInputs from "../../../type/ISigninInputs";
 
 const Login = () => {
-  const { login } = useAuth();
+  const { signin, isLoading } = useAuth();
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<Inputs>();
+  } = useForm<ISigninInputs>();
 
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+  const onSubmit: SubmitHandler<ISigninInputs> = async (data) => {
     const { username, password } = data;
-    await login(username, password);
+    await signin({ username, password });
     reset({ username: "", password: "" });
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
       <TextInput
         label="Username"
         error={errors.username?.message}
@@ -33,10 +29,13 @@ const Login = () => {
       <TextInput
         label="Password"
         error={errors.password?.message}
+        type="password"
         {...register("password", { required: "Password is required" })}
       />
 
-      <Button type="submit">Login</Button>
+      <Button disabled={isLoading} type="submit">
+        Login
+      </Button>
     </form>
   );
 };
