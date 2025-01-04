@@ -6,19 +6,19 @@ import {
   Select,
   TextInput,
 } from "../../../common/ui-components/form-fields";
-import CustomerType from "../../../constant/customerType";
+import CustomerTypeEnum from "../../../constant/customerTypeEnum";
 import useAuth from "../../../hooks/useAuth";
 import ISignupInputs from "../../../type/ISignupInputs";
 
 const selectOption = [
-  { value: CustomerType.ORGANIZATION, label: "Business" },
-  { value: CustomerType.INDIVIDUAL, label: "Individual" },
+  { value: CustomerTypeEnum.ORGANIZATION, label: "Business" },
+  { value: CustomerTypeEnum.INDIVIDUAL, label: "Individual" },
 ];
 
 const Register = () => {
   const { signup, isLoading } = useAuth();
   const [selectedBusinessType, setSelectedBusinessType] =
-    useState<CustomerType>();
+    useState<CustomerTypeEnum>();
 
   const {
     register,
@@ -28,7 +28,7 @@ const Register = () => {
     formState: { errors },
   } = useForm<ISignupInputs>();
 
-  const handleSelectChange = (value: CustomerType) => {
+  const handleSelectChange = (value: CustomerTypeEnum) => {
     setSelectedBusinessType(value);
     reset({
       business_type: value,
@@ -54,7 +54,7 @@ const Register = () => {
 
   const renderOptionalFields = useCallback(() => {
     switch (selectedBusinessType) {
-      case CustomerType.INDIVIDUAL:
+      case CustomerTypeEnum.INDIVIDUAL:
         return (
           <>
             <TextInput
@@ -82,19 +82,14 @@ const Register = () => {
             />
           </>
         );
-      case CustomerType.ORGANIZATION:
+      case CustomerTypeEnum.ORGANIZATION:
         return (
           <>
-            <TextInput
-              label="Username"
-              error={errors.username?.message}
-              {...register("username", { required: "Username is required" })}
-            />
             <FileInput
               label="Business Register Certificate"
-              error={errors.brfile?.message}
+              error={errors.brFile?.message}
               accept=".pdf,.jpg,.jpeg,.png"
-              {...register("brfile", {
+              {...register("brFile", {
                 required: "Business Register Certificate is required",
               })}
             />
@@ -124,8 +119,9 @@ const Register = () => {
         error={errors.business_type?.message}
         {...register("business_type", {
           required: "Please select business type",
+          onChange: (e) =>
+            handleSelectChange(e.target.value as CustomerTypeEnum),
         })}
-        onChange={(e) => handleSelectChange(e.target.value as CustomerType)}
         options={selectOption}
       />
 
@@ -138,6 +134,7 @@ const Register = () => {
             value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
             message: "Invalid email format",
           },
+          disabled: !selectedBusinessType,
         })}
       />
 
@@ -151,6 +148,7 @@ const Register = () => {
           validate: (value) =>
             /^(0|0094|\+94)(7\d{8}|6\d{8})$/.test(String(value)) ||
             "Please enter a valid contact number (e.g., 0761234567 or +94761234567)",
+          disabled: !selectedBusinessType,
         })}
       />
 
@@ -160,6 +158,7 @@ const Register = () => {
           error={errors.full_address?.district?.message}
           {...register("full_address.district", {
             required: "District is required",
+            disabled: !selectedBusinessType,
           })}
         />
         <TextInput
@@ -170,6 +169,7 @@ const Register = () => {
             validate: (value) =>
               /^\d{5}$/.test(String(value)) ||
               "Post Code must be exactly 5 digits",
+            disabled: !selectedBusinessType,
           })}
         />
         <TextInput
@@ -177,6 +177,7 @@ const Register = () => {
           error={errors.full_address?.address?.message}
           {...register("full_address.address", {
             required: "Address is required",
+            disabled: !selectedBusinessType,
           })}
         />
       </div>
@@ -185,7 +186,10 @@ const Register = () => {
         label="Password"
         error={errors.password?.message}
         type="password"
-        {...register("password", { required: "Password is required" })}
+        {...register("password", {
+          required: "Password is required",
+          disabled: !selectedBusinessType,
+        })}
       />
       <TextInput
         label="Confirm Password"
@@ -194,10 +198,11 @@ const Register = () => {
         {...register("confirm_password", {
           validate: (value) =>
             value === getValues("password") || "Passwords do not match",
+          disabled: !selectedBusinessType,
         })}
       />
 
-      <Button disabled={isLoading} type="submit">
+      <Button disabled={isLoading || !selectedBusinessType} type="submit">
         Register
       </Button>
     </form>

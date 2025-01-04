@@ -1,4 +1,4 @@
-enum Path {
+enum PathEnum {
   ROOT = "/",
   LOGIN_EMPLOYEE = "/employee/login",
   LOGIN = "/login",
@@ -6,4 +6,4 @@ enum Path {
   DASHBOARD = "/dashboard",
 }
 
-export default Path;
+export default PathEnum;

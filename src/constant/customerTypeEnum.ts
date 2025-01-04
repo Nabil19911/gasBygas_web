@@ -1,6 +1,6 @@
-enum CustomerType {
+enum CustomerTypeEnum {
   ORGANIZATION = "Organization",
   INDIVIDUAL = "Individual",
 }
 
-export default CustomerType;
+export default CustomerTypeEnum;

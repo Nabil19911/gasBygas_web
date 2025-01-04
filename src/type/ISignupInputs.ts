@@ -4,7 +4,7 @@ interface ISignupInputs {
   username?: string;
   business_type: string;
   nic: string;
-  brfile: File;
+  brFile: File;
   brn: string;
   contact: string;
   email: string;

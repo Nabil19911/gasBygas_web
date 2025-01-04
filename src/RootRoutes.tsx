@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from "react-router";
-import Path from "./constant/pathEnum";
+import PathEnum from "./constant/pathsEnum";
 import AuthGuard from "./guards/AuthGuard";
 import GuestGuard from "./guards/GuestGuard";
 import { lazy } from "react";
@@ -14,16 +14,16 @@ function RootRoutes() {
   return (
     <Routes>
       <Route element={<GuestGuard />}>
-        <Route path={Path.ROOT} element={<AuthLayout />}>
-          <Route index element={<Navigate to={Path.LOGIN} replace />} />
-          <Route path={Path.REGISTER} element={<Register />} />
-          <Route path={Path.LOGIN_EMPLOYEE} element={<Login />} />
-          <Route path={Path.LOGIN} element={<Login />} />
+        <Route path={PathEnum.ROOT} element={<AuthLayout />}>
+          <Route index element={<Navigate to={PathEnum.LOGIN} replace />} />
+          <Route path={PathEnum.REGISTER} element={<Register />} />
+          <Route path={PathEnum.LOGIN_EMPLOYEE} element={<Login />} />
+          <Route path={PathEnum.LOGIN} element={<Login />} />
         </Route>
       </Route>
 
       <Route element={<AuthGuard />}>
-        <Route path={Path.DASHBOARD} element={<DashboardLayout />}></Route>
+        <Route path={PathEnum.DASHBOARD} element={<DashboardLayout />}></Route>
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

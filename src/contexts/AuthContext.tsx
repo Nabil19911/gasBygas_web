@@ -3,11 +3,12 @@ import authAxiosInstance from "../utils/authAxios";
 import axios from "axios";
 import useSessionStorage from "../hooks/useSessionStorage";
 import { redirect, useNavigate } from "react-router";
-import Path from "../constant/pathEnum";
+import PathEnum from "../constant/pathsEnum";
 import isValidToken from "../utils/tokenValidator";
 import useIsEmployeeRoute from "../hooks/useIsEmployeeRoute";
 import ISigninInputs from "../type/ISigninInputs";
 import ISignupInputs from "../type/ISignupInputs";
+import RolesEnum from "../constant/rolesEnum";
 
 interface IAuthContextProps {
   children: ReactNode;
@@ -17,6 +18,7 @@ interface IAuthProvider {
   errorMessage: string;
   isAuth: boolean;
   isLoading: boolean;
+  setErrorMessage: (value: string) => void;
   signin: (value: ISigninInputs) => Promise<void>;
   signup: (value: ISignupInputs) => Promise<void>;
   signout: () => void;
@@ -40,24 +42,29 @@ const AuthContext = ({ children }: IAuthContextProps) => {
     initialValue: "",
   });
 
-  const signin = async ({ username, password }: ISigninInputs) => {
+  const onSuccess = () => {
+    setAuth(true);
+    navigate(PathEnum.DASHBOARD);
+  };
+
+  const signin = async ({ username, email, password }: ISigninInputs) => {
     try {
       setLoading(true);
       const res = await authAxiosInstance.post<ILoginResponse>(
-        isEmployee ? Path.LOGIN_EMPLOYEE : Path.LOGIN,
+        isEmployee ? PathEnum.LOGIN_EMPLOYEE : PathEnum.LOGIN,
         {
           username,
+          email,
           password,
         }
       );
 
       setValue(res.data.accessToken);
-      setAuth(true);
-      navigate(Path.DASHBOARD);
+      onSuccess();
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response && error.response.status === 401) {
-          setErrorMessage("Invalid username or password. Please try again.");
+          setErrorMessage(error.response.data.message);
         } else {
           setErrorMessage("Something went wrong. Please try again.");
         }
@@ -71,45 +78,57 @@ const AuthContext = ({ children }: IAuthContextProps) => {
 
   const signup = async (data: ISignupInputs) => {
     try {
-      // Send user data excluding the brfile
-      const userData = {
-        first_name: data.first_name,
-        last_name: data.last_name,
-        business_type: data.business_type,
-        nic: data.nic,
-        contact: data.contact,
-        email: data.email,
-        full_address: data.full_address,
-        password: data.password,
-        brn: data.brn,
-        username: data.username,
-      };
+      const formData = new FormData();
 
-      const response = await authAxiosInstance.post(Path.REGISTER, userData);
+      // Append form data only if they exist
+      if (data.first_name) formData.append("first_name", data.first_name);
+      if (data.last_name) formData.append("last_name", data.last_name);
+      formData.append("business_type", data.business_type);
+      if (data.nic) formData.append("nic", data.nic);
+      if (data.contact) formData.append("contact", data.contact);
+      formData.append("email", data.email);
+      formData.append("full_address", JSON.stringify(data.full_address));
+      formData.append("password", data.password);
+      if (data.brn) formData.append("brn", data.brn);
+      formData.append("createdBy", RolesEnum.CUSTOMER);
 
-      // TODO: handle document upload
+      if (data.brFile) {
+        if (data.brFile instanceof FileList) {
+          formData.append("brFile", data.brFile[0]);
+        } else {
+          formData.append("brFile", data.brFile);
+        }
+      }
 
-      // // If brfile exists, upload it separately
-      // if (data.brfile) {
-      //   const formData = new FormData();
-      //   formData.append("brfile", data.brfile);
-
-      //   // Upload the brfile to a separate endpoint
-      //   const fileResponse = await axios.post("/api/upload-brfile", formData, {
-      //     headers: {
-      //       "Content-Type": "multipart/form-data",
-      //     },
-      //   });
-
-      //   console.log("BR File uploaded successfully", fileResponse.data);
-      // }
+      // Make a POST request to the register endpoint
+      const response = await authAxiosInstance.post(
+        PathEnum.REGISTER,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       console.log("User registered successfully", response.data);
+      onSuccess();
     } catch (error) {
-      // Handle error (e.g., show error message)
       console.error("Signup failed", error);
+
       if (axios.isAxiosError(error)) {
-        console.log(error.response?.data);
+        if (error.response) {
+          console.log("Error response:", error.response?.data);
+          setErrorMessage(
+            error.response?.data.message || "Something went wrong"
+          );
+        } else {
+          setErrorMessage(
+            "An unexpected error occurred. Please try again later."
+          );
+        }
+      } else {
+        setErrorMessage("An unknown error occurred.");
       }
     }
   };
@@ -117,19 +136,31 @@ const AuthContext = ({ children }: IAuthContextProps) => {
   const signout = () => {
     removeValue();
     setAuth(false);
-    redirect(Path.LOGIN);
+    redirect(PathEnum.LOGIN);
   };
 
   useEffect(() => {
     if (isValidToken(storedValue)) {
-      navigate(Path.DASHBOARD);
+      navigate(PathEnum.DASHBOARD);
       setAuth(true);
     }
   }, [storedValue]);
 
+  useEffect(() => {
+    setErrorMessage("");
+  }, []);
+
   return (
     <AuthProvider.Provider
-      value={{ errorMessage, isAuth, isLoading, signin, signup, signout }}
+      value={{
+        errorMessage,
+        isAuth,
+        isLoading,
+        setErrorMessage,
+        signin,
+        signup,
+        signout,
+      }}
     >
       {children}
     </AuthProvider.Provider>
