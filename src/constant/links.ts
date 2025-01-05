@@ -1,3 +1,4 @@
+import PathsEnum from "./pathsEnum";
 import RolesEnum from "./rolesEnum";
 
 interface LinkItem {
@@ -8,7 +9,7 @@ interface LinkItem {
 
 const links: LinkItem[] = [
   {
-    to: "/",
+    to: PathsEnum.DASHBOARD,
     label: "Dashboard",
     roles: [
       RolesEnum.ADMIN,
@@ -18,7 +19,7 @@ const links: LinkItem[] = [
     ],
   },
   {
-    to: "/outlet",
+    to: PathsEnum.OUTLET,
     label: "Outlet",
     roles: [
       RolesEnum.ADMIN,
@@ -26,9 +27,9 @@ const links: LinkItem[] = [
       RolesEnum.DISPATCH_OFFICER,
     ],
   },
-  { to: "/employee", label: "Employee", roles: [RolesEnum.ADMIN] },
-  { to: "/customer", label: "Customer", roles: [RolesEnum.ADMIN] },
-  { to: "/report", label: "Report", roles: [RolesEnum.ADMIN] },
+  { to: PathsEnum.EMPLOYEE, label: "Employee", roles: [RolesEnum.ADMIN] },
+  { to: PathsEnum.CUSTOMER, label: "Customer", roles: [RolesEnum.ADMIN] },
+  { to: PathsEnum.REPORT, label: "Report", roles: [RolesEnum.ADMIN] },
 ];
 
 export default links;

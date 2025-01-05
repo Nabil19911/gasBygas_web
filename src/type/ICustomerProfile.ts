@@ -1,6 +1,6 @@
 import RolesEnum from "../constant/rolesEnum";
 
-interface ICustomerProfileResponse {
+interface ICustomerProfile {
   brFile: string;
   brn: string;
   business_type: string;
@@ -16,4 +16,4 @@ interface ICustomerProfileResponse {
   is_approved: boolean;
 }
 
-export default ICustomerProfileResponse;
+export default ICustomerProfile;

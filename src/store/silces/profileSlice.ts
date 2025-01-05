@@ -1,15 +1,17 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import FetchState from "../../constant/fetchState";
+import FetchStateEnum from "../../constant/fetchStateEnum";
 import IApiError from "../../type/IApiError";
 import baseAxiosInstance from "../../utils/baseAxios";
-import ICustomerProfileResponse from "../../type/ICustomerProfileResponse";
-import IEmployeeProfileResponse from "../../type/IEmployeeProfileResponse";
+import ICustomerProfile from "../../type/ICustomerProfile";
+import IEmployeeProfile from "../../type/IEmployeeProfile";
+
+export type ProfileData = ICustomerProfile | IEmployeeProfile;
 
 interface InitialState {
   userProfile: {
-    data: ICustomerProfileResponse | IEmployeeProfileResponse | null;
-    status: FetchState;
+    data: ProfileData | null;
+    status: FetchStateEnum;
     error: IApiError | null;
   };
 }
@@ -17,7 +19,7 @@ interface InitialState {
 const initialState: InitialState = {
   userProfile: {
     data: null,
-    status: FetchState.IDLE,
+    status: FetchStateEnum.IDLE,
     error: null,
   },
 };
@@ -30,28 +32,28 @@ const profileSlice = createSlice({
     builder
       // Employee Profile
       .addCase(fetchEmployeeProfileDetail.pending, (state) => {
-        state.userProfile.status = FetchState.PENDING;
+        state.userProfile.status = FetchStateEnum.PENDING;
         state.userProfile.error = null;
       })
       .addCase(fetchEmployeeProfileDetail.fulfilled, (state, action) => {
-        state.userProfile.status = FetchState.FULFILLED;
+        state.userProfile.status = FetchStateEnum.FULFILLED;
         state.userProfile.data = action.payload;
       })
       .addCase(fetchEmployeeProfileDetail.rejected, (state, action) => {
-        state.userProfile.status = FetchState.REJECTED;
+        state.userProfile.status = FetchStateEnum.REJECTED;
         state.userProfile.error = action.payload || null;
       })
       // Customer Profile
       .addCase(fetchCustomerProfileDetail.pending, (state) => {
-        state.userProfile.status = FetchState.PENDING;
+        state.userProfile.status = FetchStateEnum.PENDING;
         state.userProfile.error = null;
       })
       .addCase(fetchCustomerProfileDetail.fulfilled, (state, action) => {
-        state.userProfile.status = FetchState.FULFILLED;
+        state.userProfile.status = FetchStateEnum.FULFILLED;
         state.userProfile.data = action.payload;
       })
       .addCase(fetchCustomerProfileDetail.rejected, (state, action) => {
-        state.userProfile.status = FetchState.REJECTED;
+        state.userProfile.status = FetchStateEnum.REJECTED;
         state.userProfile.error = action.payload || null;
       });
   },
@@ -59,7 +61,7 @@ const profileSlice = createSlice({
 
 // Employee Profile Thunk
 export const fetchEmployeeProfileDetail = createAsyncThunk<
-  IEmployeeProfileResponse,
+  IEmployeeProfile,
   string,
   { rejectValue: IApiError }
 >(
@@ -81,7 +83,7 @@ export const fetchEmployeeProfileDetail = createAsyncThunk<
 
 // Customer Profile Thunk
 export const fetchCustomerProfileDetail = createAsyncThunk<
-  ICustomerProfileResponse,
+  ICustomerProfile,
   string,
   { rejectValue: IApiError }
 >("profile/fetchCustomerProfileDetail", async (email, { rejectWithValue }) => {

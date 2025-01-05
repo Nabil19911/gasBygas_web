@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Outlet, useNavigate } from "react-router";
 import { Switch } from "../common/ui-components/form-fields";
-import PathEnum from "../constant/pathsEnum";
+import PathsEnum from "../constant/pathsEnum";
 import useIsEmployeeRoute from "../hooks/useIsEmployeeRoute";
 
 const AuthLayout = () => {
@@ -11,7 +11,7 @@ const AuthLayout = () => {
 
   const handleToggle = () => {
     setLogin(!isLogin);
-    navigate(isLogin ? PathEnum.LOGIN : PathEnum.REGISTER);
+    navigate(isLogin ? PathsEnum.LOGIN : PathsEnum.REGISTER);
   };
 
   return (

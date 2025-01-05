@@ -2,7 +2,7 @@ import axios from "axios";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { redirect, useNavigate } from "react-router";
 import GeneralEnum from "../constant/generalEnum";
-import PathEnum from "../constant/pathsEnum";
+import PathsEnum from "../constant/pathsEnum";
 import useIsEmployeeRoute from "../hooks/useIsEmployeeRoute";
 import useLocalStorage from "../hooks/useLocalStorage";
 import {
@@ -52,7 +52,7 @@ const AuthContext = ({ children }: IAuthContextProps) => {
   const onSuccess = (token: string, value: string) => {
     setAuth(true);
     setValue(token);
-    navigate(PathEnum.DASHBOARD);
+    navigate(PathsEnum.DASHBOARD);
     setLoading(false);
     getUserProfile(value);
   };
@@ -69,7 +69,7 @@ const AuthContext = ({ children }: IAuthContextProps) => {
     try {
       setLoading(true);
       const res = await authAxiosInstance.post<ILoginResponse>(
-        isEmployee ? PathEnum.LOGIN_EMPLOYEE : PathEnum.LOGIN,
+        isEmployee ? PathsEnum.LOGIN_EMPLOYEE : PathsEnum.LOGIN,
         {
           username,
           email,
@@ -120,7 +120,7 @@ const AuthContext = ({ children }: IAuthContextProps) => {
 
       // Make a POST request to the register endpoint
       const response = await authAxiosInstance.post(
-        PathEnum.REGISTER,
+        PathsEnum.REGISTER,
         formData,
         {
           headers: {
@@ -156,14 +156,14 @@ const AuthContext = ({ children }: IAuthContextProps) => {
   const signout = () => {
     removeValue();
     setAuth(false);
-    redirect(PathEnum.LOGIN);
+    redirect(PathsEnum.LOGIN);
   };
 
   useEffect(() => {
     if (!isValidToken(storedValue)) {
       signout();
     } else {
-      navigate(PathEnum.DASHBOARD);
+      navigate(PathsEnum.DASHBOARD);
       setAuth(true);
     }
   }, [storedValue]);

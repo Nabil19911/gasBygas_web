@@ -1,9 +1,10 @@
 import { XMarkIcon } from "@heroicons/react/16/solid";
 import { useMemo } from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import links from "../../../../constant/links";
 import { getUserProfile } from "../../../../store/selectors/profileSelector";
 import { useAppSelector } from "../../../../store/store";
+import clsx from "clsx";
 
 interface ISidebarLinksProps {
   isOpen: boolean;
@@ -12,6 +13,12 @@ interface ISidebarLinksProps {
 
 const SidebarLinks = ({ isOpen, setIsOpen }: ISidebarLinksProps) => {
   const profileData = useAppSelector(getUserProfile);
+  const location = useLocation();
+
+  const hasActive = (activeRoute: string) => {
+    console.log(location.pathname, activeRoute);
+    return location.pathname === activeRoute;
+  };
 
   const filteredLinks = useMemo(() => {
     if (profileData?.data?.role) {
@@ -53,7 +60,13 @@ const SidebarLinks = ({ isOpen, setIsOpen }: ISidebarLinksProps) => {
             <Link
               key={link.to}
               to={link.to}
-              className="flex items-center px-6 py-2 text-gray-100 hover:bg-gray-700"
+              className={clsx(
+                "flex items-center px-6 py-2 text-gray-100 hover:bg-gray-700",
+                {
+                  "bg-gray-500 pointer-events-none": hasActive(link.to),
+                  "hover:bg-gray-700": !hasActive(link.to),
+                }
+              )}
             >
               {link.label}
             </Link>
