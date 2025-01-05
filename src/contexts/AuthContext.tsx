@@ -1,6 +1,6 @@
 import axios from "axios";
 import { createContext, ReactNode, useEffect, useState } from "react";
-import { redirect, useNavigate } from "react-router";
+import { redirect, useLocation, useNavigate } from "react-router";
 import GeneralEnum from "../constant/generalEnum";
 import PathsEnum from "../constant/pathsEnum";
 import useIsEmployeeRoute from "../hooks/useIsEmployeeRoute";
@@ -40,6 +40,7 @@ const AuthContext = ({ children }: IAuthContextProps) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [isAuth, setAuth] = useState<boolean>();
   const navigate = useNavigate();
+  const location = useLocation();
   const isEmployee = useIsEmployeeRoute();
 
   const dispatch = useAppDispatch();
@@ -163,7 +164,7 @@ const AuthContext = ({ children }: IAuthContextProps) => {
     if (!isValidToken(storedValue)) {
       signout();
     } else {
-      navigate(PathsEnum.DASHBOARD);
+      navigate(location.pathname);
       setAuth(true);
     }
   }, [storedValue]);

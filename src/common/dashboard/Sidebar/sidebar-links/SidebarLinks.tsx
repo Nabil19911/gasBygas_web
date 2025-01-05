@@ -16,7 +16,6 @@ const SidebarLinks = ({ isOpen, setIsOpen }: ISidebarLinksProps) => {
   const location = useLocation();
 
   const hasActive = (activeRoute: string) => {
-    console.log(location.pathname, activeRoute);
     return location.pathname === activeRoute;
   };
 
