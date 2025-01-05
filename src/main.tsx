@@ -1,20 +1,28 @@
-import { StrictMode } from "react";
+import { StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
-// import { Provider } from "react-redux";
-import RootRoutes from "./RootRoutes.tsx";
-import "./index.css";
-// import { store } from "./store/store.ts";
+import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router";
+import { PersistGate } from "redux-persist/integration/react";
+import RootRoutes from "./RootRoutes.tsx";
 import { AuthContext } from "./contexts/AuthContext.tsx";
+import "./index.css";
+import { presistStore, store } from "./store/store.ts";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    {/* <Provider store={store}> */}
     <BrowserRouter>
-      <AuthContext>
-        <RootRoutes />
-      </AuthContext>
+      <Suspense>
+        <PersistGate
+          loading={<div>Loading persisted state...</div>}
+          persistor={presistStore}
+        >
+          <Provider store={store}>
+            <AuthContext>
+              <RootRoutes />
+            </AuthContext>
+          </Provider>
+        </PersistGate>
+      </Suspense>
     </BrowserRouter>
-    {/* </Provider> */}
   </StrictMode>
 );

@@ -1,14 +1,20 @@
-import { createContext, ReactNode, useEffect, useState } from "react";
-import authAxiosInstance from "../utils/authAxios";
 import axios from "axios";
-import useSessionStorage from "../hooks/useSessionStorage";
+import { createContext, ReactNode, useEffect, useState } from "react";
 import { redirect, useNavigate } from "react-router";
+import GeneralEnum from "../constant/generalEnum";
 import PathEnum from "../constant/pathsEnum";
-import isValidToken from "../utils/tokenValidator";
 import useIsEmployeeRoute from "../hooks/useIsEmployeeRoute";
+import useLocalStorage from "../hooks/useLocalStorage";
+import { useAppDispatch, useAppSelector } from "../store/store";
 import ISigninInputs from "../type/ISigninInputs";
 import ISignupInputs from "../type/ISignupInputs";
-import RolesEnum from "../constant/rolesEnum";
+import authAxiosInstance from "../utils/authAxios";
+import isValidToken from "../utils/tokenValidator";
+import {
+  fetchCustomerProfileDetail,
+  fetchEmployeeProfileDetail,
+} from "../store/silces/profileSlice";
+import { getProfileDetails } from "../store/selectors/profileSelector";
 
 interface IAuthContextProps {
   children: ReactNode;
@@ -16,7 +22,7 @@ interface IAuthContextProps {
 
 interface IAuthProvider {
   errorMessage: string;
-  isAuth: boolean;
+  isAuth?: boolean;
   isLoading: boolean;
   setErrorMessage: (value: string) => void;
   signin: (value: ISigninInputs) => Promise<void>;
@@ -33,18 +39,34 @@ const AuthProvider = createContext<IAuthProvider | null>(null);
 const AuthContext = ({ children }: IAuthContextProps) => {
   const [isLoading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [isAuth, setAuth] = useState(false);
+  const [isAuth, setAuth] = useState<boolean>();
   const navigate = useNavigate();
   const isEmployee = useIsEmployeeRoute();
+  const value = useAppSelector(getProfileDetails)
 
-  const { storedValue, setValue, removeValue } = useSessionStorage({
-    key: "accessToken",
+  console.log(value)
+
+  const dispatch = useAppDispatch();
+
+  const { storedValue, setValue, removeValue } = useLocalStorage({
+    key: GeneralEnum.ACCESSTOKEN,
     initialValue: "",
   });
 
-  const onSuccess = () => {
+  const onSuccess = async (token: string, value: string) => {
     setAuth(true);
+    setValue(token);
     navigate(PathEnum.DASHBOARD);
+    setLoading(false);
+    await getUserProfile(value);
+  };
+
+  const getUserProfile = async (value: string) => {
+    if (isEmployee) {
+      await dispatch(fetchEmployeeProfileDetail(value));
+    } else {
+      await dispatch(fetchCustomerProfileDetail(value));
+    }
   };
 
   const signin = async ({ username, email, password }: ISigninInputs) => {
@@ -59,8 +81,8 @@ const AuthContext = ({ children }: IAuthContextProps) => {
         }
       );
 
-      setValue(res.data.accessToken);
-      onSuccess();
+      const value = isEmployee ? username : email;
+      await onSuccess(res.data.accessToken, value!);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response && error.response.status === 401) {
@@ -78,6 +100,7 @@ const AuthContext = ({ children }: IAuthContextProps) => {
 
   const signup = async (data: ISignupInputs) => {
     try {
+      setLoading(true);
       const formData = new FormData();
 
       // Append form data only if they exist
@@ -90,7 +113,6 @@ const AuthContext = ({ children }: IAuthContextProps) => {
       formData.append("full_address", JSON.stringify(data.full_address));
       formData.append("password", data.password);
       if (data.brn) formData.append("brn", data.brn);
-      formData.append("createdBy", RolesEnum.CUSTOMER);
 
       if (data.brFile) {
         if (data.brFile instanceof FileList) {
@@ -112,7 +134,7 @@ const AuthContext = ({ children }: IAuthContextProps) => {
       );
 
       console.log("User registered successfully", response.data);
-      onSuccess();
+      await onSuccess(response.data.accessToken, data.email);
     } catch (error) {
       console.error("Signup failed", error);
 
@@ -130,6 +152,8 @@ const AuthContext = ({ children }: IAuthContextProps) => {
       } else {
         setErrorMessage("An unknown error occurred.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -140,7 +164,9 @@ const AuthContext = ({ children }: IAuthContextProps) => {
   };
 
   useEffect(() => {
-    if (isValidToken(storedValue)) {
+    if (!isValidToken(storedValue)) {
+      signout();
+    } else {
       navigate(PathEnum.DASHBOARD);
       setAuth(true);
     }
