@@ -2,7 +2,7 @@ import { XMarkIcon } from "@heroicons/react/16/solid";
 import { useMemo } from "react";
 import { Link } from "react-router";
 import links from "../../../../constant/links";
-import { getEmployeeProfile } from "../../../../store/selectors/profileSelector";
+import { getUserProfile } from "../../../../store/selectors/profileSelector";
 import { useAppSelector } from "../../../../store/store";
 
 interface ISidebarLinksProps {
@@ -11,14 +11,16 @@ interface ISidebarLinksProps {
 }
 
 const SidebarLinks = ({ isOpen, setIsOpen }: ISidebarLinksProps) => {
-  const { data } = useAppSelector(getEmployeeProfile);
+  const profileData = useAppSelector(getUserProfile);
+
   const filteredLinks = useMemo(() => {
-    if (data) {
-      console.log(data.role, links, data);
-      return links.filter((link) => link.roles.includes(data.role));
+    if (profileData?.data?.role) {
+      return links.filter((link) =>
+        link.roles.includes(profileData?.data?.role || "")
+      );
     }
     return [];
-  }, [data]);
+  }, [profileData]);
 
   return (
     <>

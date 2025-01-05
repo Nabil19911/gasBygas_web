@@ -7,25 +7,15 @@ import ICustomerProfileResponse from "../../type/ICustomerProfileResponse";
 import IEmployeeProfileResponse from "../../type/IEmployeeProfileResponse";
 
 interface InitialState {
-  employeeProfile: {
-    data: IEmployeeProfileResponse | null;
-    status: FetchState;
-    error: IApiError | null;
-  };
-  customerProfile: {
-    data: ICustomerProfileResponse | null;
+  userProfile: {
+    data: ICustomerProfileResponse | IEmployeeProfileResponse | null;
     status: FetchState;
     error: IApiError | null;
   };
 }
 
 const initialState: InitialState = {
-  employeeProfile: {
-    data: null,
-    status: FetchState.IDLE,
-    error: null,
-  },
-  customerProfile: {
+  userProfile: {
     data: null,
     status: FetchState.IDLE,
     error: null,
@@ -40,29 +30,29 @@ const profileSlice = createSlice({
     builder
       // Employee Profile
       .addCase(fetchEmployeeProfileDetail.pending, (state) => {
-        state.employeeProfile.status = FetchState.PENDING;
-        state.employeeProfile.error = null;
+        state.userProfile.status = FetchState.PENDING;
+        state.userProfile.error = null;
       })
       .addCase(fetchEmployeeProfileDetail.fulfilled, (state, action) => {
-        state.employeeProfile.status = FetchState.FULFILLED;
-        state.employeeProfile.data = action.payload;
+        state.userProfile.status = FetchState.FULFILLED;
+        state.userProfile.data = action.payload;
       })
       .addCase(fetchEmployeeProfileDetail.rejected, (state, action) => {
-        state.employeeProfile.status = FetchState.REJECTED;
-        state.employeeProfile.error = action.payload || null;
+        state.userProfile.status = FetchState.REJECTED;
+        state.userProfile.error = action.payload || null;
       })
       // Customer Profile
       .addCase(fetchCustomerProfileDetail.pending, (state) => {
-        state.customerProfile.status = FetchState.PENDING;
-        state.customerProfile.error = null;
+        state.userProfile.status = FetchState.PENDING;
+        state.userProfile.error = null;
       })
       .addCase(fetchCustomerProfileDetail.fulfilled, (state, action) => {
-        state.customerProfile.status = FetchState.FULFILLED;
-        state.customerProfile.data = action.payload;
+        state.userProfile.status = FetchState.FULFILLED;
+        state.userProfile.data = action.payload;
       })
       .addCase(fetchCustomerProfileDetail.rejected, (state, action) => {
-        state.customerProfile.status = FetchState.REJECTED;
-        state.customerProfile.error = action.payload || null;
+        state.userProfile.status = FetchState.REJECTED;
+        state.userProfile.error = action.payload || null;
       });
   },
 });
@@ -79,7 +69,7 @@ export const fetchEmployeeProfileDetail = createAsyncThunk<
       const response = await baseAxiosInstance.post(`/employee/profile`, {
         username,
       });
-      return response.data;
+      return response.data.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data as IApiError);
@@ -99,7 +89,8 @@ export const fetchCustomerProfileDetail = createAsyncThunk<
     const response = await baseAxiosInstance.post(`/customer/profile`, {
       email,
     });
-    return response.data;
+
+    return response.data.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       return rejectWithValue(error.response.data as IApiError);

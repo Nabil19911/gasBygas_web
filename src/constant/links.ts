@@ -7,8 +7,25 @@ interface LinkItem {
 }
 
 const links: LinkItem[] = [
-  { to: "/", label: "Dashboard", roles: [RolesEnum.ADMIN] },
-  { to: "/outlet", label: "Outlet", roles: [RolesEnum.ADMIN] },
+  {
+    to: "/",
+    label: "Dashboard",
+    roles: [
+      RolesEnum.ADMIN,
+      RolesEnum.BRANCH_MANAGER,
+      RolesEnum.CUSTOMER,
+      RolesEnum.DISPATCH_OFFICER,
+    ],
+  },
+  {
+    to: "/outlet",
+    label: "Outlet",
+    roles: [
+      RolesEnum.ADMIN,
+      RolesEnum.BRANCH_MANAGER,
+      RolesEnum.DISPATCH_OFFICER,
+    ],
+  },
   { to: "/employee", label: "Employee", roles: [RolesEnum.ADMIN] },
   { to: "/customer", label: "Customer", roles: [RolesEnum.ADMIN] },
   { to: "/report", label: "Report", roles: [RolesEnum.ADMIN] },
