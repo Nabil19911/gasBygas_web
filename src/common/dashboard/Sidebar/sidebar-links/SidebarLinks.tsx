@@ -1,15 +1,24 @@
 import { XMarkIcon } from "@heroicons/react/16/solid";
+import { useMemo } from "react";
 import { Link } from "react-router";
 import links from "../../../../constant/links";
+import { getEmployeeProfile } from "../../../../store/selectors/profileSelector";
+import { useAppSelector } from "../../../../store/store";
 
 interface ISidebarLinksProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  role: string;
 }
 
-const SidebarLinks = ({ isOpen, role, setIsOpen }: ISidebarLinksProps) => {
-  const filteredLinks = links.filter((link) => link.roles.includes(role));
+const SidebarLinks = ({ isOpen, setIsOpen }: ISidebarLinksProps) => {
+  const { data } = useAppSelector(getEmployeeProfile);
+  const filteredLinks = useMemo(() => {
+    if (data) {
+      console.log(data.role, links, data);
+      return links.filter((link) => link.roles.includes(data.role));
+    }
+    return [];
+  }, [data]);
 
   return (
     <>

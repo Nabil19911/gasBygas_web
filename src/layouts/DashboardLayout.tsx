@@ -1,11 +1,10 @@
 import { useState } from "react";
-import Sidebar from "../common/dashboard/sidebar";
-import Header from "../common/dashboard/header";
 import { Outlet } from "react-router";
+import Header from "../common/dashboard/header";
+import Sidebar from "../common/dashboard/sidebar";
 
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />

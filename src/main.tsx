@@ -11,18 +11,18 @@ import { presistStore, store } from "./store/store.ts";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <Suspense>
+      <Provider store={store}>
         <PersistGate
           loading={<div>Loading persisted state...</div>}
           persistor={presistStore}
         >
-          <Provider store={store}>
-            <AuthContext>
+          <AuthContext>
+            <Suspense fallback={<div>Loading routes...</div>}>
               <RootRoutes />
-            </AuthContext>
-          </Provider>
+            </Suspense>
+          </AuthContext>
         </PersistGate>
-      </Suspense>
+      </Provider>
     </BrowserRouter>
   </StrictMode>
 );

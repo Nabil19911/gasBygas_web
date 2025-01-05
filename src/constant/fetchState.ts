@@ -1,8 +1,8 @@
 enum FetchState {
-  IDEL = "IDEL",
+  IDLE = "IDLE",
   PENDING = "PENDING",
-  FULFILED = "FULFIlLED",
-  ERROR = "ERROR",
+  FULFILLED = "FULFILLED",
+  REJECTED = "REJECTED",
 }
 
 export default FetchState;

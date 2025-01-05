@@ -5,16 +5,15 @@ import GeneralEnum from "../constant/generalEnum";
 import PathEnum from "../constant/pathsEnum";
 import useIsEmployeeRoute from "../hooks/useIsEmployeeRoute";
 import useLocalStorage from "../hooks/useLocalStorage";
-import { useAppDispatch, useAppSelector } from "../store/store";
-import ISigninInputs from "../type/ISigninInputs";
-import ISignupInputs from "../type/ISignupInputs";
-import authAxiosInstance from "../utils/authAxios";
-import isValidToken from "../utils/tokenValidator";
 import {
   fetchCustomerProfileDetail,
   fetchEmployeeProfileDetail,
 } from "../store/silces/profileSlice";
-import { getProfileDetails } from "../store/selectors/profileSelector";
+import { useAppDispatch } from "../store/store";
+import ISigninInputs from "../type/ISigninInputs";
+import ISignupInputs from "../type/ISignupInputs";
+import authAxiosInstance from "../utils/authAxios";
+import isValidToken from "../utils/tokenValidator";
 
 interface IAuthContextProps {
   children: ReactNode;
@@ -42,9 +41,6 @@ const AuthContext = ({ children }: IAuthContextProps) => {
   const [isAuth, setAuth] = useState<boolean>();
   const navigate = useNavigate();
   const isEmployee = useIsEmployeeRoute();
-  const value = useAppSelector(getProfileDetails)
-
-  console.log(value)
 
   const dispatch = useAppDispatch();
 
@@ -53,12 +49,12 @@ const AuthContext = ({ children }: IAuthContextProps) => {
     initialValue: "",
   });
 
-  const onSuccess = async (token: string, value: string) => {
+  const onSuccess = (token: string, value: string) => {
     setAuth(true);
     setValue(token);
     navigate(PathEnum.DASHBOARD);
     setLoading(false);
-    await getUserProfile(value);
+    getUserProfile(value);
   };
 
   const getUserProfile = async (value: string) => {
@@ -82,7 +78,7 @@ const AuthContext = ({ children }: IAuthContextProps) => {
       );
 
       const value = isEmployee ? username : email;
-      await onSuccess(res.data.accessToken, value!);
+      onSuccess(res.data.accessToken, value!);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response && error.response.status === 401) {
@@ -134,7 +130,7 @@ const AuthContext = ({ children }: IAuthContextProps) => {
       );
 
       console.log("User registered successfully", response.data);
-      await onSuccess(response.data.accessToken, data.email);
+      onSuccess(response.data.accessToken, data.email);
     } catch (error) {
       console.error("Signup failed", error);
 
