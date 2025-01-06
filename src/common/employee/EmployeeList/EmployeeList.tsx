@@ -1,37 +1,31 @@
+import { useCallback } from "react";
 import Table from "../../ui-components/table";
+import EmployeeRow from "./EmployeeRow";
+import ICustomerProfile from "../../../type/ICustomerProfile";
 
-type User = {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-};
+interface IEmployeeListProps {
+  users?: ICustomerProfile[];
+}
 
-const users: User[] = [
-  { id: 1, name: "John Doe", email: "john@example.com", role: "Admin" },
-  { id: 2, name: "Jane Smith", email: "jane@example.com", role: "User" },
-  { id: 3, name: "Bob Johnson", email: "bob@example.com", role: "Editor" },
-];
+const EmployeeList = ({ users }: IEmployeeListProps) => {
+  const renderEmployeeRow = useCallback(() => {
+    if (users) {
+      return users.map((user) => <EmployeeRow key={user._id} user={user} />);
+    }
+    return [];
+  }, [users]);
 
-const EmployeeList = () => {
   return (
     <Table>
       <Table.Header>
-        <Table.Column>Name</Table.Column>
+        <Table.Column>Business Type</Table.Column>
+        <Table.Column>Address</Table.Column>
         <Table.Column>Email</Table.Column>
-        <Table.Column>Role</Table.Column>
+        <Table.Column>Contact</Table.Column>
+        <Table.Column>Createdby</Table.Column>
+        <Table.Column>Action</Table.Column>
       </Table.Header>
-      <Table.Body>
-        {users.map((user) => (
-          <Table.Row key={user.id}>
-            <Table.Cell>
-              <span className="font-medium text-gray-900">{user.name}</span>
-            </Table.Cell>
-            <Table.Cell>{user.email}</Table.Cell>
-            <Table.Cell>{user.role}</Table.Cell>
-          </Table.Row>
-        ))}
-      </Table.Body>
+      <Table.Body>{renderEmployeeRow()}</Table.Body>
     </Table>
   );
 };

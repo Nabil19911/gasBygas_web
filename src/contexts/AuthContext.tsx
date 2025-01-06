@@ -1,8 +1,8 @@
-import axios from "axios";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { redirect, useLocation, useNavigate } from "react-router";
 import GeneralEnum from "../constant/generalEnum";
 import PathsEnum from "../constant/pathsEnum";
+import { handleAxiosError } from "../helpers/axiosHelper";
 import useIsEmployeeRoute from "../hooks/useIsEmployeeRoute";
 import useLocalStorage from "../hooks/useLocalStorage";
 import {
@@ -81,15 +81,10 @@ const AuthContext = ({ children }: IAuthContextProps) => {
       const value = isEmployee ? username : email;
       onSuccess(res.data.accessToken, value!);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.response && error.response.status === 401) {
-          setErrorMessage(error.response.data.message);
-        } else {
-          setErrorMessage("Something went wrong. Please try again.");
-        }
-      } else {
-        setErrorMessage("Unexpected error occurred. Please try again.");
-      }
+      console.error("Signin failed", error);
+      setErrorMessage(
+        handleAxiosError(error as string) || "An unknown error occurred."
+      );
     } finally {
       setLoading(false);
     }
@@ -134,21 +129,9 @@ const AuthContext = ({ children }: IAuthContextProps) => {
       onSuccess(response.data.accessToken, data.email);
     } catch (error) {
       console.error("Signup failed", error);
-
-      if (axios.isAxiosError(error)) {
-        if (error.response) {
-          console.log("Error response:", error.response?.data);
-          setErrorMessage(
-            error.response?.data.message || "Something went wrong"
-          );
-        } else {
-          setErrorMessage(
-            "An unexpected error occurred. Please try again later."
-          );
-        }
-      } else {
-        setErrorMessage("An unknown error occurred.");
-      }
+      setErrorMessage(
+        handleAxiosError(error as string) || "An unknown error occurred."
+      );
     } finally {
       setLoading(false);
     }
@@ -191,3 +174,4 @@ const AuthContext = ({ children }: IAuthContextProps) => {
 };
 
 export { AuthContext, AuthProvider };
+

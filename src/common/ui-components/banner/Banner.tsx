@@ -28,7 +28,7 @@ const Banner = ({ type, children }: IBannerProps) => {
   return (
     <div
       className={clsx(
-        "flex items-center px-4 py-3 rounded shadow space-x-4 border",
+        "flex items-center px-4 py-3 rounded shadow space-x-4 border mb-2",
         {
           "bg-red-100 text-red-700 border-red-500": type === "error",
           "bg-yellow-100 text-yellow-700 border-yellow-500": type === "warning",

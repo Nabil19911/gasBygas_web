@@ -17,7 +17,7 @@ const AuthLayout = () => {
   return (
     <div className="flex h-screen bg-gray-100">
       <div className="hidden lg:flex w-1/2 flex-col items-center justify-center bg-white">
-        <img src="src\assets\logo_Gas_by_Gas.png" className="w-2/4" />
+        <img src="\assets\logo_Gas_by_Gas.png" className="w-2/4" />
       </div>
       <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-12 overflow-auto">
         <div className="w-full max-w-md">

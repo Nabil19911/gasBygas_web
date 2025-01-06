@@ -14,6 +14,10 @@ interface ICustomerProfile {
     address: string;
   };
   is_approved: boolean;
+  updatedAt?: Date;
+  createdAt?: Date;
+  __v?: number;
+  _id?: string;
 }
 
 export default ICustomerProfile;
