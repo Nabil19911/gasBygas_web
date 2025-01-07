@@ -5,6 +5,7 @@ enum PathsEnum {
   REGISTER = "/register",
   DASHBOARD = "/dashboard",
   EMPLOYEE = "/employee",
+  CREATE = "create",
   CUSTOMER = "/customer",
   OUTLET = "/outlet",
   REPORT = "/report",

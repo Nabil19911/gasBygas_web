@@ -1,7 +1,9 @@
 import EmployeeList from "../../common/employee/EmployeeList";
 import Banner from "../../common/ui-components/banner";
+import { Button } from "../../common/ui-components/form-fields";
 import LoadingSpinner from "../../common/ui-components/loadingSpinner";
 import useFetch from "../../hooks/useFetch";
+// TODO: make this employee interface
 import ICustomerProfile from "../../type/ICustomerProfile";
 
 const Employee = () => {
@@ -10,19 +12,19 @@ const Employee = () => {
     isLoading: isGetCustomerLoading,
     error,
   } = useFetch<ICustomerProfile[]>({
-    url: "/customer",
+    url: "/employee",
     initialLoad: true,
-    options: {
-      method: "get",
-    },
   });
 
   const isLoading = isGetCustomerLoading;
 
   return (
-    <div>
+    <div className="flex flex-col">
       {error && <Banner type="error">{error}</Banner>}
       {isLoading && <LoadingSpinner />}
+      <div className="self-end mb-2 w-fit">
+        <Button>Add new Employee</Button>
+      </div>
       <EmployeeList users={data} />
     </div>
   );

@@ -1,13 +1,17 @@
 import { lazy } from "react";
-import { Navigate, Route, Routes } from "react-router";
+import { Navigate, Outlet, Route, Routes } from "react-router";
 import PathsEnum from "./constant/pathsEnum";
 import AuthGuard from "./guards/AuthGuard";
 import GuestGuard from "./guards/GuestGuard";
+import RoleGuard from "./guards/RoleGuard";
+import RolesEnum from "./constant/rolesEnum";
 
+const EmployeeForm = lazy(() => import("./common/employee/EmployeeForm"));
+const CustomerForm = lazy(() => import("./common/customer/CustomerForm"));
 const DashboardManager = lazy(() => import("./components/Dashboard"));
 const Employee = lazy(() => import("./components/Employee"));
 const Customer = lazy(() => import("./components/Customer"));
-const Outlet = lazy(() => import("./components/Outlet"));
+const OutletPage = lazy(() => import("./components/Outlet"));
 const Report = lazy(() => import("./components/Report"));
 const Profile = lazy(() => import("./components/Profile"));
 const Login = lazy(() => import("./components/Auth/Login"));
@@ -36,9 +40,24 @@ function RootRoutes() {
         }
       >
         <Route path={PathsEnum.DASHBOARD} element={<DashboardManager />} />
-        <Route path={PathsEnum.EMPLOYEE} element={<Employee />} />
-        <Route path={PathsEnum.CUSTOMER} element={<Customer />} />
-        <Route path={PathsEnum.OUTLET} element={<Outlet />} />
+        <Route path={PathsEnum.EMPLOYEE} element={<Outlet />}>
+          <Route index element={<Employee />} />
+          <Route path={PathsEnum.CREATE} element={<EmployeeForm />} />
+        </Route>
+        <Route path={PathsEnum.CUSTOMER} element={<Outlet />}>
+          <Route index element={<Customer />} />
+          <Route
+            path={PathsEnum.CREATE}
+            element={
+              <RoleGuard
+                allowedRoles={[RolesEnum.ADMIN, RolesEnum.BRANCH_MANAGER]}
+              >
+                <CustomerForm />
+              </RoleGuard>
+            }
+          />
+        </Route>
+        <Route path={PathsEnum.OUTLET} element={<OutletPage />} />
         <Route path={PathsEnum.REPORT} element={<Report />} />
         <Route path={PathsEnum.PROFILE} element={<Profile />} />
       </Route>

@@ -3,7 +3,6 @@ import { handleAxiosError } from "../helpers/axiosHelper";
 import appFetch from "../utils/appFetch";
 
 interface UseFetchOptions {
-  method?: "get" | "post" | "put" | "delete";
   data?: Record<string, unknown>;
   headers?: Record<string, string>;
 }
@@ -11,7 +10,7 @@ interface UseFetchOptions {
 interface IFetchProps {
   url: string;
   initialLoad?: boolean;
-  options: UseFetchOptions;
+  options?: UseFetchOptions;
 }
 
 const useFetch = <T extends unknown>({
@@ -29,7 +28,7 @@ const useFetch = <T extends unknown>({
     try {
       const responseData: T = await appFetch({
         url,
-        method: options.method || "get",
+        method: "get",
         data: options.data,
         headers: options.headers,
       });

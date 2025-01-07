@@ -1,28 +1,32 @@
 import { useCallback, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
-  Button,
-  FileInput,
-  Select,
-  TextInput,
+    Button,
+    FileInput,
+    Select,
+    TextInput,
 } from "../../../common/ui-components/form-fields";
 import CustomerTypeEnum from "../../../constant/customerTypeEnum";
-import useAuth from "../../../hooks/useAuth";
-import ISignupInputs from "../../../type/ISignupInputs";
 import { selectOption } from "../../../constant/customerTypeSelectOptions";
+import useApiFetch from "../../../hooks/useApiFetch";
+import ISignupInputs from "../../../type/ISignupInputs";
 
-const Register = () => {
-  const { signup, isLoading } = useAuth();
+type TCreateCustomer = Omit<ISignupInputs, "password" | "confirm_password">;
+
+const CustomerForm = () => {
   const [selectedBusinessType, setSelectedBusinessType] =
     useState<CustomerTypeEnum>();
+
+  const { data, isLoading, error, postData } = useApiFetch<TCreateCustomer>({
+    url: "/customer/create",
+  });
 
   const {
     register,
     handleSubmit,
     reset,
-    getValues,
     formState: { errors },
-  } = useForm<ISignupInputs>();
+  } = useForm<TCreateCustomer>();
 
   const handleSelectChange = (value: CustomerTypeEnum) => {
     setSelectedBusinessType(value);
@@ -31,10 +35,8 @@ const Register = () => {
       first_name: "",
       last_name: "",
       brn: "",
-      confirm_password: "",
       contact: "",
       nic: "",
-      password: "",
       email: "",
       full_address: {
         address: "",
@@ -44,8 +46,9 @@ const Register = () => {
     });
   };
 
-  const onSubmit: SubmitHandler<ISignupInputs> = async (data) => {
-    await signup(data);
+  const onSubmit: SubmitHandler<TCreateCustomer> = async (data) => {
+    console.log(data);
+    postData(data);
   };
 
   const renderOptionalFields = useCallback(() => {
@@ -109,7 +112,10 @@ const Register = () => {
   }, [selectedBusinessType]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col gap-3 w-1/2"
+    >
       <Select
         label="Business Type"
         error={errors.business_type?.message}
@@ -178,31 +184,15 @@ const Register = () => {
         />
       </div>
 
-      <TextInput
-        label="Password"
-        error={errors.password?.message}
-        type="password"
-        {...register("password", {
-          required: "Password is required",
-          disabled: !selectedBusinessType,
-        })}
-      />
-      <TextInput
-        label="Confirm Password"
-        error={errors.confirm_password?.message}
-        type="password"
-        {...register("confirm_password", {
-          validate: (value) =>
-            value === getValues("password") || "Passwords do not match",
-          disabled: !selectedBusinessType,
-        })}
-      />
-
-      <Button disabled={isLoading || !selectedBusinessType} type="submit">
-        Register
+      <Button
+        className="self-end w-fit"
+        disabled={isLoading || !selectedBusinessType}
+        type="submit"
+      >
+        Save
       </Button>
     </form>
   );
 };
 
-export default Register;
+export default CustomerForm;

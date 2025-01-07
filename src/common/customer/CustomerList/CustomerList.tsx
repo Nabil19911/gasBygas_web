@@ -1,17 +1,15 @@
-// TDOD: this compnenet needs to fix
 import { useCallback } from "react";
-import Table from "../../ui-components/table";
-import EmployeeRow from "./EmployeeRow";
 import ICustomerProfile from "../../../type/ICustomerProfile";
-
-interface IEmployeeListProps {
+import Table from "../../ui-components/table";
+import CustomerRow from "./CustomerRow";
+interface IECustomerListProps {
   users?: ICustomerProfile[];
 }
 
-const EmployeeList = ({ users }: IEmployeeListProps) => {
+const CustomerList = ({ users }: IECustomerListProps) => {
   const renderEmployeeRow = useCallback(() => {
     if (users) {
-      return users.map((user) => <EmployeeRow key={user._id} user={user} />);
+      return users.map((user) => <CustomerRow key={user._id} user={user} />);
     }
     return [];
   }, [users]);
@@ -19,8 +17,8 @@ const EmployeeList = ({ users }: IEmployeeListProps) => {
   return (
     <Table>
       <Table.Header>
-        <Table.Column>Role</Table.Column>
-        <Table.Column>Frist Name</Table.Column>
+        <Table.Column>Business Type</Table.Column>
+        <Table.Column>Address</Table.Column>
         <Table.Column>Email</Table.Column>
         <Table.Column>Contact</Table.Column>
         <Table.Column>Createdby</Table.Column>
@@ -31,4 +29,4 @@ const EmployeeList = ({ users }: IEmployeeListProps) => {
   );
 };
 
-export default EmployeeList;
+export default CustomerList;
