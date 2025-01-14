@@ -14,6 +14,7 @@ import ISigninInputs from "../type/ISigninInputs";
 import ISignupInputs from "../type/ISignupInputs";
 import authAxiosInstance from "../utils/authAxios";
 import isValidToken from "../utils/tokenValidator";
+import IOrganizationDetails from "../type/IOrganizationDetails";
 
 interface IAuthContextProps {
   children: ReactNode;
@@ -96,23 +97,41 @@ const AuthContext = ({ children }: IAuthContextProps) => {
       const formData = new FormData();
 
       // Append form data only if they exist
-      if (data.first_name) formData.append("first_name", data.first_name);
-      if (data.last_name) formData.append("last_name", data.last_name);
+
       formData.append("business_type", data.business_type);
-      if (data.nic) formData.append("nic", data.nic);
-      if (data.contact) formData.append("contact", data.contact);
+      formData.append("contact", data.contact);
       formData.append("email", data.email);
       formData.append("full_address", JSON.stringify(data.full_address));
       formData.append("password", data.password);
-      if (data.brn) formData.append("brn", data.brn);
-
-      if (data.brFile) {
-        if (data.brFile instanceof FileList) {
-          formData.append("brFile", data.brFile[0]);
-        } else {
-          formData.append("brFile", data.brFile);
-        }
+      if (data.individual_details) {
+        formData.append(
+          "individual_details",
+          JSON.stringify(data.individual_details)
+        );
       }
+      if (data.organization_details) {
+        const organizationData: IOrganizationDetails = {
+          ...data.organization_details,
+          business_registration_certification_path: data.organization_details
+            .business_registration_certification_path
+            ? data.organization_details
+                .business_registration_certification_path[0]
+            : data.organization_details
+                .business_registration_certification_path,
+        };
+        formData.append(
+          "organization_details",
+          JSON.stringify(organizationData)
+        );
+      }
+
+      // if (data.brFile) {
+      //   if (data.brFile instanceof FileList) {
+      //     formData.append("brFile", data.brFile[0]);
+      //   } else {
+      //     formData.append("brFile", data.brFile);
+      //   }
+      // }
 
       // Make a POST request to the register endpoint
       const response = await authAxiosInstance.post(
@@ -174,4 +193,3 @@ const AuthContext = ({ children }: IAuthContextProps) => {
 };
 
 export { AuthContext, AuthProvider };
-

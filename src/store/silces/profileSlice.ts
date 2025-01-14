@@ -88,7 +88,7 @@ export const fetchCustomerProfileDetail = createAsyncThunk<
   { rejectValue: IApiError }
 >("profile/fetchCustomerProfileDetail", async (email, { rejectWithValue }) => {
   try {
-    const response = await baseAxiosInstance.post(`/customer/profile`, {
+    const response = await baseAxiosInstance.post(`/user/profile`, {
       email,
     });
 

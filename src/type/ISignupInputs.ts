@@ -1,15 +1,18 @@
+import IFullAddress from "./IFullAddress";
+import IIndividualDetails from "./IIndividualDetails";
+import IOrganizationDetails from "./IOrganizationDetails";
+
 interface ISignupInputs {
-  first_name?: string;
-  last_name?: string;
   business_type: string;
-  nic: string;
-  brFile: File;
-  brn: string;
-  contact: string;
   email: string;
-  full_address: { district: string; post_code: string; address: string };
   password: string;
-  confirm_password: string;
+  confirm_password?: string;
+  contact: string;
+  full_address: IFullAddress;
+  status: string;
+  created_by: string;
+  individual_details: IIndividualDetails;
+  organization_details: IOrganizationDetails;
 }
 
 export default ISignupInputs;

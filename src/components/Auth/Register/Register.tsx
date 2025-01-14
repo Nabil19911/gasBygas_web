@@ -27,19 +27,29 @@ const Register = () => {
   const handleSelectChange = (value: CustomerTypeEnum) => {
     setSelectedBusinessType(value);
     reset({
-      business_type: value,
-      first_name: "",
-      last_name: "",
-      brn: "",
+      business_type: "",
+      email: "",
+      password: "",
       confirm_password: "",
       contact: "",
-      nic: "",
-      password: "",
-      email: "",
       full_address: {
-        address: "",
         district: "",
         post_code: "",
+        address: "",
+      },
+      status: "",
+      created_by: "",
+      individual_details: {
+        first_name: "",
+        last_name: "",
+        nic: "",
+      },
+      organization_details: {
+        business_registration_certification_path: "",
+        business_registration_number: "",
+        business_name: "",
+        approval_status: "",
+        approval_date: "",
       },
     });
   };
@@ -55,20 +65,22 @@ const Register = () => {
           <>
             <TextInput
               label="First Name"
-              error={errors.first_name?.message}
-              {...register("first_name", {
+              error={errors.individual_details?.first_name?.message}
+              {...register("individual_details.first_name", {
                 required: "First Name is required",
               })}
             />
             <TextInput
               label="Last Name"
-              error={errors.last_name?.message}
-              {...register("last_name", { required: "Last Name is required" })}
+              error={errors.individual_details?.last_name?.message}
+              {...register("individual_details.last_name", {
+                required: "Last Name is required",
+              })}
             />
             <TextInput
               label="NIC"
-              error={errors.nic?.message}
-              {...register("nic", {
+              error={errors.individual_details?.nic?.message}
+              {...register("individual_details.nic", {
                 required: "NIC is required",
                 pattern: {
                   value: /^(?:\d{12}|\d{9}[VXvx])$/,
@@ -81,18 +93,34 @@ const Register = () => {
       case CustomerTypeEnum.ORGANIZATION:
         return (
           <>
+            <TextInput
+              label="Business Name"
+              error={errors.organization_details?.business_name?.message}
+              {...register("organization_details.business_name", {
+                required: "Business Name is required",
+              })}
+            />
             <FileInput
               label="Business Register Certificate"
-              error={errors.brFile?.message}
+              error={
+                errors.organization_details
+                  ?.business_registration_certification_path?.message
+              }
               accept=".pdf,.jpg,.jpeg,.png"
-              {...register("brFile", {
-                required: "Business Register Certificate is required",
-              })}
+              {...register(
+                "organization_details.business_registration_certification_path",
+                {
+                  required: "Business Register Certificate is required",
+                }
+              )}
             />
             <TextInput
               label="BRN"
-              error={errors.brn?.message}
-              {...register("brn", {
+              error={
+                errors.organization_details?.business_registration_number
+                  ?.message
+              }
+              {...register("organization_details.business_registration_number", {
                 required: "BRN is required",
                 pattern: {
                   value: /^(?:[A-Za-z]{2}\d{5,7}|\d{5,7})$/,
@@ -118,6 +146,7 @@ const Register = () => {
           onChange: (e) =>
             handleSelectChange(e.target.value as CustomerTypeEnum),
         })}
+        value={selectedBusinessType}
         options={selectOption}
       />
 

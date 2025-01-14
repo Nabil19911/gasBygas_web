@@ -14,7 +14,7 @@ const Customer = () => {
     isLoading: isGetCustomerLoading,
     error,
   } = useFetch<ICustomerProfile[]>({
-    url: "/customer",
+    url: "/user",
     initialLoad: true,
   });
 

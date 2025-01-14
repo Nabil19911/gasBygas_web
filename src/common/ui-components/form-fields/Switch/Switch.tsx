@@ -16,12 +16,12 @@ const Switch = ({
 }: IToggleSwitchProps) => {
   return (
     <div
-      className="relative flex items-center h-10 w-40 bg-gray-400 rounded-full p-1 cursor-pointer"
+      className="relative flex items-center h-10 w-40 bg-secondary_color rounded-full p-1 cursor-pointer"
       onClick={onToggle}
     >
       <div
         className={clsx(
-          "absolute h-8 w-[48%] rounded-full bg-black transition-transform",
+          "absolute h-8 w-[48%] rounded-full bg-button_color transition-transform",
           isChecked ? "translate-x-full" : "translate-x-0"
         )}
       />

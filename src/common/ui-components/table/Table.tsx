@@ -14,7 +14,7 @@ export const Table = ({ children }: { children: ReactNode }) => {
 
 Table.Header = ({ children }: { children: ReactNode }) => {
   return (
-    <thead className="bg-gray-900 sticky top-0 z-10">
+    <thead className="bg-primary_color sticky top-0 z-10">
       <tr>{children}</tr>
     </thead>
   );

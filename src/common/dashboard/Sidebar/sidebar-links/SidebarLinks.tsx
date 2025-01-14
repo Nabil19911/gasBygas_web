@@ -16,7 +16,7 @@ const SidebarLinks = ({ isOpen, setIsOpen }: ISidebarLinksProps) => {
   const location = useLocation();
 
   const hasActive = (activeRoute: string) => {
-    return location.pathname === activeRoute;
+    return location.pathname.includes(activeRoute);
   };
 
   const filteredLinks = useMemo(() => {
@@ -38,7 +38,7 @@ const SidebarLinks = ({ isOpen, setIsOpen }: ISidebarLinksProps) => {
       ></div>
 
       <div
-        className={`fixed inset-y-0 left-0 z-30 w-64 overflow-y-auto transition duration-300 transform bg-gray-900 lg:translate-x-0 lg:static lg:inset-0 ${
+        className={`fixed inset-y-0 left-0 z-30 w-64 overflow-y-auto transition duration-300 transform bg-primary_color lg:translate-x-0 lg:static lg:inset-0 ${
           isOpen ? "translate-x-0 ease-out" : "-translate-x-full ease-in"
         }`}
       >
@@ -60,9 +60,9 @@ const SidebarLinks = ({ isOpen, setIsOpen }: ISidebarLinksProps) => {
               key={link.to}
               to={link.to}
               className={clsx(
-                "flex items-center px-6 py-2 text-gray-100 hover:bg-gray-700",
+                "flex items-center px-6 py-2 hover:bg-secondary_color text-black",
                 {
-                  "bg-gray-500 pointer-events-none": hasActive(link.to),
+                  "bg-secondary_color pointer-events-none": hasActive(link.to),
                   "hover:bg-gray-700": !hasActive(link.to),
                 }
               )}
