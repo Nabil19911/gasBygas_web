@@ -13,7 +13,7 @@ const CustomerRow = ({ user }: ICustomerRowProps) => {
       <Table.Cell>{user.full_address.address}</Table.Cell>
       <Table.Cell>{user.email}</Table.Cell>
       <Table.Cell>{user.contact}</Table.Cell>
-      <Table.Cell>{user.createdBy}</Table.Cell>
+      <Table.Cell>{user.created_by}</Table.Cell>
       <Table.Cell>Action</Table.Cell>
     </Table.Row>
   );

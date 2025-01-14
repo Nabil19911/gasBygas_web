@@ -5,7 +5,7 @@ interface ICustomerProfile {
   brn: string;
   business_type: string;
   contact: string;
-  createdBy: string;
+  created_by: string;
   email: string;
   role: RolesEnum;
   full_address: {
