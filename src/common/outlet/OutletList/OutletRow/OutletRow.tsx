@@ -1,11 +1,11 @@
 import ICustomerProfile from "../../../../type/ICustomerProfile";
 import Table from "../../../ui-components/table";
 
-interface IEmployeeRowProps {
+interface IOutletRowProps {
   user: ICustomerProfile;
 }
 
-const EmployeeRow = ({ user }: IEmployeeRowProps) => {
+const OutletRow = ({ user }: IOutletRowProps) => {
   return (
     <Table.Row key={user.email}>
       <Table.Cell>
@@ -20,4 +20,4 @@ const EmployeeRow = ({ user }: IEmployeeRowProps) => {
   );
 };
 
-export default EmployeeRow;
+export default OutletRow;

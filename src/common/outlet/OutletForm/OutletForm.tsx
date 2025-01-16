@@ -1,10 +1,10 @@
 import { useForm } from "react-hook-form";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "../../ui-components/card/Card";
 import { Button, Select, TextInput } from "../../ui-components/form-fields";
 
@@ -98,9 +98,13 @@ const OutletForm = () => {
             options={[]}
           />
           <div className="flex justify-end space-x-4">
-            <Button type="button">Back</Button>
-            <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700">
-              Create Outlet
+            <Button type="submit">Save</Button>
+            <Button
+              type="button"
+              onClick={() => reset()}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              reset
             </Button>
           </div>
         </form>
