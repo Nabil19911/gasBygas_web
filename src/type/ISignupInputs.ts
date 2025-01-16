@@ -12,6 +12,7 @@ interface ISignupInputs {
   status: string;
   created_by: string;
   individual_details: IIndividualDetails;
+  business_registration_certification_path: File;
   organization_details: IOrganizationDetails;
 }
 
