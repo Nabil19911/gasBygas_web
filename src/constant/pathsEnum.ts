@@ -10,6 +10,7 @@ enum PathsEnum {
   OUTLET = "/outlet",
   REPORT = "/report",
   PROFILE = "/profile",
+  STOCK = "/stock",
 }
 
 export default PathsEnum;

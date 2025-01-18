@@ -4,10 +4,11 @@ import { forwardRef, InputHTMLAttributes } from "react";
 interface IFileInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
+  helperText?: string;
 }
 
 const FileInput = forwardRef<HTMLInputElement, IFileInputProps>(
-  ({ label, error, ...props }, ref) => {
+  ({ label, error, helperText, ...props }, ref) => {
     return (
       <div>
         {label && <label htmlFor="file_input">{label}</label>}
@@ -24,6 +25,10 @@ const FileInput = forwardRef<HTMLInputElement, IFileInputProps>(
             }
           )}
         />
+        {/* Helper Text */}
+        {helperText && !error && (
+          <small className="text-gray-500 text-sm">{helperText}</small>
+        )}
         {error && <small className="text-red-600">{error}</small>}
       </div>
     );

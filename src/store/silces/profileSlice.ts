@@ -2,9 +2,9 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import FetchStateEnum from "../../constant/fetchStateEnum";
 import IApiError from "../../type/IApiError";
-import baseAxiosInstance from "../../utils/baseAxios";
 import ICustomerProfile from "../../type/ICustomerProfile";
 import IEmployeeProfile from "../../type/IEmployeeProfile";
+import appFetch from "../../utils/appFetch";
 
 export type ProfileData = ICustomerProfile | IEmployeeProfile;
 
@@ -68,10 +68,15 @@ export const fetchEmployeeProfileDetail = createAsyncThunk<
   "profile/fetchEmployeeProfileDetail",
   async (username, { rejectWithValue }) => {
     try {
-      const response = await baseAxiosInstance.post(`/employee/profile`, {
-        username,
+      const response = await appFetch<IEmployeeProfile>({
+        url: `/employee/profile`,
+        method: "post",
+        data: {
+          username,
+        },
       });
-      return response.data.data;
+
+      return response;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data as IApiError);
@@ -88,11 +93,15 @@ export const fetchCustomerProfileDetail = createAsyncThunk<
   { rejectValue: IApiError }
 >("profile/fetchCustomerProfileDetail", async (email, { rejectWithValue }) => {
   try {
-    const response = await baseAxiosInstance.post(`/user/profile`, {
-      email,
+    const response = await appFetch<ICustomerProfile>({
+      url: `/user/profile`,
+      method: "post",
+      data: {
+        email,
+      },
     });
 
-    return response.data.data;
+    return response;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       return rejectWithValue(error.response.data as IApiError);

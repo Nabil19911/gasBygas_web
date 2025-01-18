@@ -3,7 +3,13 @@ import { useForm } from "react-hook-form";
 import GasRequestTypeEnum from "../../../../constant/gasRequestTypeEnum";
 import ICustomerProfile from "../../../../type/ICustomerProfile";
 import Banner from "../../../ui-components/banner";
-import { Button, Select, TextInput } from "../../../ui-components/form-fields";
+import {
+  Button,
+  Radio,
+  Select,
+  TextInput,
+} from "../../../ui-components/form-fields";
+import gasTypeOption from "../../../../constant/gasTypeOptions";
 
 interface IndividualProps {
   profile: ICustomerProfile;
@@ -51,6 +57,12 @@ const Individual = ({ profile }: IndividualProps) => {
           })}
           value={gasRequestType}
           options={requestTypeOptions}
+        />
+        <Radio
+          label="Select Gas Type"
+          options={gasTypeOption}
+          // error={errors.gasType?.message}
+          {...register("gasType", { required: "Please select a gas type" })}
         />
         <TextInput
           label="Gas Quantity"

@@ -5,11 +5,12 @@ import ISelectOption from "../../../../type/ISelectOption";
 interface ISelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   error?: string;
+  helperText?: string;
   options: ISelectOption[];
 }
 
 const Select = forwardRef<HTMLSelectElement, ISelectProps>(
-  ({ label, error, options, ...props }, ref) => {
+  ({ label, error, helperText, options, ...props }, ref) => {
     return (
       <div>
         {label && <label htmlFor="select_input">{label}</label>}
@@ -36,7 +37,13 @@ const Select = forwardRef<HTMLSelectElement, ISelectProps>(
             </option>
           ))}
         </select>
-        <small className="text-red-600">{error}</small>
+        
+        {/* Helper Text */}
+        {helperText && !error && (
+          <small className="text-gray-500 text-sm">{helperText}</small>
+        )}
+
+        {error && <small className="text-red-600">{error}</small>}
       </div>
     );
   }

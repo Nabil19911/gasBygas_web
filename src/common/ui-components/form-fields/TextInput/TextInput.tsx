@@ -4,10 +4,11 @@ import { forwardRef, InputHTMLAttributes } from "react";
 interface ITextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
+  helperText?: string;
 }
 
 const TextInput = forwardRef<HTMLInputElement, ITextInputProps>(
-  ({ label, error, ...props }, ref) => {
+  ({ label, error, helperText, ...props }, ref) => {
     return (
       <div>
         {label && <label htmlFor="text_input">{label}</label>}
@@ -24,7 +25,13 @@ const TextInput = forwardRef<HTMLInputElement, ITextInputProps>(
             }
           )}
         />
-        <small className="text-red-600">{error}</small>
+
+        {/* Helper Text */}
+        {helperText && !error && (
+          <small className="text-gray-500 text-sm">{helperText}</small>
+        )}
+
+        {error && <small className="text-red-600">{error}</small>}
       </div>
     );
   }
