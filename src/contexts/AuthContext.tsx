@@ -14,7 +14,6 @@ import ISigninInputs from "../type/ISigninInputs";
 import ISignupInputs from "../type/ISignupInputs";
 import authAxiosInstance from "../utils/authAxios";
 import isValidToken from "../utils/tokenValidator";
-import IOrganizationDetails from "../type/IOrganizationDetails";
 
 interface IAuthContextProps {
   children: ReactNode;
@@ -97,7 +96,6 @@ const AuthContext = ({ children }: IAuthContextProps) => {
       const formData = new FormData();
 
       // Append form data only if they exist
-
       formData.append("business_type", data.business_type);
       formData.append("contact", data.contact);
       formData.append("email", data.email);
@@ -109,19 +107,19 @@ const AuthContext = ({ children }: IAuthContextProps) => {
           JSON.stringify(data.individual_details)
         );
       }
+      
       if (data.organization_details) {
-        const organizationData: IOrganizationDetails = {
-          ...data.organization_details,
-          business_registration_certification_path: data.organization_details
-            .business_registration_certification_path
-            ? data.organization_details
-                .business_registration_certification_path[0]
-            : data.organization_details
-                .business_registration_certification_path,
-        };
+        let value;
+        if (data.business_registration_certification_path instanceof FileList) {
+          value = data.business_registration_certification_path[0];
+        } else {
+          value = data.business_registration_certification_path;
+        }
+
+        formData.append("business_registration_certification_path", value);
         formData.append(
           "organization_details",
-          JSON.stringify(organizationData)
+          JSON.stringify(data.organization_details)
         );
       }
 
@@ -193,3 +191,4 @@ const AuthContext = ({ children }: IAuthContextProps) => {
 };
 
 export { AuthContext, AuthProvider };
+

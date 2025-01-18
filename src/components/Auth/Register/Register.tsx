@@ -44,8 +44,8 @@ const Register = () => {
         last_name: "",
         nic: "",
       },
+      business_registration_certification_path: undefined,
       organization_details: {
-        business_registration_certification_path: "",
         business_registration_number: "",
         business_name: "",
         approval_status: "",
@@ -102,17 +102,11 @@ const Register = () => {
             />
             <FileInput
               label="Business Register Certificate"
-              error={
-                errors.organization_details
-                  ?.business_registration_certification_path?.message
-              }
+              error={errors?.business_registration_certification_path?.message}
               accept=".pdf,.jpg,.jpeg,.png"
-              {...register(
-                "organization_details.business_registration_certification_path",
-                {
-                  required: "Business Register Certificate is required",
-                }
-              )}
+              {...register("business_registration_certification_path", {
+                required: "Business Register Certificate is required",
+              })}
             />
             <TextInput
               label="BRN"
@@ -120,14 +114,17 @@ const Register = () => {
                 errors.organization_details?.business_registration_number
                   ?.message
               }
-              {...register("organization_details.business_registration_number", {
-                required: "BRN is required",
-                pattern: {
-                  value: /^(?:[A-Za-z]{2}\d{5,7}|\d{5,7})$/,
-                  message:
-                    "Invalid BRN format. Use the format 'PV12345' or '1234567'.",
-                },
-              })}
+              {...register(
+                "organization_details.business_registration_number",
+                {
+                  required: "BRN is required",
+                  pattern: {
+                    value: /^(?:[A-Za-z]{2}\d{5,7}|\d{5,7})$/,
+                    message:
+                      "Invalid BRN format. Use the format 'PV12345' or '1234567'.",
+                  },
+                }
+              )}
             />
           </>
         );
