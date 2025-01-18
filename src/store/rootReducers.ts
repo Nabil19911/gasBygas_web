@@ -1,5 +1,8 @@
 import { combineReducers } from "@reduxjs/toolkit";
 import profileReducer from "./silces/profileSlice";
+import customersReducer from "./silces/customerSlice";
+import outletsReducer from "./silces/outletSlice";
+import employeesReducer from "./silces/employeeSlice";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import hardSet from "redux-persist/es/stateReconciler/hardSet";
@@ -23,4 +26,7 @@ const persistConfig = {
 
 export const rootReducer = combineReducers({
   profile: persistReducer(persistConfig, profileReducer),
+  customers: customersReducer,
+  outlets: outletsReducer,
+  employees: employeesReducer,
 });

@@ -1,4 +1,8 @@
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import gasTypeOption from "../../../constant/gasTypeOptions";
+import GasTypeEnum from "../../../constant/gasTypesEnum";
+import { statusOptions } from "../../../constant/selectOptions";
+import { ICylinderStock, IOutlet } from "../../../type/IOutlet";
 import {
   Card,
   CardContent,
@@ -7,18 +11,49 @@ import {
   CardTitle,
 } from "../../ui-components/card/Card";
 import { Button, Select, TextInput } from "../../ui-components/form-fields";
+import useApiFetch from "../../../hooks/useApiFetch";
 
 const OutletForm = () => {
+  const { postData: createOutlet } = useApiFetch<IOutlet>({
+    url: "/outlet/create/",
+  });
+
   const {
     register,
     handleSubmit,
+    control,
     reset,
-    getValues,
+    watch,
     formState: { errors },
-  } = useForm();
+  } = useForm<IOutlet>();
 
-  const onSubmit = () => {};
-  const handleSelectChange = (value: string) => {};
+  const {
+    fields: cylinders,
+    append,
+    remove,
+  } = useFieldArray({
+    control,
+    name: "stock.cylinders",
+  });
+
+  const watchCylinders = watch("stock.cylinders", []);
+
+  const selectedTypes = watchCylinders.map(
+    (cylinder: ICylinderStock) => cylinder?.type
+  );
+
+  const availableOptions = (index: number) =>
+    gasTypeOption.filter(
+      (option) =>
+        !selectedTypes.includes(option.value) ||
+        option.value === watchCylinders[index]?.type
+    );
+
+  const onSubmit: SubmitHandler<IOutlet> = async (data) => {
+    console.log(data);
+    createOutlet(data);
+  };
+
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
@@ -28,75 +63,158 @@ const OutletForm = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {/* <Form {...form}> */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <TextInput
-            label="First Name"
-            // error={errors.individual_details?.first_name?.message}
-            {...register("individual_details.first_name", {
-              required: "First Name is required",
+            label="Outlet Name"
+            error={errors.name?.message}
+            {...register("name", { required: "Outlet Name is required" })}
+          />
+          <TextInput
+            label="Branch Code"
+            error={errors.branch_code?.message}
+            {...register("branch_code", {
+              required: "Outlet Name is required",
+            })}
+          />
+          {/* <TextInput
+            label="Location"
+            error={errors.location?.message}
+            {...register("location", { required: "Location is required" })}
+          /> */}
+          <TextInput
+            label="Phone"
+            error={errors.contact?.message}
+            {...register("contact", {
+              required: "Phone number is required",
             })}
           />
           <TextInput
-            label="First Name"
-            // error={errors.individual_details?.first_name?.message}
-            {...register("individual_details.first_name", {
-              required: "First Name is required",
+            label="Email"
+            error={errors.email?.message}
+            {...register("email", {
+              required: "Email is required",
+              pattern: {
+                value: /^\S+@\S+\.\S+$/,
+                message: "Invalid email address",
+              },
             })}
           />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex flex-row gap-2">
             <TextInput
-              label="First Name"
-              //   error={errors.individual_details?.first_name?.message}
-              {...register("individual_details.first_name", {
-                required: "First Name is required",
+              label="District"
+              error={errors.full_address?.district?.message}
+              {...register("full_address.district", {
+                required: "District is required",
               })}
             />
             <TextInput
-              label="First Name"
-              //   error={errors.individual_details?.first_name?.message}
-              {...register("individual_details.first_name", {
-                required: "First Name is required",
+              label="Post Code"
+              error={errors.full_address?.post_code?.message}
+              {...register("full_address.post_code", {
+                required: "Post Code is required",
+                validate: (value) =>
+                  /^\d{5}$/.test(String(value)) ||
+                  "Post Code must be exactly 5 digits",
+              })}
+            />
+            <TextInput
+              label="Address"
+              error={errors.full_address?.address?.message}
+              {...register("full_address.address", {
+                required: "Address is required",
               })}
             />
           </div>
+
           <div>
             <h3 className="text-lg font-medium mb-4">Stock Management</h3>
             <div className="space-y-4">
-              <TextInput
-                label="First Name"
-                // error={errors.individual_details?.first_name?.message}
-                {...register("individual_details.first_name", {
-                  required: "First Name is required",
-                })}
-              />
-              <TextInput
-                label="First Name"
-                // error={errors.individual_details?.first_name?.message}
-                {...register("individual_details.first_name", {
-                  required: "First Name is required",
-                })}
-              />
-              <TextInput
-                label="First Name"
-                // error={errors.individual_details?.first_name?.message}
-                {...register("individual_details.first_name", {
-                  required: "First Name is required",
-                })}
-              />
+              {cylinders.map((cylinder, index) => (
+                <div
+                  key={cylinder.id}
+                  className="border rounded-md p-4 space-y-4"
+                >
+                  <Select
+                    label="Cylinder Type"
+                    options={availableOptions(index)}
+                    // error={errors?.stock?.cylinders?.[index]?.type?.message}
+                    {...register(`stock.cylinders.${index}.type`, {
+                      required: "Cylinder Type is required",
+                    })}
+                  />
+                  <TextInput
+                    label="Current Stock"
+                    type="number"
+                    // error={
+                    //   errors?.stock?.cylinders?.[index]?.currentStock?.message
+                    // }
+                    {...register(`stock.cylinders.${index}.currentStock`, {
+                      required: "Current Stock is required",
+                      valueAsNumber: true,
+                    })}
+                  />
+                  <TextInput
+                    label="Minimum Threshold"
+                    type="number"
+                    // error={
+                    //   errors?.stock?.cylinders?.[index]?.minimumThreshold
+                    //     ?.message
+                    // }
+                    {...register(`stock.cylinders.${index}.minimumThreshold`, {
+                      required: "Minimum Threshold is required",
+                      valueAsNumber: true,
+                    })}
+                  />
+                  <TextInput
+                    label="Maximum Capacity"
+                    type="number"
+                    // error={
+                    //   errors?.stock?.cylinders?.[index]?.maximumCapacity
+                    //     ?.message
+                    // }
+                    {...register(`stock.cylinders.${index}.maximumCapacity`, {
+                      required: "Maximum Capacity is required",
+                      valueAsNumber: true,
+                    })}
+                  />
+                  <div className="flex justify-end">
+                    <Button
+                      type="button"
+                      className="bg-red-600 hover:bg-red-700"
+                      onClick={() => remove(index)}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                </div>
+              ))}
+              {cylinders.length < gasTypeOption.length && (
+                <Button
+                  type="button"
+                  className="bg-green-600 hover:bg-green-700"
+                  onClick={() =>
+                    append({
+                      type: "" as GasTypeEnum,
+                      currentStock: 0,
+                      minimumThreshold: 0,
+                      maximumCapacity: 0,
+                    })
+                  }
+                >
+                  Add Cylinder
+                </Button>
+              )}
             </div>
           </div>
+
           <Select
-            label="Business Type"
-            // error={errors.business_type?.message}
-            {...register("business_type", {
-              required: "Please select business type",
-              onChange: (e) => handleSelectChange(e.target.value as string),
-            })}
-            // value={selectedBusinessType}
-            // options={selectOption}
-            options={[]}
+            label="Status"
+            error={errors.status?.message}
+            {...register("status", { required: "Status is required" })}
+            options={statusOptions}
+            defaultValue={statusOptions[0].value}
           />
+
           <div className="flex justify-end space-x-4">
             <Button type="submit">Save</Button>
             <Button
@@ -104,11 +222,10 @@ const OutletForm = () => {
               onClick={() => reset()}
               className="bg-red-600 hover:bg-red-700"
             >
-              reset
+              Reset
             </Button>
           </div>
         </form>
-        {/* </Form> */}
       </CardContent>
     </Card>
   );

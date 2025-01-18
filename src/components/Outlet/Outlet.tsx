@@ -4,22 +4,12 @@ import Banner from "../../common/ui-components/banner";
 import { Button } from "../../common/ui-components/form-fields";
 import LoadingSpinner from "../../common/ui-components/loadingSpinner";
 import PathsEnum from "../../constant/pathsEnum";
-import useFetch from "../../hooks/useFetch";
-import ICustomerProfile from "../../type/ICustomerProfile";
+import useGetOutlets from "../../hooks/useGetOutlets";
 
 const Outlet = () => {
   const navigate = useNavigate();
-  const {
-    data,
-    isLoading: isGetCustomerLoading,
-    error,
-  } = useFetch<ICustomerProfile[]>({
-    url: "/employee",
-    initialLoad: true,
-  });
+  const { error, data, isLoading } = useGetOutlets();
 
-  const isLoading = isGetCustomerLoading;
-  
   return (
     <div className="flex flex-col">
       {error && <Banner type="error">{error}</Banner>}
@@ -31,7 +21,7 @@ const Outlet = () => {
           Add new Employee
         </Button>
       </div>
-      <OutletList users={data} />
+      <OutletList outlets={data} />
     </div>
   );
 };

@@ -3,22 +3,12 @@ import CustomerList from "../../common/customer/CustomerList";
 import Banner from "../../common/ui-components/banner";
 import { Button } from "../../common/ui-components/form-fields";
 import LoadingSpinner from "../../common/ui-components/loadingSpinner";
-import useFetch from "../../hooks/useFetch";
-import ICustomerProfile from "../../type/ICustomerProfile";
 import PathsEnum from "../../constant/pathsEnum";
+import useGetCustomers from "../../hooks/useGetCustomers";
 
 const Customer = () => {
   const navigate = useNavigate();
-  const {
-    data,
-    isLoading: isGetCustomerLoading,
-    error,
-  } = useFetch<ICustomerProfile[]>({
-    url: "/user",
-    initialLoad: true,
-  });
-
-  const isLoading = isGetCustomerLoading;
+  const { error, data, isLoading } = useGetCustomers();
 
   return (
     <div className="flex flex-col">

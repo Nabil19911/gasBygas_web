@@ -1,28 +1,28 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
+import { IOutlet } from "../../../type/IOutlet";
 import Table from "../../ui-components/table";
 import OutletRow from "./OutletRow";
-import ICustomerProfile from "../../../type/ICustomerProfile";
 
 interface IOutletListProps {
-  users?: ICustomerProfile[];
+  outlets?: IOutlet[];
 }
 
-const OutletList = ({ users }: IOutletListProps) => {
+const OutletList = ({ outlets }: IOutletListProps) => {
   const renderEmployeeRow = useCallback(() => {
-    if (users) {
-      return users.map((user) => <OutletRow key={user._id} user={user} />);
+    if (outlets) {
+      return outlets.map((outlet) => <OutletRow key={outlet._id} outlet={outlet} />);
     }
     return [];
-  }, [users]);
+  }, [outlets]);
 
   return (
     <Table>
       <Table.Header>
-        <Table.Column>Role</Table.Column>
-        <Table.Column>Frist Name</Table.Column>
+        <Table.Column>Branch Code</Table.Column>
+        <Table.Column>Address</Table.Column>
         <Table.Column>Email</Table.Column>
         <Table.Column>Contact</Table.Column>
-        <Table.Column>Createdby</Table.Column>
+        <Table.Column>Status</Table.Column>
         <Table.Column>Action</Table.Column>
       </Table.Header>
       <Table.Body>{renderEmployeeRow()}</Table.Body>

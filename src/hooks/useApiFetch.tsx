@@ -11,7 +11,7 @@ interface UsePostResponse<T> {
   data: T | null;
   isLoading: boolean;
   error: string | null;
-  postData: (postData: Record<string, unknown>) => Promise<void>;
+  postData: (postData: T) => Promise<void>;
   cancelRequest: () => void;
 }
 
@@ -34,7 +34,7 @@ const useApiFetch = <T extends unknown>({
   }, [abortController]);
 
   const postData = useCallback(
-    async (postData: Record<string, unknown>) => {
+    async (postData: T) => {
       setLoading(true);
       setError(null);
 

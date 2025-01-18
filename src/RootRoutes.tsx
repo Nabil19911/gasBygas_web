@@ -6,6 +6,7 @@ import GuestGuard from "./guards/GuestGuard";
 import RoleGuard from "./guards/RoleGuard";
 import RolesEnum from "./constant/rolesEnum";
 import OutletForm from "./common/outlet/OutletForm";
+import Stock from "./components/Stock";
 
 const EmployeeForm = lazy(() => import("./common/employee/EmployeeForm"));
 const CustomerForm = lazy(() => import("./common/customer/CustomerForm"));
@@ -41,6 +42,9 @@ function RootRoutes() {
         }
       >
         <Route path={PathsEnum.DASHBOARD} element={<DashboardManager />} />
+        <Route path={PathsEnum.STOCK} element={<Stock />}>
+
+        </Route>
         <Route path={PathsEnum.EMPLOYEE} element={<Outlet />}>
           <Route index element={<Employee />} />
           <Route

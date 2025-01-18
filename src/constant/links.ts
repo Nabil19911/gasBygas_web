@@ -19,6 +19,11 @@ const links: LinkItem[] = [
     ],
   },
   {
+    to: PathsEnum.STOCK,
+    label: "Stock",
+    roles: [RolesEnum.ADMIN, RolesEnum.DISPATCH_OFFICER],
+  },
+  {
     to: PathsEnum.OUTLET,
     label: "Outlet",
     roles: [

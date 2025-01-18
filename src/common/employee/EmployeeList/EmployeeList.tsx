@@ -1,29 +1,31 @@
 // TDOD: this compnenet needs to fix
 import { useCallback } from "react";
+import IEmployee from "../../../type/IEmployee";
 import Table from "../../ui-components/table";
 import EmployeeRow from "./EmployeeRow";
-import ICustomerProfile from "../../../type/ICustomerProfile";
 
 interface IEmployeeListProps {
-  users?: ICustomerProfile[];
+  employees?: IEmployee[];
 }
 
-const EmployeeList = ({ users }: IEmployeeListProps) => {
+const EmployeeList = ({ employees }: IEmployeeListProps) => {
   const renderEmployeeRow = useCallback(() => {
-    if (users) {
-      return users.map((user) => <EmployeeRow key={user._id} user={user} />);
+    if (employees) {
+      return employees.map((user) => (
+        <EmployeeRow key={user._id} user={user} />
+      ));
     }
     return [];
-  }, [users]);
+  }, [employees]);
 
   return (
     <Table>
       <Table.Header>
-        <Table.Column>Role</Table.Column>
-        <Table.Column>Frist Name</Table.Column>
+        <Table.Column>First name</Table.Column>
         <Table.Column>Email</Table.Column>
         <Table.Column>Contact</Table.Column>
-        <Table.Column>Createdby</Table.Column>
+        <Table.Column>Role</Table.Column>
+        <Table.Column>Status</Table.Column>
         <Table.Column>Action</Table.Column>
       </Table.Header>
       <Table.Body>{renderEmployeeRow()}</Table.Body>
