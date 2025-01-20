@@ -19,7 +19,7 @@ export interface IOutlet {
   branch_code: string;
   contact: string;
   email: string;
-  // location: string;
+  is_request_enable?: boolean;
   full_address: IFullAddress;
   stock: IStock;
   _id?: string;

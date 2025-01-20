@@ -18,7 +18,7 @@ const Outlet = () => {
         <Button
           onClick={() => navigate(`${PathsEnum.OUTLET}/${PathsEnum.CREATE}`)}
         >
-          Add new Employee
+          Add new Outlet
         </Button>
       </div>
       <OutletList outlets={data} />

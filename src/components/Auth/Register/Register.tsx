@@ -8,11 +8,14 @@ import {
 } from "../../../common/ui-components/form-fields";
 import CustomerTypeEnum from "../../../constant/customerTypeEnum";
 import useAuth from "../../../hooks/useAuth";
-import ISignupInputs from "../../../type/ISignupInputs";
+import ICustomer from "../../../type/ICustomer";
 import { selectOption } from "../../../constant/customerTypeSelectOptions";
+import ActiveStatus from "../../../constant/activeStatusOptions";
+import RolesEnum from "../../../constant/rolesEnum";
+import Banner from "../../../common/ui-components/banner";
 
 const Register = () => {
-  const { signup, isLoading } = useAuth();
+  const { signup, isLoading, errorMessage } = useAuth();
   const [selectedBusinessType, setSelectedBusinessType] =
     useState<CustomerTypeEnum>();
 
@@ -22,7 +25,7 @@ const Register = () => {
     reset,
     getValues,
     formState: { errors },
-  } = useForm<ISignupInputs>();
+  } = useForm<ICustomer>();
 
   const handleSelectChange = (value: CustomerTypeEnum) => {
     setSelectedBusinessType(value);
@@ -37,7 +40,7 @@ const Register = () => {
         post_code: "",
         address: "",
       },
-      status: "",
+      status: ActiveStatus.ACTIVE,
       created_by: "",
       individual_details: {
         first_name: "",
@@ -54,7 +57,18 @@ const Register = () => {
     });
   };
 
-  const onSubmit: SubmitHandler<ISignupInputs> = async (data) => {
+  const onSubmit: SubmitHandler<ICustomer> = async (data) => {
+    switch (data.business_type) {
+      case CustomerTypeEnum.INDIVIDUAL:
+        data.organization_details = undefined;
+        data.business_registration_certification_path = undefined;
+        break;
+      case CustomerTypeEnum.ORGANIZATION:
+        data.individual_details = undefined;
+        break;
+    }
+
+    data.created_by = RolesEnum.CUSTOMER;
     await signup(data);
   };
 
@@ -135,6 +149,7 @@ const Register = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+      {errorMessage && <Banner type="error">{errorMessage}</Banner>}
       <Select
         label="Business Type"
         error={errors.business_type?.message}

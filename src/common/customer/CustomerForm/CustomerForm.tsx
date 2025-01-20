@@ -9,7 +9,7 @@ import {
 import CustomerTypeEnum from "../../../constant/customerTypeEnum";
 import { selectOption } from "../../../constant/customerTypeSelectOptions";
 import useApiFetch from "../../../hooks/useApiFetch";
-import ISignupInputs from "../../../type/ISignupInputs";
+import ICustomer from "../../../type/ICustomer";
 import {
   Card,
   CardContent,
@@ -17,32 +17,35 @@ import {
   CardHeader,
   CardTitle,
 } from "../../ui-components/card/Card";
+import LoadingSpinner from "../../ui-components/loadingSpinner";
+import Banner from "../../ui-components/banner";
+import { statusOptions } from "../../../constant/selectOptions";
+import ActiveStatus from "../../../constant/activeStatusOptions";
+import { useAppSelector } from "../../../store/store";
+import { getUserProfile } from "../../../store/selectors/profileSelector";
 
-type TCreateCustomer = Omit<ISignupInputs, "password" | "confirm_password">;
+type TCustomer = Omit<ICustomer, "password" | "confirm_password">;
 
 const CustomerForm = () => {
-  // State
   const [selectedBusinessType, setSelectedBusinessType] =
     useState<CustomerTypeEnum>();
 
-  // API Hook
-  const { data, isLoading, error, postData } = useApiFetch<TCreateCustomer>({
+  const { data: userProfile } = useAppSelector(getUserProfile);
+
+  const { isLoading, error, postData } = useApiFetch<TCustomer>({
     url: "/user/create",
   });
 
-  // Form Setup
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<TCreateCustomer>();
+  } = useForm<TCustomer>();
 
-  // Handlers
   const handleSelectChange = (value: CustomerTypeEnum) => {
     setSelectedBusinessType(value);
 
-    // Reset form fields
     reset({
       business_type: "",
       email: "",
@@ -52,7 +55,7 @@ const CustomerForm = () => {
         post_code: "",
         address: "",
       },
-      status: "",
+      status: ActiveStatus.ACTIVE,
       created_by: "",
       individual_details: {
         first_name: "",
@@ -69,7 +72,18 @@ const CustomerForm = () => {
     });
   };
 
-  const onSubmit: SubmitHandler<TCreateCustomer> = async (data) => {
+  const onSubmit: SubmitHandler<TCustomer> = async (data) => {
+    switch (data.business_type) {
+      case CustomerTypeEnum.INDIVIDUAL:
+        data.organization_details = undefined;
+        data.business_registration_certification_path = undefined;
+        break;
+      case CustomerTypeEnum.ORGANIZATION:
+        data.individual_details = undefined;
+        break;
+    }
+
+    data.created_by = userProfile?.role!;
     console.log(data);
     postData(data);
   };
@@ -144,11 +158,13 @@ const CustomerForm = () => {
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
+      {isLoading && <LoadingSpinner />}
       <CardHeader>
-        <CardTitle>Create or Edit Customer</CardTitle>
+        <CardTitle>Create Customer</CardTitle>
         <CardDescription>Fill in the customer details below.</CardDescription>
       </CardHeader>
       <CardContent>
+        {error && <Banner type="error">{error}</Banner>}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Business Type Selection */}
           <Select
@@ -159,6 +175,7 @@ const CustomerForm = () => {
               onChange: (e) =>
                 handleSelectChange(e.target.value as CustomerTypeEnum),
             })}
+            value={selectedBusinessType}
             options={selectOption}
           />
 
@@ -174,6 +191,17 @@ const CustomerForm = () => {
               },
               disabled: !selectedBusinessType,
             })}
+          />
+
+          <Select
+            label="Status"
+            error={errors.status?.message}
+            {...register("status", {
+              required: "Please select a status",
+              disabled: true,
+            })}
+            options={statusOptions}
+            defaultValue={statusOptions[0].value}
           />
 
           {/* Conditional Fields Based on Business Type */}
@@ -225,11 +253,12 @@ const CustomerForm = () => {
 
           {/* Submit Button */}
           <div className="flex justify-end space-x-4">
-            <Button type="submit">Save</Button>
+            <Button type="submit">
+              Save
+            </Button>
             <Button
               type="button"
               onClick={() => reset()}
-              className="bg-red-600 hover:bg-red-700"
             >
               reset
             </Button>

@@ -14,10 +14,15 @@ import {
 import { Button, Select, TextInput } from "../../ui-components/form-fields";
 import useApiFetch from "../../../hooks/useApiFetch";
 import Banner from "../../ui-components/banner";
+import LoadingSpinner from "../../ui-components/loadingSpinner";
 
 const EmployeeForm = () => {
   const { data: outlets } = useGetOutlets();
-  const { postData: createEmployee, error } = useApiFetch<IEmployee>({
+  const {
+    postData: createEmployee,
+    error,
+    isLoading,
+  } = useApiFetch<IEmployee>({
     url: "/employee/create/",
   });
   const [selectedRole, setSelectedRole] = useState();
@@ -45,6 +50,7 @@ const EmployeeForm = () => {
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
+      {isLoading && <LoadingSpinner />}
       <CardHeader>
         <CardTitle>Create Employee</CardTitle>
         <CardDescription>Fill in the employee details below.</CardDescription>

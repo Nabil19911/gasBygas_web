@@ -23,7 +23,7 @@ interface DropdownMenuProps {
 
 const DropdownMenu = ({ items, icon }: DropdownMenuProps) => {
   return (
-    <Menu as="div" className="relative">
+    <Menu as="div" className="relative z-20">
       <div>
         <MenuButton className="flex items-center space-x-2 text-gray-500">
           {icon || <UserCircleIcon className="w-10 h-10" />}

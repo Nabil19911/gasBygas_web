@@ -1,13 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import ICustomerProfile from "../../type/ICustomerProfile";
+import axios from "axios";
 import FetchStateEnum from "../../constant/fetchStateEnum";
 import IApiError from "../../type/IApiError";
+import ICustomer from "../../type/ICustomer";
 import appFetch from "../../utils/appFetch";
-import axios from "axios";
 
 interface InitialState {
   customers: {
-    data: ICustomerProfile[] | null;
+    data: ICustomer[] | null;
     status: FetchStateEnum;
     error: IApiError | null;
   };
@@ -43,12 +43,12 @@ const customerSlice = createSlice({
 });
 
 export const fetchCustomers = createAsyncThunk<
-  ICustomerProfile[],
+  ICustomer[],
   void,
   { rejectValue: IApiError }
 >("customer/fetchCustomers", async (_, { rejectWithValue }) => {
   try {
-    const response = await appFetch<ICustomerProfile[]>({
+    const response = await appFetch<ICustomer[]>({
       url: `/user`,
       method: "get",
     });

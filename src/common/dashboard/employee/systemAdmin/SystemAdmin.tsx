@@ -1,16 +1,19 @@
+import useGetStock from "../../../../hooks/useGetStock";
+import { useModal } from "../../../../hooks/useModal";
+import HeadOfficeStock from "../../../headOfficeStock";
+import StockModal from "../../../StockModal";
 import OrganizationApprovals from "./organizationApprovals";
-import OutletManager from "./outletActivities";
 import DashboardStats from "./outletStats";
 
 const SystemAdmin = () => {
+  const { openModal, isOpen, closeModal } = useModal();
+  const { data: stock } = useGetStock();
   return (
     <main className="container mx-auto px-4 py-8">
-      {/* <h1 className="text-2xl text-center lg:text-left lg:text-3xl font-bold mb-8">
-        System Admin Dashboard
-      </h1> */}
+      <StockModal stock={stock} isOpen={isOpen} closeModal={closeModal} />
       <DashboardStats />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-        <OutletManager />
+        <HeadOfficeStock openModal={openModal} stock={stock}/>
         <OrganizationApprovals />
       </div>
     </main>

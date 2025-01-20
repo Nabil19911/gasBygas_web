@@ -1,10 +1,10 @@
 import CustomerTypeEnum from "../../../constant/customerTypeEnum";
-import ICustomerProfile from "../../../type/ICustomerProfile";
+import ICustomer from "../../../type/ICustomer";
 import Individual from "./individual";
 import Organization from "./organization";
 
 interface ICustomerProps {
-  profile: ICustomerProfile;
+  profile: ICustomer;
 }
 
 const CustomerDashboardManager = ({ profile }: ICustomerProps) => {
