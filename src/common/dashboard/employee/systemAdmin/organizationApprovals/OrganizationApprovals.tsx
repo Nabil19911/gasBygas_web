@@ -6,14 +6,22 @@ import {
   CardTitle,
 } from "../../../../ui-components/card/Card";
 import { Button } from "../../../../ui-components/form-fields";
-
-const pendingApprovals = [
-  { name: "Organization A", type: "Gas Station", date: "2023-05-01" },
-  { name: "Organization B", type: "Distributor", date: "2023-05-02" },
-  { name: "Organization C", type: "Retailer", date: "2023-05-03" },
-];
+import useGetCustomers from "../../../../../hooks/useGetCustomers";
+import { useMemo } from "react";
+import CustomerTypeEnum from "../../../../../constant/customerTypeEnum";
+import RequestStatusEnum from "../../../../../constant/requestStatusEnum";
 
 const OrganizationApprovals = () => {
+  const { data: customers } = useGetCustomers();
+  const organization = useMemo(() => {
+    return customers.filter(
+      (customer) =>
+        customer.business_type === CustomerTypeEnum.ORGANIZATION &&
+        customer.organization_details?.approval_status ===
+          RequestStatusEnum.PENDING
+    );
+  }, [customers]);
+
   return (
     <Card>
       <CardHeader>
@@ -24,14 +32,20 @@ const OrganizationApprovals = () => {
       </CardHeader>
       <CardContent>
         <ul className="space-y-4">
-          {pendingApprovals.map((org, index) => (
+          {organization.map((org, index) => (
             <li key={index} className="flex justify-between items-center">
               <div>
-                <p className="font-medium">{org.name}</p>
-                <p className="text-sm text-gray-500">{org.type}</p>
+                <p className="font-medium">
+                  {org.organization_details?.business_name}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {new Date(org.createdAt).toLocaleDateString("en-CA")}
+                </p>
               </div>
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-500">{org.date}</span>
+                <span className="text-sm text-gray-500 text-nowrap">
+                  {org.organization_details?.approval_status}
+                </span>
                 <Button>Review</Button>
               </div>
             </li>

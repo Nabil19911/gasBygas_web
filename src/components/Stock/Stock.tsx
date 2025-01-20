@@ -1,8 +1,10 @@
 
 const Stock = () => {
   return (
-    <div>Stock</div>
-  )
-}
+    <div className="flex flex-col">
+      {/* <StockModal /> */}
+    </div>
+  );
+};
 
-export default Stock
+export default Stock;

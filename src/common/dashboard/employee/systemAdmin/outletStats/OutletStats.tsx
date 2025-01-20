@@ -1,10 +1,10 @@
-import { Users, Building2, UserCheck, UserX } from "lucide-react";
-import StatCard from "../../../../ui-components/starCard/StarCard";
-import useGetCustomers from "../../../../../hooks/useGetCustomers";
-import useGetOutlets from "../../../../../hooks/useGetOutlets";
+import { Building2, UserCheck, Users } from "lucide-react";
 import { useMemo } from "react";
 import ActiveStatus from "../../../../../constant/activeStatusOptions";
+import useGetCustomers from "../../../../../hooks/useGetCustomers";
 import useGetEmployees from "../../../../../hooks/useGetEmployees";
+import useGetOutlets from "../../../../../hooks/useGetOutlets";
+import StatCard from "../../../../ui-components/starCard/StarCard";
 
 export const OutletStats = () => {
   const { data: customers } = useGetCustomers();
@@ -25,7 +25,7 @@ export const OutletStats = () => {
   }, [employees]);
 
   return (
-    <div className="grid lg:grid-cols-2 gap-6">
+    <div className="grid lg:grid-cols-3 gap-6">
       <StatCard
         title="Total Customers"
         value={String(customers.length || 0)}
@@ -40,11 +40,6 @@ export const OutletStats = () => {
         title="Active Employees"
         value={activeEmployees}
         icon={<UserCheck className="h-6 w-6" />}
-      />
-      <StatCard
-        title="Inactive Employees"
-        value="23"
-        icon={<UserX className="h-6 w-6" />}
       />
     </div>
   );

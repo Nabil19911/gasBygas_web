@@ -1,44 +1,67 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useMemo, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import GasRequestTypeEnum from "../../../../constant/gasRequestTypeEnum";
-import ICustomerProfile from "../../../../type/ICustomerProfile";
-import Banner from "../../../ui-components/banner";
-import {
-  Button,
-  Radio,
-  Select,
-  TextInput,
-} from "../../../ui-components/form-fields";
 import gasTypeOption from "../../../../constant/gasTypeOptions";
+import { requestTypeOptions } from "../../../../constant/selectOptions";
+import useGetOutlets from "../../../../hooks/useGetOutlets";
+import ICustomer from "../../../../type/ICustomer";
+import Banner from "../../../ui-components/banner";
+import { Button, Radio, Select } from "../../../ui-components/form-fields";
+import IGasRequest from "../../../../type/IGasRequest";
+import GasTypeEnum from "../../../../constant/gasTypesEnum";
 
 interface IndividualProps {
-  profile: ICustomerProfile;
+  profile: ICustomer;
 }
-
-const requestTypeOptions = [
-  {
-    value: GasRequestTypeEnum.New_Gas,
-    label: GasRequestTypeEnum.New_Gas,
-  },
-  {
-    value: GasRequestTypeEnum.Refilled_Gas,
-    label: GasRequestTypeEnum.Refilled_Gas,
-  },
-];
 
 const Individual = ({ profile }: IndividualProps) => {
   const [gasRequestType, setGasRequestType] = useState<GasRequestTypeEnum>(
     GasRequestTypeEnum.Refilled_Gas
   );
+  const [selectedOutlet, setSelectedOutlet] = useState<string>();
+
+  const { data: outlets } = useGetOutlets();
+
+  const outletOptions = useMemo(() => {
+    if (!outlets) {
+      return [];
+    }
+
+    return outlets.map((outlet) => ({
+      label: outlet.name,
+      value: outlet._id!,
+    }));
+  }, [outlets]);
 
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
-  } = useForm();
+  } = useForm<IGasRequest>();
 
-  const onSubmit = () => {};
+  const onSubmit: SubmitHandler<IGasRequest> = async (data) => {
+    const saveData: IGasRequest = {
+      ...data,
+      userId: profile._id!,
+      gas: {
+        ...data.gas,
+        individual: {
+          type: data.gas.individual?.type as GasTypeEnum,
+          gasQuantity: 1,
+        },
+      },
+    };
+    await console.log(saveData);
+  };
+
+  const selectedOutletData = useMemo(
+    () => outlets?.find((o) => o._id === selectedOutlet),
+    [selectedOutlet, outlets]
+  );
+
+  const hasNotGasRequestEnabled =
+    selectedOutletData && selectedOutletData?.is_request_enable === false;
+
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
       <h1 className="text-2xl font-bold mb-6">Gas Request Form</h1>
@@ -47,42 +70,42 @@ const Individual = ({ profile }: IndividualProps) => {
           For new gas, payment is required for both the gas and the cylinders.
         </Banner>
       )}
+      {hasNotGasRequestEnabled && (
+        <Banner type="warning">This outlet is not enabled for requests.</Banner>
+      )}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <Select
           label="Request Type"
-          // error={errors.business_type?.message}
-          {...register("request_type", {
+          error={errors.requestType?.message}
+          {...register("requestType", {
             required: "Please select Request Type",
             onChange: (e) => setGasRequestType(e.target.value),
           })}
-          value={gasRequestType}
+          defaultValue={gasRequestType}
           options={requestTypeOptions}
         />
         <Radio
           label="Select Gas Type"
           options={gasTypeOption}
-          // error={errors.gasType?.message}
-          {...register("gasType", { required: "Please select a gas type" })}
-        />
-        <TextInput
-          label="Gas Quantity"
-          // error={errors.individual_details?.first_name?.message}
-          {...register("gas_quantity", {
-            required: "Gas Quantity is required",
+          {...register("gas.individual.type", {
+            required: "Please select a gas type",
           })}
-          type="number"
+          selected={gasTypeOption[0].value}
         />
         <Select
           label="Outlet"
-          // error={errors.business_type?.message}
-          {...register("outlet", {
+          error={errors.outletId?.message}
+          {...register("outletId", {
             required: "Please select Outlet",
-            // onChange: (e) =>
-            // handleSelectChange(e.target.value as CustomerTypeEnum),
+            onChange: (e) => setSelectedOutlet(e.target.value),
           })}
-          options={[]}
+          options={outletOptions}
         />
-        <Button type="submit" className="w-full">
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={hasNotGasRequestEnabled}
+        >
           Submit Request
         </Button>
       </form>

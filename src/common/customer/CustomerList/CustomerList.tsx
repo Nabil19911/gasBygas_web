@@ -1,15 +1,15 @@
 import { useCallback } from "react";
-import ICustomerProfile from "../../../type/ICustomerProfile";
+import ICustomer from "../../../type/ICustomer";
 import Table from "../../ui-components/table";
 import CustomerRow from "./CustomerRow";
 interface IECustomerListProps {
-  users?: ICustomerProfile[];
+  users?: ICustomer[];
 }
 
 const CustomerList = ({ users }: IECustomerListProps) => {
   const renderEmployeeRow = useCallback(() => {
     if (users) {
-      return users.map((user) => <CustomerRow key={user._id} user={user} />);
+      return users.map((user) => <CustomerRow key={user.email} user={user} />);
     }
     return [];
   }, [users]);

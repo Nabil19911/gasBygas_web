@@ -6,10 +6,11 @@ interface IRadioProps extends InputHTMLAttributes<HTMLInputElement> {
   options: { label: string; value: string }[];
   error?: string;
   helperText?: string;
+  selected?: string;
 }
 
 const Radio = forwardRef<HTMLInputElement, IRadioProps>(
-  ({ label, options, error, helperText, ...props }, ref) => {
+  ({ label, options, error, helperText, selected, ...props }, ref) => {
     return (
       <div className="space-y-2">
         {/* Label */}
@@ -32,6 +33,7 @@ const Radio = forwardRef<HTMLInputElement, IRadioProps>(
               <input
                 type="radio"
                 value={option.value}
+                defaultChecked={selected === option.value}
                 ref={ref}
                 {...props}
                 className={clsx(

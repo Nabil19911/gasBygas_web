@@ -11,7 +11,7 @@ import {
 } from "../store/silces/profileSlice";
 import { useAppDispatch } from "../store/store";
 import ISigninInputs from "../type/ISigninInputs";
-import ISignupInputs from "../type/ISignupInputs";
+import ICustomer from "../type/ICustomer";
 import authAxiosInstance from "../utils/authAxios";
 import isValidToken from "../utils/tokenValidator";
 
@@ -25,7 +25,7 @@ interface IAuthProvider {
   isLoading: boolean;
   setErrorMessage: (value: string) => void;
   signin: (value: ISigninInputs) => Promise<void>;
-  signup: (value: ISignupInputs) => Promise<void>;
+  signup: (value: ICustomer) => Promise<void>;
   signout: () => void;
 }
 
@@ -90,7 +90,7 @@ const AuthContext = ({ children }: IAuthContextProps) => {
     }
   };
 
-  const signup = async (data: ISignupInputs) => {
+  const signup = async (data: ICustomer) => {
     try {
       setLoading(true);
       const formData = new FormData();
@@ -107,16 +107,23 @@ const AuthContext = ({ children }: IAuthContextProps) => {
           JSON.stringify(data.individual_details)
         );
       }
-      
+
       if (data.organization_details) {
-        let value;
-        if (data.business_registration_certification_path instanceof FileList) {
-          value = data.business_registration_certification_path[0];
-        } else {
-          value = data.business_registration_certification_path;
+        if (data.business_registration_certification_path) {
+          let value: File | string | undefined;
+          if (
+            data.business_registration_certification_path instanceof FileList
+          ) {
+            value = data.business_registration_certification_path[0];
+          } else {
+            value = data.business_registration_certification_path;
+          }
+          // Append the file only if it's defined
+          if (value) {
+            formData.append("business_registration_certification_path", value);
+          }
         }
 
-        formData.append("business_registration_certification_path", value);
         formData.append(
           "organization_details",
           JSON.stringify(data.organization_details)
@@ -191,4 +198,3 @@ const AuthContext = ({ children }: IAuthContextProps) => {
 };
 
 export { AuthContext, AuthProvider };
-

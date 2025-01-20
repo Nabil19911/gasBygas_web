@@ -1,4 +1,5 @@
 import ActiveStatus from "./activeStatusOptions";
+import GasRequestTypeEnum from "./gasRequestTypeEnum";
 import RolesEnum from "./rolesEnum";
 
 export const roleOptions = Object.values(RolesEnum)
@@ -6,6 +7,11 @@ export const roleOptions = Object.values(RolesEnum)
   .map((role) => ({ value: role, label: role }));
 
 export const statusOptions = Object.values(ActiveStatus).map((status) => ({
+  value: status,
+  label: status,
+}));
+
+export const requestTypeOptions = Object.values(GasRequestTypeEnum).map((status) => ({
   value: status,
   label: status,
 }));

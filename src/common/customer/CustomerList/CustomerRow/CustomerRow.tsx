@@ -1,7 +1,7 @@
-import ICustomerProfile from "../../../../type/ICustomerProfile";
+import ICustomer from "../../../../type/ICustomer";
 import Table from "../../../ui-components/table";
 interface ICustomerRowProps {
-  user: ICustomerProfile;
+  user: ICustomer;
 }
 
 const CustomerRow = ({ user }: ICustomerRowProps) => {
