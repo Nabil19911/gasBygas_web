@@ -9,6 +9,8 @@ import Banner from "../../../ui-components/banner";
 import { Button, Radio, Select } from "../../../ui-components/form-fields";
 import IGasRequest from "../../../../type/IGasRequest";
 import GasTypeEnum from "../../../../constant/gasTypesEnum";
+import useApiFetch from "../../../../hooks/useApiFetch";
+import LoadingSpinner from "../../../ui-components/loadingSpinner";
 
 interface IndividualProps {
   profile: ICustomer;
@@ -19,6 +21,10 @@ const Individual = ({ profile }: IndividualProps) => {
     GasRequestTypeEnum.Refilled_Gas
   );
   const [selectedOutlet, setSelectedOutlet] = useState<string>();
+
+  const { isLoading, error, postData } = useApiFetch<IGasRequest>({
+    url: "/gas-request/create",
+  });
 
   const { data: outlets } = useGetOutlets();
 
@@ -47,11 +53,12 @@ const Individual = ({ profile }: IndividualProps) => {
         ...data.gas,
         individual: {
           type: data.gas.individual?.type as GasTypeEnum,
+          requestType: data.gas.individual?.requestType!,
           gasQuantity: 1,
         },
       },
     };
-    await console.log(saveData);
+    await postData(saveData);
   };
 
   const selectedOutletData = useMemo(
@@ -65,6 +72,7 @@ const Individual = ({ profile }: IndividualProps) => {
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
       <h1 className="text-2xl font-bold mb-6">Gas Request Form</h1>
+      {isLoading && <LoadingSpinner />}
       {gasRequestType === GasRequestTypeEnum.New_Gas && (
         <Banner type="info">
           For new gas, payment is required for both the gas and the cylinders.
@@ -73,11 +81,12 @@ const Individual = ({ profile }: IndividualProps) => {
       {hasNotGasRequestEnabled && (
         <Banner type="warning">This outlet is not enabled for requests.</Banner>
       )}
+      {error && <Banner type="error">{error}</Banner>}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <Select
           label="Request Type"
-          error={errors.requestType?.message}
-          {...register("requestType", {
+          error={errors.gas?.individual?.requestType?.message}
+          {...register("gas.individual.requestType", {
             required: "Please select Request Type",
             onChange: (e) => setGasRequestType(e.target.value),
           })}

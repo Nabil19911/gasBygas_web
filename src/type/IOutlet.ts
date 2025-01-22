@@ -19,6 +19,7 @@ export interface IOutlet {
   branch_code: string;
   contact: string;
   email: string;
+  // TODO: this is need to check by stock and reserve stock
   is_request_enable?: boolean;
   full_address: IFullAddress;
   stock: IStock;

@@ -1,16 +1,16 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import useApiFetch from "../../hooks/useApiFetch";
-import IStock from "../../type/IStock";
-import Banner from "../ui-components/banner";
+import useApiFetch from "../../../hooks/useApiFetch";
+import IStock from "../../../type/IStock";
+import Banner from "../../ui-components/banner";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-} from "../ui-components/card/Card";
-import { Button, TextInput } from "../ui-components/form-fields";
-import LoadingSpinner from "../ui-components/loadingSpinner";
-import Modal from "../ui-components/modal/Modal";
+} from "../../ui-components/card/Card";
+import { Button, TextInput } from "../../ui-components/form-fields";
+import LoadingSpinner from "../../ui-components/loadingSpinner";
+import Modal from "../../ui-components/modal/Modal";
 
 interface IStockModalProps {
   isOpen: boolean;
