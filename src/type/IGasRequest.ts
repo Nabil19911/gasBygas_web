@@ -5,19 +5,35 @@ import PaymentStatusEnum from "../constant/paymentStatusEnum";
 import RequestStatusEnum from "../constant/requestStatusEnum";
 import RolesEnum from "../constant/rolesEnum";
 
+interface ICylinder {
+  returned: {
+    type: Boolean;
+    required: false;
+    default: false;
+  };
+  cylinderQuantity: {
+    type: Number;
+    required: false;
+  };
+}
+
 interface IGasRequest {
   userId: string;
   outletId: string;
-  requestType: GasRequestTypeEnum;
   tokenId?: string;
+  scheduledId?: string;
   gas: {
     individual?: {
       type: GasTypeEnum;
+      requestType: GasRequestTypeEnum;
+      cylinder?: ICylinder;
       gasQuantity: number;
       comments?: string;
     };
     organization?: Array<{
       type: GasTypeEnum;
+      requestType: GasRequestTypeEnum;
+      cylinder?: ICylinder;
       gasQuantity: number;
       comments?: string;
     }>;
@@ -28,30 +44,12 @@ interface IGasRequest {
     method: PaymentMethodEnum;
     requestDate: string;
   };
-  approval: {
-    outletManagerApproval: {
-      status: RequestStatusEnum;
-      approvedBy?: string;
-      date?: string;
-    };
-    dispatcherApproval: {
-      status: RequestStatusEnum;
-      approvedBy?: string;
-      date?: string;
-    };
+  outletManagerApproval: {
+    status: RequestStatusEnum;
+    approvedBy?: string;
+    date?: string;
   };
   comments?: string;
-  scheduledSlot?: {
-    slotId: string;
-    date: string;
-    timeRange: string;
-  };
-  slotReassignmentHistory?: Array<{
-    reassignedBy: string;
-    fromSlot: string;
-    toSlot: string;
-    date: string;
-  }>;
   createdBy: {
     type: RolesEnum;
     userId: string;

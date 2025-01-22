@@ -1,20 +1,35 @@
+import { useState } from "react";
 import useGetStock from "../../../../hooks/useGetStock";
-import { useModal } from "../../../../hooks/useModal";
 import HeadOfficeStock from "../../../headOfficeStock";
-import StockModal from "../../../StockModal";
+import Schedule from "../../../schedule";
+import StockModal from "../../../modal/StockModal";
 import OrganizationApprovals from "./organizationApprovals";
 import DashboardStats from "./outletStats";
+import ScheduleModal from "../../../modal/ScheduleModal";
 
 const SystemAdmin = () => {
-  const { openModal, isOpen, closeModal } = useModal();
+  const [isStockModalOpen, setStockModalOpen] = useState(false);
+  const [isScheduleModalOpen, setScheduleModalOpen] = useState(false);
   const { data: stock } = useGetStock();
   return (
     <main className="container mx-auto px-4 py-8">
-      <StockModal stock={stock} isOpen={isOpen} closeModal={closeModal} />
+      <StockModal
+        stock={stock}
+        isOpen={isStockModalOpen}
+        closeModal={() => setStockModalOpen(false)}
+      />
+      <ScheduleModal
+        isOpen={isScheduleModalOpen}
+        closeModal={() => setScheduleModalOpen(false)}
+      />
       <DashboardStats />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-        <HeadOfficeStock openModal={openModal} stock={stock}/>
+        <HeadOfficeStock
+          openModal={() => setStockModalOpen(true)}
+          stock={stock}
+        />
         <OrganizationApprovals />
+        <Schedule openModal={() => setScheduleModalOpen(true)} />
       </div>
     </main>
   );
