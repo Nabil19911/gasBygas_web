@@ -53,6 +53,7 @@ const useApiFetch = <T extends unknown>({
           setError("Request cancelled");
         } else {
           const axiosErrorMessage = handleAxiosError(error as string);
+          console.log({axiosErrorMessage})
           const errorMessage =
             error instanceof Error ? error.message : "Unknown error occurred";
           setError(axiosErrorMessage || errorMessage);

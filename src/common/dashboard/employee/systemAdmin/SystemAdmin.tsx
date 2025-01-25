@@ -6,17 +6,20 @@ import StockModal from "../../../modal/StockModal";
 import OrganizationApprovals from "./organizationApprovals";
 import DashboardStats from "./outletStats";
 import ScheduleModal from "../../../modal/ScheduleModal";
+import useGetSchedule from "../../../../hooks/useGetSchedule";
 
 const SystemAdmin = () => {
   const [isStockModalOpen, setStockModalOpen] = useState(false);
   const [isScheduleModalOpen, setScheduleModalOpen] = useState(false);
-  const { data: stock } = useGetStock();
+  const { data: stock, fetchData } = useGetStock();
+  const { data: schedules } = useGetSchedule();
   return (
     <main className="container mx-auto px-4 py-8">
       <StockModal
         stock={stock}
         isOpen={isStockModalOpen}
         closeModal={() => setStockModalOpen(false)}
+        fetchStock={fetchData}
       />
       <ScheduleModal
         isOpen={isScheduleModalOpen}
@@ -29,7 +32,10 @@ const SystemAdmin = () => {
           stock={stock}
         />
         <OrganizationApprovals />
-        <Schedule openModal={() => setScheduleModalOpen(true)} />
+        <Schedule
+          schedules={schedules}
+          openModal={() => setScheduleModalOpen(true)}
+        />
       </div>
     </main>
   );

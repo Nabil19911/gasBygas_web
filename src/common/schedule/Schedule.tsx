@@ -1,17 +1,20 @@
-import { Route, TrendingUp } from "lucide-react";
+import { Route } from "lucide-react";
+import PathsEnum from "../../constant/pathsEnum";
+import { ISchedule } from "../../type/IDeliveryRequest";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "../ui-components/card/Card";
-import { Button } from "../ui-components/form-fields";
+import { Button, Link } from "../ui-components/form-fields";
 
 interface IScheduleProps {
+  schedules: ISchedule[];
   openModal: () => void;
 }
 
-const Schedule = ({ openModal }: IScheduleProps) => {
+const Schedule = ({ schedules, openModal }: IScheduleProps) => {
   return (
     <Card>
       <CardHeader>
@@ -20,33 +23,34 @@ const Schedule = ({ openModal }: IScheduleProps) => {
             <Route className="mr-2 h-5 w-5" />
             Schedule
           </div>
-          <Button className="flex-initial w-1/4" onClick={openModal}>
+          <Button size="sm" className="flex-initial w-1/4" onClick={openModal}>
             Schedule
           </Button>
         </CardTitle>
       </CardHeader>
       <CardContent>
         <ul className="space-y-4">
-          <li className="flex justify-between items-center">
-            <p className="font-medium">In Stock</p>
-            {/* <span className="text-sm text-gray-500">{stock.currentStock}</span> */}
-          </li>
-          <li className="flex justify-between items-center">
-            <p className="font-medium">minimum Threshold</p>
-            <span className="text-sm text-gray-500">
-              {/* {stock.minimumThreshold} */}
-            </span>
-          </li>
-          <li className="flex justify-between items-center">
-            <p className="font-medium">maximum Capacity</p>
-            <span className="text-sm text-gray-500">
-              {/* {stock.maximumCapacity} */}
-            </span>
-          </li>
-          <li className="flex justify-between items-center">
-            <p className="font-medium">Reserved Stock</p>
-            {/* <span className="text-sm text-gray-500">{stock.outgoingStock}</span> */}
-          </li>
+          {schedules.map((schedule) => {
+            if (!schedule) return "No Schedule";
+            return (
+              <li
+                key={schedule!._id!}
+                className="flex justify-between items-center"
+              >
+                <p className="font-medium">
+                  {new Date(schedule.deliveryDate!)?.toLocaleDateString()}
+                </p>
+                <span className="text-sm text-gray-500">{schedule.status}</span>
+                <Link
+                  size="sm"
+                  className="cursor-pointer"
+                  href={`${PathsEnum.SCHEDULE}/${schedule._id}`}
+                >
+                  View
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </CardContent>
     </Card>

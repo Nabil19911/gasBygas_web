@@ -3,6 +3,8 @@ import profileReducer from "./silces/profileSlice";
 import customersReducer from "./silces/customerSlice";
 import outletsReducer from "./silces/outletSlice";
 import employeesReducer from "./silces/employeeSlice";
+import scheduleReducer from "./silces/scheduleSlice";
+import gasRequestReducer from "./silces/gasRequestSlice";
 import stockReducer from "./silces/stockSlice";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
@@ -31,4 +33,6 @@ export const rootReducer = combineReducers({
   outlets: outletsReducer,
   employees: employeesReducer,
   stock: stockReducer,
+  schedule: scheduleReducer,
+  gasRequest: gasRequestReducer,
 });

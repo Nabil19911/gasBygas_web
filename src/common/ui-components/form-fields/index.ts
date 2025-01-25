@@ -6,3 +6,5 @@ export { default as FileInput } from "./FileInput";
 export { default as Radio } from "./Radio";
 export { default as DateTimePicker } from "./DateTimePicker";
 export { default as MultiSelect } from "./MultiSelect";
+export { default as Link } from "./Link";
+export { default as Textarea } from "./Textarea";
