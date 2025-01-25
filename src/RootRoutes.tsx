@@ -7,6 +7,8 @@ import RoleGuard from "./guards/RoleGuard";
 import RolesEnum from "./constant/rolesEnum";
 import OutletForm from "./common/outlet/OutletForm";
 import Stock from "./components/Stock";
+import ScheduleForm from "./common/schedule/ScheduleForm";
+import OrganizationApprovalView from "./common/OrganizationApprovalView";
 
 const EmployeeForm = lazy(() => import("./common/employee/EmployeeForm"));
 const CustomerForm = lazy(() => import("./common/customer/CustomerForm"));
@@ -42,9 +44,7 @@ function RootRoutes() {
         }
       >
         <Route path={PathsEnum.DASHBOARD} element={<DashboardManager />} />
-        <Route path={PathsEnum.STOCK} element={<Stock />}>
-
-        </Route>
+        <Route path={PathsEnum.STOCK} element={<Stock />}></Route>
         <Route path={PathsEnum.EMPLOYEE} element={<Outlet />}>
           <Route index element={<Employee />} />
           <Route
@@ -82,6 +82,22 @@ function RootRoutes() {
         </Route>
         <Route path={PathsEnum.REPORT} element={<Report />} />
         <Route path={PathsEnum.PROFILE} element={<Profile />} />
+        <Route
+          path={`${PathsEnum.SCHEDULE}/:id`}
+          element={
+            <RoleGuard allowedRoles={[RolesEnum.ADMIN]}>
+              <ScheduleForm />
+            </RoleGuard>
+          }
+        />
+        <Route
+          path={`${PathsEnum.APPROVAL}/:id`}
+          element={
+            <RoleGuard allowedRoles={[RolesEnum.ADMIN]}>
+              <OrganizationApprovalView />
+            </RoleGuard>
+          }
+        />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

@@ -12,9 +12,17 @@ import {
 } from "../../ui-components/card/Card";
 import { Button, Select, TextInput } from "../../ui-components/form-fields";
 import useApiFetch from "../../../hooks/useApiFetch";
+import Banner from "../../ui-components/banner";
+import LoadingSpinner from "../../ui-components/loadingSpinner";
+import { useNavigate } from "react-router";
 
 const OutletForm = () => {
-  const { postData: createOutlet } = useApiFetch<IOutlet>({
+  const navigator = useNavigate();
+  const {
+    postData: createOutlet,
+    error,
+    isLoading,
+  } = useApiFetch<IOutlet>({
     url: "/outlet/create/",
   });
 
@@ -50,8 +58,10 @@ const OutletForm = () => {
     );
 
   const onSubmit: SubmitHandler<IOutlet> = async (data) => {
-    console.log(data);
-    createOutlet(data);
+    await createOutlet(data);
+    if (!isLoading) {
+      navigator(-1);
+    }
   };
 
   return (
@@ -64,6 +74,8 @@ const OutletForm = () => {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {isLoading && <LoadingSpinner />}
+          {error && <Banner type="error">{error}</Banner>}
           <TextInput
             label="Outlet Name"
             error={errors.name?.message}
@@ -76,11 +88,6 @@ const OutletForm = () => {
               required: "Outlet Name is required",
             })}
           />
-          {/* <TextInput
-            label="Location"
-            error={errors.location?.message}
-            {...register("location", { required: "Location is required" })}
-          /> */}
           <TextInput
             label="Phone"
             error={errors.contact?.message}

@@ -4,6 +4,7 @@ import PaymentMethodEnum from "../constant/paymentMethodEnum";
 import PaymentStatusEnum from "../constant/paymentStatusEnum";
 import RequestStatusEnum from "../constant/requestStatusEnum";
 import RolesEnum from "../constant/rolesEnum";
+import IToken from "./IToken";
 
 interface ICylinder {
   returned: {
@@ -20,7 +21,7 @@ interface ICylinder {
 interface IGasRequest {
   userId: string;
   outletId: string;
-  tokenId?: string;
+  tokenId?: string | IToken;
   scheduledId?: string;
   gas: {
     individual?: {

@@ -8,9 +8,16 @@ interface IModalProps {
   onClose: () => void;
   title: string;
   children: React.ReactNode;
+  className?: string;
 }
 
-export const Modal = ({ isOpen, onClose, title, children }: IModalProps) => {
+export const Modal = ({
+  isOpen,
+  onClose,
+  title,
+  children,
+  className,
+}: IModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -40,14 +47,16 @@ export const Modal = ({ isOpen, onClose, title, children }: IModalProps) => {
   if (!isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
+    <div
+      className={`fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none`}
+    >
       <div
         className="fixed inset-0 bg-black opacity-50"
         onClick={onClose}
       ></div>
       <div
         ref={modalRef}
-        className="relative w-auto max-w-3xl mx-auto my-6 bg-white rounded-lg shadow-lg"
+        className={`relative w-auto max-w-3xl mx-auto my-6 bg-white rounded-lg shadow-lg ${className}`}
         tabIndex={-1}
       >
         <div className="flex items-start justify-between p-5 border-b border-solid rounded-t border-blueGray-200">

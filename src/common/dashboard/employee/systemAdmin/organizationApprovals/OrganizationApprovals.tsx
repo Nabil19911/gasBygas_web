@@ -1,15 +1,16 @@
 import { ClipboardCheck } from "lucide-react";
+import { useMemo } from "react";
+import CustomerTypeEnum from "../../../../../constant/customerTypeEnum";
+import RequestStatusEnum from "../../../../../constant/requestStatusEnum";
+import useGetCustomers from "../../../../../hooks/useGetCustomers";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "../../../../ui-components/card/Card";
-import { Button } from "../../../../ui-components/form-fields";
-import useGetCustomers from "../../../../../hooks/useGetCustomers";
-import { useMemo } from "react";
-import CustomerTypeEnum from "../../../../../constant/customerTypeEnum";
-import RequestStatusEnum from "../../../../../constant/requestStatusEnum";
+import { Link } from "../../../../ui-components/form-fields";
+import PathsEnum from "../../../../../constant/pathsEnum";
 
 const OrganizationApprovals = () => {
   const { data: customers } = useGetCustomers();
@@ -42,11 +43,17 @@ const OrganizationApprovals = () => {
                   {new Date(org.createdAt).toLocaleDateString("en-CA")}
                 </p>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-500 text-nowrap">
                   {org.organization_details?.approval_status}
                 </span>
-                <Button>Review</Button>
+                <Link
+                  size="sm"
+                  className="cursor-pointer"
+                  href={`${PathsEnum.APPROVAL}/${org._id}`}
+                >
+                  Review
+                </Link>
               </div>
             </li>
           ))}

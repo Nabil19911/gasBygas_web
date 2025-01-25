@@ -1,16 +1,15 @@
 import { useEffect } from "react";
-import { fetchStock } from "../store/silces/stockSlice";
-import { useAppDispatch, useAppSelector } from "../store/store";
 import FetchStateEnum from "../constant/fetchStateEnum";
-import { getStock } from "../store/selectors/stockSelector";
-import IStock from "../type/IStock";
+import { getSchedule } from "../store/selectors/scheduleSelector";
+import { fetchSchedule } from "../store/silces/scheduleSlice";
+import { useAppDispatch, useAppSelector } from "../store/store";
 
-const useGetStock = () => {
-  const value = useAppSelector(getStock);
+const useGetSchedule = () => {
+  const value = useAppSelector(getSchedule);
   const dispatch = useAppDispatch();
 
   const fetchData = async () => {
-    await dispatch(fetchStock());
+    await dispatch(fetchSchedule());
   };
 
   useEffect(() => {
@@ -21,11 +20,10 @@ const useGetStock = () => {
 
   const isLoading = value?.status !== FetchStateEnum.FULFILLED;
   return {
-    data: value?.data || {} as IStock,
+    data: value?.data || [],
     isLoading,
     error: value?.error?.message,
-    fetchData,
   };
 };
 
-export default useGetStock;
+export default useGetSchedule;

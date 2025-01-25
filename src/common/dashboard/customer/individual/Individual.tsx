@@ -2,15 +2,21 @@ import { useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import GasRequestTypeEnum from "../../../../constant/gasRequestTypeEnum";
 import gasTypeOption from "../../../../constant/gasTypeOptions";
+import GasTypeEnum from "../../../../constant/gasTypesEnum";
+import RequestStatusEnum from "../../../../constant/requestStatusEnum";
+import RolesEnum from "../../../../constant/rolesEnum";
 import { requestTypeOptions } from "../../../../constant/selectOptions";
+import useApiFetch from "../../../../hooks/useApiFetch";
+import useGetGasRequest from "../../../../hooks/useGetGasRequest";
 import useGetOutlets from "../../../../hooks/useGetOutlets";
 import ICustomer from "../../../../type/ICustomer";
+import IGasRequest from "../../../../type/IGasRequest";
+import IToken from "../../../../type/IToken";
 import Banner from "../../../ui-components/banner";
 import { Button, Radio, Select } from "../../../ui-components/form-fields";
-import IGasRequest from "../../../../type/IGasRequest";
-import GasTypeEnum from "../../../../constant/gasTypesEnum";
-import useApiFetch from "../../../../hooks/useApiFetch";
 import LoadingSpinner from "../../../ui-components/loadingSpinner";
+import useGetSchedule from "../../../../hooks/useGetSchedule";
+import DeliveryStatusEnum from "../../../../constant/DeliveryStatusEnum";
 
 interface IndividualProps {
   profile: ICustomer;
@@ -21,7 +27,10 @@ const Individual = ({ profile }: IndividualProps) => {
     GasRequestTypeEnum.Refilled_Gas
   );
   const [selectedOutlet, setSelectedOutlet] = useState<string>();
-
+  const { data: gasRequest, fetchData } = useGetGasRequest({
+    userId: profile._id,
+  });
+  const { data: schedules } = useGetSchedule();
   const { isLoading, error, postData } = useApiFetch<IGasRequest>({
     url: "/gas-request/create",
   });
@@ -57,8 +66,13 @@ const Individual = ({ profile }: IndividualProps) => {
           gasQuantity: 1,
         },
       },
+      createdBy: {
+        type: profile.role as RolesEnum,
+        userId: profile._id!,
+      },
     };
     await postData(saveData);
+    await fetchData({ userId: profile._id });
   };
 
   const selectedOutletData = useMemo(
@@ -66,8 +80,35 @@ const Individual = ({ profile }: IndividualProps) => {
     [selectedOutlet, outlets]
   );
 
-  const hasNotGasRequestEnabled =
-    selectedOutletData && selectedOutletData?.is_request_enable === false;
+  const hasNotGasRequestEnabled: boolean = useMemo(() => {
+    const selectedOutletId = selectedOutletData?._id;
+
+    return !schedules.some((schedule) => {
+      return (
+        schedule?.outlets.some((it) => it.outletId === selectedOutletId) &&
+        schedule?.status === DeliveryStatusEnum.OutForDelivery
+      );
+    });
+  }, [selectedOutletData, schedules]);
+
+  if (
+    gasRequest &&
+    gasRequest.length > 0 &&
+    (gasRequest[0].tokenId as IToken)?.status === RequestStatusEnum.PENDING
+  ) {
+    return (
+      <div className="h-1/2 flex flex-col items-center justify-center bg-gray-100 p-2">
+        <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-center font-semibold text-gray-800">
+          You have an active token
+        </p>
+        <p className="text-sm sm:text-base md:text-lg lg:text-xl text-center text-gray-600 mt-2">
+          <span className="font-bold text-blue-600 bg-yellow-200 px-2 py-1 rounded-lg">
+            {(gasRequest[0].tokenId as IToken).token}
+          </span>
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
@@ -92,6 +133,7 @@ const Individual = ({ profile }: IndividualProps) => {
           })}
           defaultValue={gasRequestType}
           options={requestTypeOptions}
+          disabled={hasNotGasRequestEnabled}
         />
         <Radio
           label="Select Gas Type"
@@ -100,6 +142,7 @@ const Individual = ({ profile }: IndividualProps) => {
             required: "Please select a gas type",
           })}
           selected={gasTypeOption[0].value}
+          disabled={hasNotGasRequestEnabled}
         />
         <Select
           label="Outlet"

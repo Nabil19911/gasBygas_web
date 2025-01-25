@@ -1,4 +1,5 @@
 import { SubmitHandler, useForm } from "react-hook-form";
+import gasTypeOption from "../../../constant/gasTypeOptions";
 import useApiFetch from "../../../hooks/useApiFetch";
 import IStock from "../../../type/IStock";
 import Banner from "../../ui-components/banner";
@@ -16,9 +17,15 @@ interface IStockModalProps {
   isOpen: boolean;
   closeModal: () => void;
   stock: IStock;
+  fetchStock: () => Promise<void>;
 }
 
-const StockModal = ({ stock, isOpen, closeModal }: IStockModalProps) => {
+const StockModal = ({
+  stock,
+  isOpen,
+  fetchStock,
+  closeModal,
+}: IStockModalProps) => {
   const {
     postData: updateStock,
     isLoading,
@@ -30,15 +37,13 @@ const StockModal = ({ stock, isOpen, closeModal }: IStockModalProps) => {
     },
   });
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<IStock>();
+  const { register, handleSubmit, reset, watch } = useForm<IStock>();
 
   const onSubmit: SubmitHandler<IStock> = async (data) => {
     await updateStock(data);
-    if (!isLoading) {
+    await fetchStock();
+    if (!isLoading && !error) {
+      reset();
       closeModal();
     }
   };
@@ -53,30 +58,48 @@ const StockModal = ({ stock, isOpen, closeModal }: IStockModalProps) => {
         <CardContent>
           {error && <Banner type="error">{error}</Banner>}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <TextInput
-              label="Current Stock"
-              error={errors.currentStock?.message}
-              {...register("currentStock", {
-                required: "First Name is required",
-              })}
-              type="number"
-            />
-            <TextInput
-              label="maximum Capacity"
-              error={errors.maximumCapacity?.message}
-              {...register("maximumCapacity", {
-                required: "Last Name is required",
-              })}
-              type="number"
-            />
-            <TextInput
-              label="minimum Threshold"
-              error={errors.minimumThreshold?.message}
-              {...register("minimumThreshold", {
-                required: "Contact is required",
-              })}
-              type="number"
-            />
+            {gasTypeOption.map((gasType, gasIndex) => {
+              const maxValue = stock?.stock
+                ? stock?.stock[gasIndex]?.maximumCapacity
+                : 0;
+
+              const currentStock = stock?.stock
+                ? stock?.stock[gasIndex]?.currentStock
+                : 0;
+              return (
+                <div key={gasIndex} className="grid grid-cols-4 gap-4">
+                  <TextInput
+                    label={`Gas Type ${gasIndex + 1}`}
+                    disabled
+                    value={gasType.value}
+                    {...register(`stock.${gasIndex}.gasType`, {})}
+                  />
+
+                  <TextInput
+                    label="Maximum Capacity"
+                    type="number"
+                    defaultValue={maxValue}
+                    {...register(`stock.${gasIndex}.maximumCapacity`, {})}
+                  />
+                  <TextInput
+                    label="Minimum Threshold"
+                    type="number"
+                    defaultValue={
+                      stock?.stock
+                        ? stock?.stock[gasIndex]?.minimumThreshold
+                        : 0
+                    }
+                    {...register(`stock.${gasIndex}.minimumThreshold`, {})}
+                  />
+                  <TextInput
+                    label={`Current Stock - ${currentStock}`}
+                    type="number"
+                    {...register(`stock.${gasIndex}.currentStock`, {})}
+                    max={watch(`stock.${gasIndex}.maximumCapacity`) || maxValue}
+                  />
+                </div>
+              );
+            })}
             <div className="flex justify-end space-x-4">
               <Button type="submit">Save</Button>
               <Button

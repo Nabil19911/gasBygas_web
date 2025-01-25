@@ -11,6 +11,8 @@ enum PathsEnum {
   REPORT = "/report",
   PROFILE = "/profile",
   STOCK = "/stock",
+  SCHEDULE = "/schedule",
+  APPROVAL = "/approval",
 }
 
 export default PathsEnum;

@@ -9,7 +9,6 @@ export const handleAxiosError = (error: string) => {
         error.response?.data.message
       );
       return (
-        error.response?.data.error ||
         error.response?.data.message ||
         "Something went wrong"
       );
