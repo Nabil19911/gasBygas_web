@@ -1,9 +1,12 @@
 import { useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 import RolesEnum from "../../../constant/rolesEnum";
 import { roleOptions, statusOptions } from "../../../constant/selectOptions";
+import useApiFetch from "../../../hooks/useApiFetch";
 import useGetOutlets from "../../../hooks/useGetOutlets";
 import IEmployee from "../../../type/IEmployee";
+import Banner from "../../ui-components/banner";
 import {
   Card,
   CardContent,
@@ -12,16 +15,21 @@ import {
   CardTitle,
 } from "../../ui-components/card/Card";
 import { Button, Select, TextInput } from "../../ui-components/form-fields";
-import useApiFetch from "../../../hooks/useApiFetch";
-import Banner from "../../ui-components/banner";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
+import useGetEmployees from "../../../hooks/useGetEmployees";
 
 const EmployeeForm = () => {
-  const { data: outlets } = useGetOutlets();
+  const navigator = useNavigate();
+  const { data: outlets, isLoading: isFetchOutletLoading } = useGetOutlets();
+  const {
+    data: employees,
+    fetchData: fetchEmployee,
+    isLoading: isFetchEmployeeLoading,
+  } = useGetEmployees();
   const {
     postData: createEmployee,
     error,
-    isLoading,
+    isLoading: isCreateEmployeeLoading,
   } = useApiFetch<IEmployee>({
     url: "/employee/create/",
   });
@@ -29,7 +37,6 @@ const EmployeeForm = () => {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<IEmployee>();
 
@@ -38,14 +45,25 @@ const EmployeeForm = () => {
       return [];
     }
 
-    return outlets.map((outlet) => ({
-      label: outlet.name,
-      value: outlet._id!,
-    }));
+    return outlets
+      .filter(
+        (item) => !employees.some((employee) => employee.outlet === item._id)
+      )
+      .map((outlet) => ({
+        label: outlet.name,
+        value: outlet._id!,
+      }));
   }, [outlets]);
+
+  const isLoading =
+    isCreateEmployeeLoading || isFetchOutletLoading || isFetchEmployeeLoading;
 
   const onSubmit: SubmitHandler<IEmployee> = async (data) => {
     await createEmployee(data);
+    await fetchEmployee();
+    if (!isLoading) {
+      navigator(-1);
+    }
   };
 
   return (
@@ -120,10 +138,10 @@ const EmployeeForm = () => {
             <Button type="submit">Save</Button>
             <Button
               type="button"
-              onClick={() => reset()}
+              onClick={() => navigator(-1)}
               className="bg-red-600 hover:bg-red-700"
             >
-              reset
+              Back
             </Button>
           </div>
         </form>

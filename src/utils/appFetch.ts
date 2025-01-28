@@ -3,7 +3,7 @@ import baseAxiosInstance from "./baseAxios";
 
 interface AppFetchOptions extends AxiosRequestConfig {
   url: string;
-  method: "get" | "post" | "put" | "delete";
+  method: "get" | "post" | "put" | "delete" | "patch";
 }
 
 const appFetch = async <T>(options: AppFetchOptions): Promise<T> => {

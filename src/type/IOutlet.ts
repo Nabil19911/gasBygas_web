@@ -9,10 +9,6 @@ export interface ICylinderStock {
   maximumCapacity: number;
 }
 
-export interface IStock {
-  cylinders: ICylinderStock[];
-}
-
 export interface IOutlet {
   name: string;
   status: ActiveStatus;
@@ -20,6 +16,6 @@ export interface IOutlet {
   contact: string;
   email: string;
   full_address: IFullAddress;
-  stock: IStock;
+  cylinders_stock: ICylinderStock[];
   _id?: string;
 }

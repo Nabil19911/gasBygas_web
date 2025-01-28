@@ -4,7 +4,7 @@ import appFetch from "../utils/appFetch";
 
 interface IUseApiFetchOptions {
   headers?: Record<string, string>;
-  method?: "get" | "post" | "put" | "delete";
+  method?: "get" | "post" | "put" | "delete" | "patch";
 }
 
 interface UsePostResponse<T> {
@@ -53,7 +53,6 @@ const useApiFetch = <T extends unknown>({
           setError("Request cancelled");
         } else {
           const axiosErrorMessage = handleAxiosError(error as string);
-          console.log({axiosErrorMessage})
           const errorMessage =
             error instanceof Error ? error.message : "Unknown error occurred";
           setError(axiosErrorMessage || errorMessage);

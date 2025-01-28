@@ -1,15 +1,19 @@
 import { useCallback, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 import {
   Button,
   FileInput,
   Select,
   TextInput,
 } from "../../../common/ui-components/form-fields";
+import ActiveStatus from "../../../constant/activeStatusOptions";
 import CustomerTypeEnum from "../../../constant/customerTypeEnum";
 import { selectOption } from "../../../constant/customerTypeSelectOptions";
+import { statusOptions } from "../../../constant/selectOptions";
 import useApiFetch from "../../../hooks/useApiFetch";
 import ICustomer from "../../../type/ICustomer";
+import Banner from "../../ui-components/banner";
 import {
   Card,
   CardContent,
@@ -18,22 +22,21 @@ import {
   CardTitle,
 } from "../../ui-components/card/Card";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
-import Banner from "../../ui-components/banner";
-import { statusOptions } from "../../../constant/selectOptions";
-import ActiveStatus from "../../../constant/activeStatusOptions";
-import { useAppSelector } from "../../../store/store";
-import { getUserProfile } from "../../../store/selectors/profileSelector";
 
 type TCustomer = Omit<ICustomer, "password" | "confirm_password">;
 
 const CustomerForm = () => {
+  const navigator = useNavigate();
   const [selectedBusinessType, setSelectedBusinessType] =
     useState<CustomerTypeEnum>();
 
-  const { data: userProfile } = useAppSelector(getUserProfile);
-
-  const { isLoading, error, postData } = useApiFetch<TCustomer>({
+  const { isLoading, error, postData } = useApiFetch({
     url: "/user/create",
+    options: {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    },
   });
 
   const {
@@ -73,19 +76,41 @@ const CustomerForm = () => {
   };
 
   const onSubmit: SubmitHandler<TCustomer> = async (data) => {
-    switch (data.business_type) {
-      case CustomerTypeEnum.INDIVIDUAL:
-        data.organization_details = undefined;
-        data.business_registration_certification_path = undefined;
-        break;
-      case CustomerTypeEnum.ORGANIZATION:
-        data.individual_details = undefined;
-        break;
+    const formData = new FormData();
+
+    // Append form data only if they exist
+    formData.append("business_type", data.business_type);
+    formData.append("contact", data.contact);
+    formData.append("email", data.email);
+    formData.append("full_address", JSON.stringify(data.full_address));
+    formData.append("password", "0000");
+    if (data.individual_details) {
+      formData.append(
+        "individual_details",
+        JSON.stringify(data.individual_details)
+      );
     }
 
-    data.created_by = userProfile?.role!;
-    console.log(data);
-    postData(data);
+    if (data.organization_details) {
+      if (data.business_registration_certification_path) {
+        let value: File | string | undefined;
+        if (data.business_registration_certification_path instanceof FileList) {
+          value = data.business_registration_certification_path[0];
+        } else {
+          value = data.business_registration_certification_path;
+        }
+        // Append the file only if it's defined
+        if (value) {
+          formData.append("business_registration_certification_path", value);
+        }
+      }
+
+      formData.append(
+        "organization_details",
+        JSON.stringify(data.organization_details)
+      );
+    }
+    await postData(formData);
   };
 
   const renderOptionalFields = useCallback(() => {
@@ -123,6 +148,13 @@ const CustomerForm = () => {
       case CustomerTypeEnum.ORGANIZATION:
         return (
           <>
+            <TextInput
+              label="Business Name"
+              error={errors.organization_details?.business_name?.message}
+              {...register("organization_details.business_name", {
+                required: "Business Name is required",
+              })}
+            />
             <FileInput
               label="Business Register Certificate"
               error={errors?.business_registration_certification_path?.message}
@@ -253,14 +285,9 @@ const CustomerForm = () => {
 
           {/* Submit Button */}
           <div className="flex justify-end space-x-4">
-            <Button type="submit">
-              Save
-            </Button>
-            <Button
-              type="button"
-              onClick={() => reset()}
-            >
-              reset
+            <Button type="submit">Save</Button>
+            <Button type="button" onClick={() => navigator(-1)}>
+              Back
             </Button>
           </div>
         </form>

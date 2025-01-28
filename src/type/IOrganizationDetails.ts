@@ -1,6 +1,6 @@
  interface IOrganizationDetails {
-    business_registration_number: string;
-    business_name: string;
+    business_registration_number?: string;
+    business_name?: string;
     approval_status: string;
     approval_date: string;
   }

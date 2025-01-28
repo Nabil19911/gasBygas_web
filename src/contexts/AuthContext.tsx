@@ -130,14 +130,6 @@ const AuthContext = ({ children }: IAuthContextProps) => {
         );
       }
 
-      // if (data.brFile) {
-      //   if (data.brFile instanceof FileList) {
-      //     formData.append("brFile", data.brFile[0]);
-      //   } else {
-      //     formData.append("brFile", data.brFile);
-      //   }
-      // }
-
       // Make a POST request to the register endpoint
       const response = await authAxiosInstance.post(
         PathsEnum.REGISTER,

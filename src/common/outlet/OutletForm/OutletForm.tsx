@@ -41,10 +41,10 @@ const OutletForm = () => {
     remove,
   } = useFieldArray({
     control,
-    name: "stock.cylinders",
+    name: "cylinders_stock",
   });
 
-  const watchCylinders = watch("stock.cylinders", []);
+  const watchCylinders = watch("cylinders_stock", []);
 
   const selectedTypes = watchCylinders.map(
     (cylinder: ICylinderStock) => cylinder?.type
@@ -145,7 +145,7 @@ const OutletForm = () => {
                     label="Cylinder Type"
                     options={availableOptions(index)}
                     // error={errors?.stock?.cylinders?.[index]?.type?.message}
-                    {...register(`stock.cylinders.${index}.type`, {
+                    {...register(`cylinders_stock.${index}.type`, {
                       required: "Cylinder Type is required",
                     })}
                   />
@@ -155,7 +155,7 @@ const OutletForm = () => {
                     // error={
                     //   errors?.stock?.cylinders?.[index]?.currentStock?.message
                     // }
-                    {...register(`stock.cylinders.${index}.currentStock`, {
+                    {...register(`cylinders_stock.${index}.currentStock`, {
                       required: "Current Stock is required",
                       valueAsNumber: true,
                     })}
@@ -167,7 +167,7 @@ const OutletForm = () => {
                     //   errors?.stock?.cylinders?.[index]?.minimumThreshold
                     //     ?.message
                     // }
-                    {...register(`stock.cylinders.${index}.minimumThreshold`, {
+                    {...register(`cylinders_stock.${index}.minimumThreshold`, {
                       required: "Minimum Threshold is required",
                       valueAsNumber: true,
                     })}
@@ -179,7 +179,7 @@ const OutletForm = () => {
                     //   errors?.stock?.cylinders?.[index]?.maximumCapacity
                     //     ?.message
                     // }
-                    {...register(`stock.cylinders.${index}.maximumCapacity`, {
+                    {...register(`cylinders_stock.${index}.maximumCapacity`, {
                       required: "Maximum Capacity is required",
                       valueAsNumber: true,
                     })}

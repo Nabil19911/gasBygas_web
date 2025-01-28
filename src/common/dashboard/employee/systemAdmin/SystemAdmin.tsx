@@ -7,6 +7,7 @@ import OrganizationApprovals from "./organizationApprovals";
 import DashboardStats from "./outletStats";
 import ScheduleModal from "../../../modal/ScheduleModal";
 import useGetSchedule from "../../../../hooks/useGetSchedule";
+import RequestGas from "../../../requestGas";
 
 const SystemAdmin = () => {
   const [isStockModalOpen, setStockModalOpen] = useState(false);
@@ -27,6 +28,7 @@ const SystemAdmin = () => {
       />
       <DashboardStats />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+        <RequestGas />
         <HeadOfficeStock
           openModal={() => setStockModalOpen(true)}
           stock={stock}

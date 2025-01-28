@@ -23,6 +23,7 @@ const useGetEmployees = () => {
     data: value?.data || [],
     isLoading,
     error: value?.error?.message,
+    fetchData,
   };
 };
 
