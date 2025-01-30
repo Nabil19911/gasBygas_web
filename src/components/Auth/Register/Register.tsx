@@ -1,18 +1,19 @@
 import { useCallback, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import Banner from "../../../common/ui-components/banner";
 import {
   Button,
   FileInput,
   Select,
   TextInput,
 } from "../../../common/ui-components/form-fields";
+import ActiveStatus from "../../../constant/activeStatusOptions";
 import CustomerTypeEnum from "../../../constant/customerTypeEnum";
+import DistrictsEnum from "../../../constant/districtsEnum";
+import RolesEnum from "../../../constant/rolesEnum";
+import { customerOptions, districtsOptions } from "../../../constant/selectOptions";
 import useAuth from "../../../hooks/useAuth";
 import ICustomer from "../../../type/ICustomer";
-import { selectOption } from "../../../constant/customerTypeSelectOptions";
-import ActiveStatus from "../../../constant/activeStatusOptions";
-import RolesEnum from "../../../constant/rolesEnum";
-import Banner from "../../../common/ui-components/banner";
 
 const Register = () => {
   const { signup, isLoading, errorMessage } = useAuth();
@@ -36,7 +37,7 @@ const Register = () => {
       confirm_password: "",
       contact: "",
       full_address: {
-        district: "",
+        district: "" as DistrictsEnum,
         post_code: "",
         address: "",
       },
@@ -159,7 +160,7 @@ const Register = () => {
             handleSelectChange(e.target.value as CustomerTypeEnum),
         })}
         value={selectedBusinessType}
-        options={selectOption}
+        options={customerOptions}
       />
 
       <TextInput
@@ -190,13 +191,14 @@ const Register = () => {
       />
 
       <div className="flex flex-row gap-2">
-        <TextInput
+        <Select
           label="District"
           error={errors.full_address?.district?.message}
           {...register("full_address.district", {
             required: "District is required",
             disabled: !selectedBusinessType,
           })}
+          options={districtsOptions}
         />
         <TextInput
           label="Post Code"

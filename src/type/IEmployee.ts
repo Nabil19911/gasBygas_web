@@ -1,5 +1,6 @@
 import ActiveStatus from "../constant/activeStatusOptions";
 import RolesEnum from "../constant/rolesEnum";
+import { IOutlet } from "./IOutlet";
 
 type IEmployee = {
   _id?: string;
@@ -9,7 +10,7 @@ type IEmployee = {
   password?: string;
   contact: string;
   role: RolesEnum;
-  outlet: string;
+  outlet: IOutlet;
   status: ActiveStatus;
 };
 

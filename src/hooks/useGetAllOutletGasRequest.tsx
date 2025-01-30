@@ -1,15 +1,21 @@
 import { useEffect } from "react";
 import FetchStateEnum from "../constant/fetchStateEnum";
-import { getSchedule } from "../store/selectors/scheduleSelector";
-import { fetchSchedule } from "../store/silces/scheduleSlice";
+import { getAllOutletGasRequest } from "../store/selectors/outletSelector";
+import { fetchOutletGasRequests } from "../store/silces/outletSlice";
 import { useAppDispatch, useAppSelector } from "../store/store";
 
-const useGetSchedule = () => {
-  const value = useAppSelector(getSchedule);
+interface IUseGetAllOutletGasRequestProps {
+  outletId: string;
+}
+
+const useGetAllOutletGasRequest = ({
+  outletId,
+}: IUseGetAllOutletGasRequestProps) => {
+  const value = useAppSelector(getAllOutletGasRequest);
   const dispatch = useAppDispatch();
 
   const fetchData = async () => {
-    await dispatch(fetchSchedule());
+    await dispatch(fetchOutletGasRequests({outletId}));
   };
 
   useEffect(() => {
@@ -27,4 +33,4 @@ const useGetSchedule = () => {
   };
 };
 
-export default useGetSchedule;
+export default useGetAllOutletGasRequest;

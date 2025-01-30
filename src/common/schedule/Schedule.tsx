@@ -40,7 +40,7 @@ const Schedule = ({ schedules, openModal }: IScheduleProps) => {
                 <p className="font-medium">
                   {new Date(schedule.deliveryDate!)?.toLocaleDateString()}
                 </p>
-                <span className="text-sm text-gray-500">{schedule.status}</span>
+                <span className="text-sm text-gray-500">{schedule.district}</span>
                 <Link
                   size="sm"
                   className="cursor-pointer"

@@ -9,8 +9,12 @@ import {
 } from "../../../common/ui-components/form-fields";
 import ActiveStatus from "../../../constant/activeStatusOptions";
 import CustomerTypeEnum from "../../../constant/customerTypeEnum";
-import { selectOption } from "../../../constant/customerTypeSelectOptions";
-import { statusOptions } from "../../../constant/selectOptions";
+import DistrictsEnum from "../../../constant/districtsEnum";
+import {
+  customerOptions,
+  districtsOptions,
+  statusOptions,
+} from "../../../constant/selectOptions";
 import useApiFetch from "../../../hooks/useApiFetch";
 import ICustomer from "../../../type/ICustomer";
 import Banner from "../../ui-components/banner";
@@ -54,7 +58,7 @@ const CustomerForm = () => {
       email: "",
       contact: "",
       full_address: {
-        district: "",
+        district: "" as DistrictsEnum,
         post_code: "",
         address: "",
       },
@@ -208,7 +212,7 @@ const CustomerForm = () => {
                 handleSelectChange(e.target.value as CustomerTypeEnum),
             })}
             value={selectedBusinessType}
-            options={selectOption}
+            options={customerOptions}
           />
 
           {/* Email Field */}
@@ -254,13 +258,14 @@ const CustomerForm = () => {
 
           {/* Address Fields */}
           <div className="flex flex-row gap-2">
-            <TextInput
+            <Select
               label="District"
               error={errors.full_address?.district?.message}
               {...register("full_address.district", {
                 required: "District is required",
                 disabled: !selectedBusinessType,
               })}
+              options={districtsOptions}
             />
             <TextInput
               label="Post Code"

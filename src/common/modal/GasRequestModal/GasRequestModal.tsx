@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import DeliveryStatusEnum from "../../../constant/DeliveryStatusEnum";
 import GasRequestTypeEnum from "../../../constant/gasRequestTypeEnum";
 import gasTypeOption from "../../../constant/gasTypeOptions";
 import GasTypeEnum from "../../../constant/gasTypesEnum";
@@ -8,15 +7,14 @@ import RolesEnum from "../../../constant/rolesEnum";
 import { requestTypeOptions } from "../../../constant/selectOptions";
 import useApiFetch from "../../../hooks/useApiFetch";
 import useGetOutlets from "../../../hooks/useGetOutlets";
-import useGetSchedule from "../../../hooks/useGetSchedule";
 import ICustomer from "../../../type/ICustomer";
 import IGasRequest from "../../../type/IGasRequest";
 import Banner from "../../ui-components/banner";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
 } from "../../ui-components/card/Card";
 import { Button, Radio, Select } from "../../ui-components/form-fields";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
@@ -38,8 +36,6 @@ const GasRequestModal = ({
     GasRequestTypeEnum.Refilled_Gas
   );
   const [selectedOutlet, setSelectedOutlet] = useState<string>();
-
-  const { data: schedules } = useGetSchedule();
   const { isLoading, error, postData } = useApiFetch<IGasRequest>({
     url: "/gas-request/create",
   });
@@ -89,16 +85,8 @@ const GasRequestModal = ({
     [selectedOutlet, outlets]
   );
 
-  const hasNotGasRequestEnabled: boolean = useMemo(() => {
-    const selectedOutletId = selectedOutletData?._id;
-
-    return !schedules.some((schedule) => {
-      return (
-        schedule?.outlets.some((it) => it.outletId === selectedOutletId) &&
-        schedule?.status === DeliveryStatusEnum.OutForDelivery
-      );
-    });
-  }, [selectedOutletData, schedules]);
+  const hasNotGasRequestEnabled: boolean =
+    !selectedOutletData?.gas_request?.allowed_qty;
 
   return (
     <Modal isOpen={isOpen} onClose={closeModal} title="Add Stock">

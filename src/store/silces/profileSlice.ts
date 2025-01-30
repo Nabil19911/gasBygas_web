@@ -6,11 +6,11 @@ import ICustomer from "../../type/ICustomer";
 import IEmployee from "../../type/IEmployee";
 import appFetch from "../../utils/appFetch";
 
-export type ProfileData = ICustomer | IEmployee;
+export type TProfileData = Partial<ICustomer & IEmployee>;
 
 interface InitialState {
   userProfile: {
-    data: ProfileData | null;
+    data: TProfileData | null;
     status: FetchStateEnum;
     error: IApiError | null;
   };

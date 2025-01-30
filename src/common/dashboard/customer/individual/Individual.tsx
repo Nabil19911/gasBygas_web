@@ -80,16 +80,8 @@ const Individual = ({ profile }: IndividualProps) => {
     [selectedOutlet, outlets]
   );
 
-  const hasNotGasRequestEnabled: boolean = useMemo(() => {
-    const selectedOutletId = selectedOutletData?._id;
-
-    return !schedules.some((schedule) => {
-      return (
-        schedule?.outlets.some((it) => it.outletId === selectedOutletId) &&
-        schedule?.status === DeliveryStatusEnum.OutForDelivery
-      );
-    });
-  }, [selectedOutletData, schedules]);
+  const hasNotGasRequestEnabled: boolean =
+    !selectedOutletData?.gas_request?.is_allowed;
 
   if (
     gasRequest &&

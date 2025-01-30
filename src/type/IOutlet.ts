@@ -7,6 +7,7 @@ export interface ICylinderStock {
   currentStock: number;
   minimumThreshold: number;
   maximumCapacity: number;
+  incomingStock: number;
 }
 
 export interface IOutlet {
@@ -17,5 +18,9 @@ export interface IOutlet {
   email: string;
   full_address: IFullAddress;
   cylinders_stock: ICylinderStock[];
+  gas_request?: {
+    is_allowed?: boolean;
+    allowed_qty?: number;
+  };
   _id?: string;
 }

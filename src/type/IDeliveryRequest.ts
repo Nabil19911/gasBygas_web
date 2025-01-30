@@ -1,20 +1,10 @@
-import DeliveryStatusEnum from "../constant/DeliveryStatusEnum";
-import GasTypeEnum from "../constant/gasTypesEnum";
-
-export interface IGas {
-  type: GasTypeEnum;
-  gasQuantity: number;
-}
-
-export interface IRequestOutlet {
-  outletId: string;
-  gas: IGas[];
-}
+import ActiveStatus from "../constant/activeStatusOptions";
+import DistrictsEnum from "../constant/districtsEnum";
 
 export interface ISchedule {
   _id?: string;
-  status?: DeliveryStatusEnum;
+  status?: ActiveStatus;
   deliveryDate?: string;
-  outlets: IRequestOutlet[];
+  district: DistrictsEnum;
   comment?: string;
 }

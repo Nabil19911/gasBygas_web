@@ -1,5 +1,7 @@
+import DistrictsEnum from "../constant/districtsEnum";
+
 interface IFullAddress {
-  district: string;
+  district: DistrictsEnum;
   post_code: string;
   address: string;
 }

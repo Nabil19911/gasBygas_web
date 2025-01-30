@@ -1,7 +1,10 @@
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import gasTypeOption from "../../../constant/gasTypeOptions";
 import GasTypeEnum from "../../../constant/gasTypesEnum";
-import { statusOptions } from "../../../constant/selectOptions";
+import {
+  districtsOptions,
+  statusOptions,
+} from "../../../constant/selectOptions";
 import { ICylinderStock, IOutlet } from "../../../type/IOutlet";
 import {
   Card,
@@ -15,9 +18,11 @@ import useApiFetch from "../../../hooks/useApiFetch";
 import Banner from "../../ui-components/banner";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
 import { useNavigate } from "react-router";
+import useGetOutlets from "../../../hooks/useGetOutlets";
 
 const OutletForm = () => {
   const navigator = useNavigate();
+  const { fetchData } = useGetOutlets();
   const {
     postData: createOutlet,
     error,
@@ -59,6 +64,7 @@ const OutletForm = () => {
 
   const onSubmit: SubmitHandler<IOutlet> = async (data) => {
     await createOutlet(data);
+    await fetchData();
     if (!isLoading) {
       navigator(-1);
     }
@@ -107,12 +113,13 @@ const OutletForm = () => {
             })}
           />
           <div className="flex flex-row gap-2">
-            <TextInput
+            <Select
               label="District"
               error={errors.full_address?.district?.message}
               {...register("full_address.district", {
                 required: "District is required",
               })}
+              options={districtsOptions}
             />
             <TextInput
               label="Post Code"

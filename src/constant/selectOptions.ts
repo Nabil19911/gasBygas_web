@@ -1,5 +1,7 @@
 import ActiveStatus from "./activeStatusOptions";
+import CustomerTypeEnum from "./customerTypeEnum";
 import DeliveryStatusEnum from "./DeliveryStatusEnum";
+import DistrictsEnum from "./districtsEnum";
 import GasRequestTypeEnum from "./gasRequestTypeEnum";
 import RequestStatusEnum from "./requestStatusEnum";
 import RolesEnum from "./rolesEnum";
@@ -28,6 +30,18 @@ export const requestStatusOptions = Object.values(RequestStatusEnum).map(
 );
 
 export const deliveryStatusOptions = Object.values(DeliveryStatusEnum).map(
+  (status) => ({
+    value: status,
+    label: status,
+  })
+);
+
+export const districtsOptions = Object.values(DistrictsEnum).map((status) => ({
+  value: status,
+  label: status,
+}));
+
+export const customerOptions = Object.values(CustomerTypeEnum).map(
   (status) => ({
     value: status,
     label: status,

@@ -54,8 +54,8 @@ const OrganizationApprovalView = () => {
       {isLoading && <LoadingSpinner />}
       {error && <Banner type="error">{error}</Banner>}
       <CardHeader>
-        <CardTitle>Create Customer</CardTitle>
-        <CardDescription>Fill in the customer details below.</CardDescription>
+        <CardTitle>Approve Organization</CardTitle>
+        <CardDescription>Organization details below.</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-4 mb-6">
