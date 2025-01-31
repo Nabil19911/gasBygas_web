@@ -12,7 +12,8 @@ enum PathsEnum {
   PROFILE = "/profile",
   STOCK = "/stock",
   SCHEDULE = "/schedule",
-  APPROVAL = "/approval",
+  ORGANIZATION_DOCUMENT_APPROVAL = "/organization-document-approval",
+  OUTLET_GAS_REQUEST_APPROVAL = "/outlet-gas-request-approval",
 }
 
 export default PathsEnum;

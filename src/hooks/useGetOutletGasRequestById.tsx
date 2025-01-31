@@ -1,15 +1,23 @@
 import { useEffect } from "react";
 import FetchStateEnum from "../constant/fetchStateEnum";
-import { getAllOutletGasRequest } from "../store/selectors/outletSelector";
-import { fetchAllOutletGasRequests } from "../store/silces/outletSlice";
+import { getOutletGasRequestById } from "../store/selectors/outletSelector";
+import { fetchOutletGasRequests } from "../store/silces/outletSlice";
 import { useAppDispatch, useAppSelector } from "../store/store";
 
-const useGetAllOutletGasRequest = () => {
-  const value = useAppSelector(getAllOutletGasRequest);
+interface IUseGetAllOutletGasRequestProps {
+  outletId: string;
+}
+
+const useGetOutletGasRequestById = ({
+  outletId,
+}: IUseGetAllOutletGasRequestProps) => {
+  const value = useAppSelector(getOutletGasRequestById);
   const dispatch = useAppDispatch();
 
   const fetchData = async () => {
-    await dispatch(fetchAllOutletGasRequests());
+    if (outletId) {
+      await dispatch(fetchOutletGasRequests({ outletId }));
+    }
   };
 
   useEffect(() => {
@@ -27,4 +35,4 @@ const useGetAllOutletGasRequest = () => {
   };
 };
 
-export default useGetAllOutletGasRequest;
+export default useGetOutletGasRequestById;

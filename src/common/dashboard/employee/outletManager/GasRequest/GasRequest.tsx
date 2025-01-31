@@ -10,14 +10,14 @@ import OutletGasRequestModal from "../../../../modal/OutletGasRequestModal";
 import { useCallback, useState } from "react";
 import { useAppSelector } from "../../../../../store/store";
 import { getUserProfile } from "../../../../../store/selectors/profileSelector";
-import useGetAllOutletGasRequest from "../../../../../hooks/useGetAllOutletGasRequest";
+import useGetOutletGasRequestById from "../../../../../hooks/useGetOutletGasRequestById";
 import { ISchedule } from "../../../../../type/IDeliveryRequest";
 
 const GasRequest = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { data: employee } = useAppSelector(getUserProfile);
   const outletId = employee?.outlet?._id!;
-  const { data: outletGasRequests, fetchData } = useGetAllOutletGasRequest({
+  const { data: outletGasRequests, fetchData } = useGetOutletGasRequestById({
     outletId,
   });
 

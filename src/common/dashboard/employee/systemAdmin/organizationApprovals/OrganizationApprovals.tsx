@@ -50,7 +50,7 @@ const OrganizationApprovals = () => {
                 <Link
                   size="sm"
                   className="cursor-pointer"
-                  href={`${PathsEnum.APPROVAL}/${org._id}`}
+                  href={`${PathsEnum.ORGANIZATION_DOCUMENT_APPROVAL}/${org._id}`}
                 >
                   Review
                 </Link>

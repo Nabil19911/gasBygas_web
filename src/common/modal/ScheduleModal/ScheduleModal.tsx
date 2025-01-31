@@ -1,7 +1,7 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
   deliveryStatusOptions,
-  districtsOptions
+  districtsOptions,
 } from "../../../constant/selectOptions";
 import useApiFetch from "../../../hooks/useApiFetch";
 import useGetSchedule from "../../../hooks/useGetSchedule";
@@ -17,6 +17,7 @@ import {
   Button,
   DateTimePicker,
   Select,
+  Textarea,
   TextInput,
 } from "../../ui-components/form-fields";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
@@ -97,7 +98,7 @@ const ScheduleModal = ({ isOpen, closeModal }: IScheduleModalProps) => {
             />
 
             {/* Comment */}
-            <TextInput
+            <Textarea
               label="Comment"
               placeholder="Enter any additional details"
               {...register("comment")}

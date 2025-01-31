@@ -3,7 +3,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import gasTypeOption from "../../../constant/gasTypeOptions";
 import { deliveryStatusOptions } from "../../../constant/selectOptions";
 import useApiFetch from "../../../hooks/useApiFetch";
-import useGetOutlets from "../../../hooks/useGetOutlets";
+// import useGetOutlets from "../../../hooks/useGetOutlets";
 import useGetSchedule from "../../../hooks/useGetSchedule";
 import { TProfileData } from "../../../store/silces/profileSlice";
 import { IOutletGasRequest } from "../../../type/IOutletGasRequest";
@@ -39,19 +39,19 @@ const OutletGasRequestModal = ({
     url: "/outlet/gas-request",
   });
 
-  const { data: outlets } = useGetOutlets();
+  // const { data: outlets } = useGetOutlets();
   const { data: schedules } = useGetSchedule();
 
-  const outletOptions = useMemo(() => {
-    if (!outlets) {
-      return [];
-    }
+  // const outletOptions = useMemo(() => {
+  //   if (!outlets) {
+  //     return [];
+  //   }
 
-    return outlets.map((outlet) => ({
-      label: outlet.name,
-      value: outlet._id!,
-    }));
-  }, [outlets]);
+  //   return outlets.map((outlet) => ({
+  //     label: outlet.name,
+  //     value: outlet._id!,
+  //   }));
+  // }, [outlets]);
 
   const scheduleOptions = useMemo(() => {
     if (!schedules) {

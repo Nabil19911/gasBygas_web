@@ -17,6 +17,11 @@ interface InitialState {
     status: FetchStateEnum;
     error: IApiError | null;
   };
+  allOutletGasRequets: {
+    data: IOutletGasRequest[] | null;
+    status: FetchStateEnum;
+    error: IApiError | null;
+  };
 }
 
 const initialState: InitialState = {
@@ -26,6 +31,11 @@ const initialState: InitialState = {
     error: null,
   },
   outletGasRequets: {
+    data: null,
+    status: FetchStateEnum.IDLE,
+    error: null,
+  },
+  allOutletGasRequets: {
     data: null,
     status: FetchStateEnum.IDLE,
     error: null,
@@ -61,7 +71,19 @@ const outletSlice = createSlice({
       .addCase(fetchOutletGasRequests.rejected, (state, action) => {
         state.outletGasRequets.status = FetchStateEnum.REJECTED;
         state.outletGasRequets.error = action.payload || null;
-      });
+      })
+      .addCase(fetchAllOutletGasRequests.pending, (state) => {
+        state.allOutletGasRequets.status = FetchStateEnum.PENDING;
+        state.allOutletGasRequets.error = null;
+      })
+      .addCase(fetchAllOutletGasRequests.fulfilled, (state, action) => {
+        state.allOutletGasRequets.status = FetchStateEnum.FULFILLED;
+        state.allOutletGasRequets.data = action.payload;
+      })
+      .addCase(fetchAllOutletGasRequests.rejected, (state, action) => {
+        state.allOutletGasRequets.status = FetchStateEnum.REJECTED;
+        state.allOutletGasRequets.error = action.payload || null;
+      })
   },
 });
 
@@ -107,5 +129,25 @@ export const fetchOutletGasRequests = createAsyncThunk<
     }
   }
 );
+
+export const fetchAllOutletGasRequests = createAsyncThunk<
+  IOutletGasRequest[],
+  void,
+  { rejectValue: IApiError }
+>("outlet/fetchAllOutletGasRequests", async (_, { rejectWithValue }) => {
+  try {
+    const response = await appFetch<IOutletGasRequest[]>({
+      url: `/outlet/gas-request/`,
+      method: "get",
+    });
+
+    return response;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return rejectWithValue(error.response.data as IApiError);
+    }
+    throw error;
+  }
+});
 
 export default outletSlice.reducer;
