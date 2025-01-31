@@ -7,7 +7,7 @@ export interface ICylinderStock {
   currentStock: number;
   minimumThreshold: number;
   maximumCapacity: number;
-  incomingStock: number;
+  incomingStock?: number;
 }
 
 export interface IOutlet {
