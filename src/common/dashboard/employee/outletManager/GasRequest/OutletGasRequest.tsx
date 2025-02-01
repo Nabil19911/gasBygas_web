@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../../../ui-components/card/Card";
-import { Button } from "../../../../ui-components/form-fields";
+import { Button, Link } from "../../../../ui-components/form-fields";
 import OutletGasRequestModal from "../../../../modal/OutletGasRequestModal";
 import { useCallback, useState } from "react";
 import { useAppSelector } from "../../../../../store/store";
@@ -13,7 +13,7 @@ import { getUserProfile } from "../../../../../store/selectors/profileSelector";
 import useGetOutletGasRequestById from "../../../../../hooks/useGetOutletGasRequestById";
 import { ISchedule } from "../../../../../type/IDeliveryRequest";
 
-const GasRequest = () => {
+const OutletGasRequest = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { data: employee } = useAppSelector(getUserProfile);
   const outletId = employee?.outlet?._id!;
@@ -28,7 +28,6 @@ const GasRequest = () => {
           key={outletGasRequest!._id + outletId}
           className="flex justify-between items-center"
         >
-          <p>Request</p>
           <p>
             {new Date(
               (outletGasRequest.scheduleId as ISchedule).deliveryDate!
@@ -37,6 +36,9 @@ const GasRequest = () => {
           <p className="font-medium">
             {outletGasRequest.headOfficeApproval?.status}
           </p>
+          <Link size="sm" href="">
+            View
+          </Link>
         </li>
       );
     });
@@ -55,7 +57,7 @@ const GasRequest = () => {
           <div className="flex items-center flex-initial w-full">
             {/* <Route className="mr-2 h-5 w-5" /> */}
             <ArrowDownCircle className="mr-2 h-5 w-5" />
-            Gas Request
+            Gas Request Details
           </div>
           <Button
             size="sm"
@@ -73,4 +75,4 @@ const GasRequest = () => {
   );
 };
 
-export default GasRequest;
+export default OutletGasRequest;

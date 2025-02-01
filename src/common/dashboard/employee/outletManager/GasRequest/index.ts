@@ -1,1 +1,1 @@
-export { default } from "./GasRequest";
+export { default } from "./OutletGasRequest";

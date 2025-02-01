@@ -4,6 +4,7 @@ import { ISchedule } from "../../type/IDeliveryRequest";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "../ui-components/card/Card";
@@ -37,10 +38,16 @@ const Schedule = ({ schedules, openModal }: IScheduleProps) => {
                 key={schedule!._id!}
                 className="flex justify-between items-center"
               >
-                <p className="font-medium">
-                  {new Date(schedule.deliveryDate!)?.toLocaleDateString()}
-                </p>
-                <span className="text-sm text-gray-500">{schedule.district}</span>
+                <div>
+                  <p className="font-medium text-gray-500">
+                    {schedule.district}
+                  </p>
+                  <p className="text-sm text-gray-500">{schedule.status}</p>
+                  <p className="text-sm">
+                    {new Date(schedule.deliveryDate!)?.toLocaleDateString()}
+                  </p>
+                </div>
+
                 <Link
                   size="sm"
                   className="cursor-pointer"

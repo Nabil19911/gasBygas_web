@@ -10,17 +10,19 @@ export interface ICylinderStock {
   incomingStock?: number;
 }
 
+export interface IGasRequest {
+  is_allowed?: boolean;
+  allowed_qty?: number;
+}
+
 export interface IOutlet {
-  name: string;
+  name?: string;
   status: ActiveStatus;
   branch_code: string;
   contact: string;
   email: string;
   full_address: IFullAddress;
   cylinders_stock: ICylinderStock[];
-  gas_request?: {
-    is_allowed?: boolean;
-    allowed_qty?: number;
-  };
+  gas_request?: IGasRequest;
   _id?: string;
 }

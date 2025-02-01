@@ -20,7 +20,7 @@ interface ISearch {
   email: string;
 }
 
-const RequestGas = () => {
+const CustomerRequestGasByOutlet = () => {
   const [isStockModalOpen, setStockModalOpen] = useState(false);
   const {
     data: user,
@@ -56,35 +56,37 @@ const RequestGas = () => {
         <CardTitle className="text-xl font-semibold flex items-center">
           <div className="flex items-center flex-initial w-full">
             <DiamondPlus className="mr-2 h-5 w-5" />
-            Request Gas
+            Customer Request Gas
           </div>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex items-center flex-initial w-full gap-2"
+          >
+            <div>
+              <TextInput
+                placeholder="Search by Email"
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                    message: "Invalid email format",
+                  },
+                })}
+              />
+            </div>
+            <div>
+              <Button size="sm" type="submit">
+                Search
+              </Button>
+            </div>
+          </form>
         </CardTitle>
       </CardHeader>
       <CardContent>
         {error && <Banner type="error">{error}</Banner>}
-        {existToken && <Banner type="error">gas request already pending</Banner>}
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex items-center flex-initial w-full gap-2"
-        >
-          <div>
-            <TextInput
-              placeholder="Search by Email"
-              {...register("email", {
-                required: "Email is required",
-                pattern: {
-                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                  message: "Invalid email format",
-                },
-              })}
-            />
-          </div>
-          <div>
-            <Button size="sm" type="submit">
-              Search
-            </Button>
-          </div>
-        </form>
+        {existToken && (
+          <Banner type="error">gas request already pending</Banner>
+        )}
 
         {!user ? (
           <div className="flex items-center justify-center mt-2 gap-2">
@@ -119,4 +121,4 @@ const RequestGas = () => {
   );
 };
 
-export default RequestGas;
+export default CustomerRequestGasByOutlet;

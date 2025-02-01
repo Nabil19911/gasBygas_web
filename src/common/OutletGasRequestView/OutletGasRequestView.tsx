@@ -30,7 +30,9 @@ const OutletGasRequestView = () => {
                 className="flex justify-between items-center"
               >
                 <div>
-                  <p className="font-medium">{outletGasRequest.status!}</p>
+                  <p className="font-medium">
+                    {outletGasRequest.headOfficeApproval?.status!}
+                  </p>
                   <p className="text-sm text-gray-500">
                     {new Date(
                       (outletGasRequest?.scheduleId! as ISchedule)
@@ -45,6 +47,9 @@ const OutletGasRequestView = () => {
                   <p>{(outletGasRequest?.outletId! as IOutlet)?.name}</p>
                   <p className="text-sm text-gray-500">
                     {(outletGasRequest?.outletId! as IOutlet)?.branch_code}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {(outletGasRequest?.scheduleId! as ISchedule)?.status}
                   </p>
                 </div>
                 <div className="flex items-center space-x-4">

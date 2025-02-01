@@ -4,19 +4,17 @@ import GasRequestTypeEnum from "../../../../constant/gasRequestTypeEnum";
 import gasTypeOption from "../../../../constant/gasTypeOptions";
 import GasTypeEnum from "../../../../constant/gasTypesEnum";
 import RequestStatusEnum from "../../../../constant/requestStatusEnum";
-import RolesEnum from "../../../../constant/rolesEnum";
 import { requestTypeOptions } from "../../../../constant/selectOptions";
 import useApiFetch from "../../../../hooks/useApiFetch";
 import useGetGasRequest from "../../../../hooks/useGetGasRequest";
 import useGetOutlets from "../../../../hooks/useGetOutlets";
+import useGetSchedule from "../../../../hooks/useGetSchedule";
 import ICustomer from "../../../../type/ICustomer";
 import IGasRequest from "../../../../type/IGasRequest";
 import IToken from "../../../../type/IToken";
 import Banner from "../../../ui-components/banner";
 import { Button, Radio, Select } from "../../../ui-components/form-fields";
 import LoadingSpinner from "../../../ui-components/loadingSpinner";
-import useGetSchedule from "../../../../hooks/useGetSchedule";
-import DeliveryStatusEnum from "../../../../constant/DeliveryStatusEnum";
 
 interface IndividualProps {
   profile: ICustomer;
@@ -43,7 +41,7 @@ const Individual = ({ profile }: IndividualProps) => {
     }
 
     return outlets.map((outlet) => ({
-      label: outlet.name,
+      label: outlet.name!,
       value: outlet._id!,
     }));
   }, [outlets]);
@@ -66,10 +64,7 @@ const Individual = ({ profile }: IndividualProps) => {
           gasQuantity: 1,
         },
       },
-      createdBy: {
-        type: profile.role as RolesEnum,
-        userId: profile._id!,
-      },
+      createdBy: profile.role!,
     };
     await postData(saveData);
     await fetchData({ userId: profile._id });

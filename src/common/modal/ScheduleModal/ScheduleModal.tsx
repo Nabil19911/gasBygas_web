@@ -17,8 +17,7 @@ import {
   Button,
   DateTimePicker,
   Select,
-  Textarea,
-  TextInput,
+  Textarea
 } from "../../ui-components/form-fields";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
 import Modal from "../../ui-components/modal/Modal";

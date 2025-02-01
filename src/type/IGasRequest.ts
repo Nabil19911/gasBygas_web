@@ -45,12 +45,9 @@ interface IGasRequest {
     approvedBy?: string;
     date?: string;
   };
-  
+
   comments?: string;
-  createdBy: {
-    type: RolesEnum;
-    userId: string;
-  };
+  createdBy: string;
 }
 
 export default IGasRequest;

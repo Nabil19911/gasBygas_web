@@ -291,7 +291,11 @@ const CustomerForm = () => {
           {/* Submit Button */}
           <div className="flex justify-end space-x-4">
             <Button type="submit">Save</Button>
-            <Button type="button" onClick={() => navigator(-1)}>
+            <Button
+              className="bg-red-500 hover:bg-red-400"
+              type="button"
+              onClick={() => navigator(-1)}
+            >
               Back
             </Button>
           </div>
