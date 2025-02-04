@@ -16,7 +16,7 @@ const Link = forwardRef<HTMLAnchorElement, ILinkProps>(
       <a
         {...props}
         ref={ref}
-        className={`inline-block bg-secondary_color text-black font-semibold rounded-lg shadow-md 
+        className={`inline-block cursor-pointer bg-secondary_color text-black font-semibold rounded-lg shadow-md 
                    hover:bg-secondary_color focus:outline-none focus:ring-2 focus:ring-secondary_color 
                    focus:ring-offset-2 active:bg-secondary_color disabled:opacity-50 
                    disabled:cursor-not-allowed transition duration-200 ease-in-out 

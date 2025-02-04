@@ -1,25 +1,27 @@
-import { Route, SquareCheck } from "lucide-react";
+import { SquareCheck } from "lucide-react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import useApiFetch from "../../hooks/useApiFetch";
+import IGasRequest from "../../type/IGasRequest";
+import IToken from "../../type/IToken";
+import Banner from "../ui-components/banner";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "../ui-components/card/Card";
-import { Button, TextInput } from "../ui-components/form-fields";
-import useApiFetch from "../../hooks/useApiFetch";
-import { SubmitHandler, useForm } from "react-hook-form";
-import IToken from "../../type/IToken";
-import Banner from "../ui-components/banner";
+import { Button, Link, TextInput } from "../ui-components/form-fields";
+import GasRequestTypeEnum from "../../constant/gasRequestTypeEnum";
 
 const VerifyToken = () => {
   const {
     data: tokenData,
     postData,
     error,
-  } = useApiFetch<IToken>({
+  } = useApiFetch<Partial<IGasRequest>>({
     url: "/token/check",
     options: {
-      method: "get",
+      method: "post",
     },
   });
 
@@ -61,7 +63,44 @@ const VerifyToken = () => {
         {error && <Banner type="error">{error}</Banner>}
 
         {tokenData && (
-          <p className="font-bold text-sm">Token: {tokenData.token || ""}</p>
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-sm flex gap-1">
+                <span className="font-bold">Token:</span>
+                {(tokenData?.tokenId as IToken)?.token || "N/A"}
+              </p>
+              <p className="flex gap-1 text-sm">
+                <span className="font-bold">Token Status:</span>
+                {(tokenData?.tokenId as IToken)?.status || "N/A"}
+              </p>
+              <p className="flex gap-1 text-sm">
+                <span className="font-bold">Payment Status:</span>
+                {tokenData?.payment?.status || "N/A"}
+              </p>
+              <p className="flex gap-1 text-sm">
+                <span className="font-bold">Gas Type:</span>
+                {tokenData?.gas?.individual?.type || "N/A"}
+              </p>
+              <p className="flex gap-1 text-sm">
+                <span className="font-bold">Request Type:</span>
+                {tokenData?.gas?.individual?.requestType || "N/A"}
+              </p>
+              {tokenData?.gas?.individual?.requestType ===
+                GasRequestTypeEnum.Refilled_Gas && (
+                <p className="flex gap-1 text-sm">
+                  <span className="font-bold">Cylinder Returned:</span>
+                  {tokenData?.gas?.individual?.isCylinderReturned
+                    ? "Yes"
+                    : "No"}
+                </p>
+              )}
+              <p className="flex gap-1 text-sm">
+                <span className="font-bold">Gas Quantity:</span>
+                {tokenData?.gas?.individual?.gasQuantity || "N/A"}
+              </p>
+            </div>
+            <Link>View</Link>
+          </div>
         )}
       </CardContent>
     </Card>

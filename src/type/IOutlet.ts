@@ -11,6 +11,7 @@ export interface ICylinderStock {
 }
 
 export interface IGasRequest {
+  active_until?: Date;
   is_allowed?: boolean;
   allowed_qty?: number;
 }

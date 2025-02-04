@@ -4,9 +4,8 @@ import { ISchedule } from "../../type/IDeliveryRequest";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "../ui-components/card/Card";
 import { Button, Link } from "../ui-components/form-fields";
 

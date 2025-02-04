@@ -11,9 +11,9 @@ const TextInput = forwardRef<HTMLInputElement, ITextInputProps>(
   ({ label, error, helperText, ...props }, ref) => {
     return (
       <div>
-        {label && <label htmlFor="text_input">{label}</label>}
+        {label && <label htmlFor={`text_input_${label}`}>{label}</label>}
         <input
-          id={"text_input"}
+          id={`text_input_${label}`}
           {...props}
           ref={ref}
           autoComplete="off"

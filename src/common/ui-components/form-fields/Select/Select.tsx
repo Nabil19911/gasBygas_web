@@ -13,9 +13,9 @@ const Select = forwardRef<HTMLSelectElement, ISelectProps>(
   ({ label, error, helperText, options, ...props }, ref) => {
     return (
       <div>
-        {label && <label htmlFor="select_input">{label}</label>}
+        {label && <label htmlFor={`select_input_${label}`}>{label}</label>}
         <select
-          id="select_input"
+          id={`select_input_${label}`}
           ref={ref}
           defaultValue=""
           onChange={props.onChange}
@@ -37,7 +37,7 @@ const Select = forwardRef<HTMLSelectElement, ISelectProps>(
             </option>
           ))}
         </select>
-        
+
         {/* Helper Text */}
         {helperText && !error && (
           <small className="text-gray-500 text-sm">{helperText}</small>

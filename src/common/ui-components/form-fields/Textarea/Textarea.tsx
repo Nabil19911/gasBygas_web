@@ -12,11 +12,11 @@ const Textarea = forwardRef<HTMLTextAreaElement, ITextareaProps>(
     return (
       <div>
         {/* Label */}
-        {label && <label htmlFor="textarea_input">{label}</label>}
+        {label && <label htmlFor={`textarea_input_${label}`}>{label}</label>}
 
         {/* Textarea */}
         <textarea
-          id="textarea_input"
+          id={`textarea_input_${label}`}
           {...props}
           ref={ref}
           className={clsx(

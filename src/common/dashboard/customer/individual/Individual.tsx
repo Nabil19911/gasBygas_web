@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import ActiveStatus from "../../../../constant/activeStatusOptions";
+import DeliveryStatusEnum from "../../../../constant/DeliveryStatusEnum";
 import GasRequestTypeEnum from "../../../../constant/gasRequestTypeEnum";
 import gasTypeOption from "../../../../constant/gasTypeOptions";
 import GasTypeEnum from "../../../../constant/gasTypesEnum";
-import RequestStatusEnum from "../../../../constant/requestStatusEnum";
 import { requestTypeOptions } from "../../../../constant/selectOptions";
 import useApiFetch from "../../../../hooks/useApiFetch";
 import useGetGasRequest from "../../../../hooks/useGetGasRequest";
@@ -52,20 +53,34 @@ const Individual = ({ profile }: IndividualProps) => {
     formState: { errors },
   } = useForm<IGasRequest>();
 
+  const schedule = useMemo(() => {
+    const selectedOutletD = outlets.find(
+      (outlet) => outlet._id === selectedOutlet
+    );
+    return schedules.find(
+      (schedule) =>
+        selectedOutletD?.full_address.district === schedule?.district
+    );
+  }, [schedules, profile, selectedOutlet]);
+
   const onSubmit: SubmitHandler<IGasRequest> = async (data) => {
     const saveData: IGasRequest = {
       ...data,
       userId: profile._id!,
+      outletId: selectedOutlet!,
+      scheduleId: schedule?._id,
       gas: {
         ...data.gas,
         individual: {
           type: data.gas.individual?.type as GasTypeEnum,
           requestType: data.gas.individual?.requestType!,
+          isCylinderReturned: false,
           gasQuantity: 1,
         },
       },
       createdBy: profile.role!,
     };
+
     await postData(saveData);
     await fetchData({ userId: profile._id });
   };
@@ -75,13 +90,15 @@ const Individual = ({ profile }: IndividualProps) => {
     [selectedOutlet, outlets]
   );
 
-  const hasNotGasRequestEnabled: boolean =
-    !selectedOutletData?.gas_request?.is_allowed;
+  const hasNotGasRequestEnabled = !(
+    selectedOutletData?.gas_request?.is_allowed &&
+    schedule?.status === DeliveryStatusEnum.Pending
+  );
 
   if (
     gasRequest &&
     gasRequest.length > 0 &&
-    (gasRequest[0].tokenId as IToken)?.status === RequestStatusEnum.PENDING
+    (gasRequest[0].tokenId as IToken)?.status === ActiveStatus.ACTIVE
   ) {
     return (
       <div className="h-1/2 flex flex-col items-center justify-center bg-gray-100 p-2">

@@ -1,10 +1,10 @@
-import RequestStatusEnum from "../constant/requestStatusEnum";
+import ActiveStatus from "../constant/activeStatusOptions";
 
 interface IToken {
   _id?: string;
   token: string;
   expiryDate: string;
-  status: RequestStatusEnum;
+  status: ActiveStatus;
 }
 
 export default IToken;

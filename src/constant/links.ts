@@ -18,19 +18,10 @@ const links: LinkItem[] = [
       RolesEnum.DISPATCH_OFFICER,
     ],
   },
-  // {
-  //   to: PathsEnum.STOCK,
-  //   label: "Stock",
-  //   roles: [RolesEnum.ADMIN, RolesEnum.DISPATCH_OFFICER],
-  // },
   {
     to: PathsEnum.OUTLET,
     label: "Outlet",
-    roles: [
-      RolesEnum.ADMIN,
-      RolesEnum.BRANCH_MANAGER,
-      RolesEnum.DISPATCH_OFFICER,
-    ],
+    roles: [RolesEnum.ADMIN, RolesEnum.DISPATCH_OFFICER],
   },
   { to: PathsEnum.EMPLOYEE, label: "Employee", roles: [RolesEnum.ADMIN] },
   { to: PathsEnum.CUSTOMER, label: "Customer", roles: [RolesEnum.ADMIN] },

@@ -1,4 +1,6 @@
 import { TrendingUp } from "lucide-react";
+import { useCallback } from "react";
+import IStock from "../../type/IStock";
 import {
   Card,
   CardContent,
@@ -6,7 +8,8 @@ import {
   CardTitle,
 } from "../ui-components/card/Card";
 import { Button } from "../ui-components/form-fields";
-import IStock from "../../type/IStock";
+import Table from "../ui-components/table";
+import HeadOfficeStockRow from "./HeadOfficeStockRow";
 
 interface IHeadOfficeStockProps {
   openModal: () => void;
@@ -14,32 +17,34 @@ interface IHeadOfficeStockProps {
 }
 
 const HeadOfficeStock = ({ stock, openModal }: IHeadOfficeStockProps) => {
+  const renderStockRows = useCallback(() => {
+    return stock?.stock?.map((item) => (
+      <HeadOfficeStockRow key={item.gasType} item={item} />
+    ));
+  }, [stock]);
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="text-xl font-semibold flex items-center">
           <div className="flex items-center flex-initial w-full">
             <TrendingUp className="mr-2 h-5 w-5" />
-            Stock level
+            Stock Level
           </div>
-          <Button size="sm" className="flex-initial w-1/4" onClick={openModal}>
+          <Button size="sm" onClick={openModal}>
             Update Stock
           </Button>
         </CardTitle>
       </CardHeader>
+
       <CardContent>
-        <ul className="space-y-4">
-          {stock?.stock?.map((item) => {
-            return (
-              <li key={item.gasType} className="flex justify-between items-center">
-                <p className="font-medium">{item.gasType}</p>
-                <span className="text-sm text-gray-500">
-                  {item.currentStock}
-                </span>
-              </li>
-            );
-          })}
-        </ul>
+        <Table>
+          <Table.Header>
+            <Table.Column>Gas Type</Table.Column>
+            <Table.Column>Current Stock</Table.Column>
+          </Table.Header>
+          <Table.Body>{renderStockRows()}</Table.Body>
+        </Table>
       </CardContent>
     </Card>
   );

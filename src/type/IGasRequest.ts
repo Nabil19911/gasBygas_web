@@ -4,30 +4,25 @@ import PaymentMethodEnum from "../constant/paymentMethodEnum";
 import PaymentStatusEnum from "../constant/paymentStatusEnum";
 import RequestStatusEnum from "../constant/requestStatusEnum";
 import RolesEnum from "../constant/rolesEnum";
+import ICustomer from "./ICustomer";
+import { ISchedule } from "./IDeliveryRequest";
+import { IOutlet } from "./IOutlet";
 import IToken from "./IToken";
-
-interface ICylinder {
-  returned: {
-    type: Boolean;
-  };
-  cylinderQuantity: {
-    type: Number;
-  };
-}
 
 interface IGas {
   type: GasTypeEnum;
   requestType: GasRequestTypeEnum;
-  cylinder?: ICylinder;
+  isCylinderReturned: boolean;
   gasQuantity: number;
   comments?: string;
 }
 
 interface IGasRequest {
-  userId: string;
-  outletId: string;
-  tokenId?: string | IToken;
-  scheduledId?: string;
+  _id?: string;
+  userId: ICustomer | string;
+  outletId: IOutlet | string;
+  tokenId?: IToken | string;
+  scheduleId?: ISchedule | string;
   gas: {
     individual?: IGas;
     organization?: Array<IGas>;
@@ -47,7 +42,7 @@ interface IGasRequest {
   };
 
   comments?: string;
-  createdBy: string;
+  createdBy: RolesEnum;
 }
 
 export default IGasRequest;
