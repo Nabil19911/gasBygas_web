@@ -9,6 +9,7 @@ import useApiFetch from "../../../hooks/useApiFetch";
 import useGetOutlets from "../../../hooks/useGetOutlets";
 import ICustomer from "../../../type/ICustomer";
 import IGasRequest from "../../../type/IGasRequest";
+import ISelectOption from "../../../type/ISelectOption";
 import Banner from "../../ui-components/banner";
 import {
   Card,
@@ -69,12 +70,10 @@ const GasRequestModal = ({
           type: data.gas.individual?.type as GasTypeEnum,
           requestType: data.gas.individual?.requestType!,
           gasQuantity: 1,
+          isCylinderReturned: false,
         },
       },
-      createdBy: {
-        type: user?.role as RolesEnum,
-        userId: user?._id!,
-      },
+      createdBy: user?.role as RolesEnum,
     };
     await postData(saveData);
     await fetchData({ userId: user?._id! });
@@ -125,7 +124,7 @@ const GasRequestModal = ({
                 required: "Please select Outlet",
                 onChange: (e) => setSelectedOutlet(e.target.value),
               })}
-              options={outletOptions}
+              options={outletOptions as ISelectOption[]}
             />
             <Button
               type="submit"

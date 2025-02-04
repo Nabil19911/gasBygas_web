@@ -25,16 +25,16 @@ const OutletGasRequest = () => {
     return outletGasRequests.map((outletGasRequest) => {
       return (
         <li
-          key={outletGasRequest!._id + outletId}
+          key={outletGasRequest?._id + outletId}
           className="flex justify-between items-center"
         >
           <p>
             {new Date(
-              (outletGasRequest.scheduleId as ISchedule).deliveryDate!
+              (outletGasRequest?.scheduleId as ISchedule)?.deliveryDate!
             ).toDateString()}
           </p>
           <p className="font-medium">
-            {outletGasRequest.headOfficeApproval?.status}
+            {outletGasRequest?.headOfficeApproval?.status}
           </p>
           <Link size="sm" href="">
             View

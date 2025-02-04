@@ -13,12 +13,13 @@ import { IOutlet } from "../../type/IOutlet";
 
 const OutletGasRequestView = () => {
   const { data: outletGasRequests } = useGetAllOutletGasRequest();
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="text-xl font-semibold flex items-center">
           <ClipboardCheck className="mr-2 h-5 w-5" />
-          Pending Outlet gas request Approvals
+          Outlet gas requests
         </CardTitle>
       </CardHeader>
       <CardContent>
