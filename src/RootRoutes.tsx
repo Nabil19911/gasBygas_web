@@ -10,6 +10,7 @@ import Stock from "./components/Stock";
 import ScheduleForm from "./common/schedule/ScheduleForm";
 import OrganizationApprovalView from "./common/OrganizationApprovalView";
 import OutletGasRequestApprovalView from "./common/OutletGasRequestApprovalView";
+import OrganizationGasRequestApproval from "./common/OrganizationGasRequestApproval";
 
 const EmployeeForm = lazy(() => import("./common/employee/EmployeeForm"));
 const CustomerForm = lazy(() => import("./common/customer/CustomerForm"));
@@ -96,6 +97,14 @@ function RootRoutes() {
           element={
             <RoleGuard allowedRoles={[RolesEnum.ADMIN]}>
               <OrganizationApprovalView />
+            </RoleGuard>
+          }
+        />
+        <Route
+          path={`${PathsEnum.ORGANIZATION_GAS_REQUEST_APPROVAL}/:id`}
+          element={
+            <RoleGuard allowedRoles={[RolesEnum.ADMIN]}>
+              <OrganizationGasRequestApproval />
             </RoleGuard>
           }
         />

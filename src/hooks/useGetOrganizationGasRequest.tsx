@@ -1,34 +1,31 @@
 import { useEffect } from "react";
 import FetchStateEnum from "../constant/fetchStateEnum";
-import { getGasRequest } from "../store/selectors/gasRequestSelector";
-import { fetchGasRequest } from "../store/silces/gasRequestSlice";
 import { useAppDispatch, useAppSelector } from "../store/store";
+import { fetchOrganizationGasRequest } from "../store/silces/gasRequestSlice";
+import { getOrganizationGasRequest } from "../store/selectors/gasRequestSelector";
 
-interface IUseGetGasRequestProps {
+interface IUseGetOrganizationGasRequestProps {
   userId?: string;
-  outletId?: string;
   tokenId?: string;
 }
 
-const useGetGasRequest = ({
+const useGetOrganizationGasRequest = ({
   userId,
-  outletId,
   tokenId,
-}: IUseGetGasRequestProps) => {
-  const value = useAppSelector(getGasRequest);
+}: IUseGetOrganizationGasRequestProps) => {
+  const value = useAppSelector(getOrganizationGasRequest);
   const dispatch = useAppDispatch();
 
   const fetchData = async ({
     userId,
-    outletId,
     tokenId,
-  }: IUseGetGasRequestProps) => {
-    await dispatch(fetchGasRequest({ userId, outletId, tokenId }));
+  }: IUseGetOrganizationGasRequestProps) => {
+    await dispatch(fetchOrganizationGasRequest({ userId, tokenId }));
   };
 
   useEffect(() => {
     if (!value || value?.status === FetchStateEnum.IDLE) {
-      fetchData({ userId, outletId, tokenId });
+      fetchData({ userId, tokenId });
     }
   }, [dispatch, value?.status]);
 
@@ -41,4 +38,4 @@ const useGetGasRequest = ({
   };
 };
 
-export default useGetGasRequest;
+export default useGetOrganizationGasRequest;

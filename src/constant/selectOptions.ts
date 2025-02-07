@@ -3,6 +3,8 @@ import CustomerTypeEnum from "./customerTypeEnum";
 import DeliveryStatusEnum from "./DeliveryStatusEnum";
 import DistrictsEnum from "./districtsEnum";
 import GasRequestTypeEnum from "./gasRequestTypeEnum";
+import PaymentMethodEnum from "./paymentMethodEnum";
+import PaymentStatusEnum from "./paymentStatusEnum";
 import RequestStatusEnum from "./requestStatusEnum";
 import RolesEnum from "./rolesEnum";
 
@@ -42,6 +44,20 @@ export const districtsOptions = Object.values(DistrictsEnum).map((status) => ({
 }));
 
 export const customerOptions = Object.values(CustomerTypeEnum).map(
+  (status) => ({
+    value: status,
+    label: status,
+  })
+);
+
+export const paymentOptions = Object.values(PaymentStatusEnum).map(
+  (status) => ({
+    value: status,
+    label: status,
+  })
+);
+
+export const paymentMethodOptions = Object.values(PaymentMethodEnum).map(
   (status) => ({
     value: status,
     label: status,

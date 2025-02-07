@@ -9,6 +9,7 @@ import ScheduleModal from "../../../modal/ScheduleModal";
 import useGetSchedule from "../../../../hooks/useGetSchedule";
 import OutletGasRequestView from "../../../OutletGasRequestView";
 import CustomerRequestGasByOutlet from "../../../customerRequestGasByOutlet";
+import OrganizationGasRequest from "../../../OrganizationGasRequest";
 
 const SystemAdmin = () => {
   const [isStockModalOpen, setStockModalOpen] = useState(false);
@@ -36,6 +37,7 @@ const SystemAdmin = () => {
         />
         <OrganizationApprovals />
         <OutletGasRequestView />
+        <OrganizationGasRequest />
         <Schedule
           schedules={schedules}
           openModal={() => setScheduleModalOpen(true)}

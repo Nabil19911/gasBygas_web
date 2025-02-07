@@ -1,7 +1,7 @@
 import { SquareCheck } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useApiFetch from "../../hooks/useApiFetch";
-import IGasRequest from "../../type/IGasRequest";
+import { IIndividualCustomerGasRequest } from "../../type/IGasRequest";
 import IToken from "../../type/IToken";
 import Banner from "../ui-components/banner";
 import {
@@ -18,7 +18,7 @@ const VerifyToken = () => {
     data: tokenData,
     postData,
     error,
-  } = useApiFetch<Partial<IGasRequest>>({
+  } = useApiFetch<Partial<IIndividualCustomerGasRequest>>({
     url: "/token/check",
     options: {
       method: "post",
@@ -28,7 +28,7 @@ const VerifyToken = () => {
   const { register, handleSubmit } = useForm<IToken>();
 
   const onSubmit: SubmitHandler<IToken> = async (data) => {
-    await postData(data);
+    await postData(data as any);
   };
 
   return (
@@ -67,11 +67,11 @@ const VerifyToken = () => {
             <div>
               <p className="text-sm flex gap-1">
                 <span className="font-bold">Token:</span>
-                {(tokenData?.tokenId as IToken)?.token || "N/A"}
+                {(tokenData?.tokenId as unknown as IToken)?.token || "N/A"}
               </p>
               <p className="flex gap-1 text-sm">
                 <span className="font-bold">Token Status:</span>
-                {(tokenData?.tokenId as IToken)?.status || "N/A"}
+                {(tokenData?.tokenId as unknown as IToken)?.status || "N/A"}
               </p>
               <p className="flex gap-1 text-sm">
                 <span className="font-bold">Payment Status:</span>
@@ -79,24 +79,22 @@ const VerifyToken = () => {
               </p>
               <p className="flex gap-1 text-sm">
                 <span className="font-bold">Gas Type:</span>
-                {tokenData?.gas?.individual?.type || "N/A"}
+                {tokenData?.gas?.type || "N/A"}
               </p>
               <p className="flex gap-1 text-sm">
                 <span className="font-bold">Request Type:</span>
-                {tokenData?.gas?.individual?.requestType || "N/A"}
+                {tokenData?.gas?.requestType || "N/A"}
               </p>
-              {tokenData?.gas?.individual?.requestType ===
+              {tokenData?.gas?.requestType ===
                 GasRequestTypeEnum.Refilled_Gas && (
                 <p className="flex gap-1 text-sm">
                   <span className="font-bold">Cylinder Returned:</span>
-                  {tokenData?.gas?.individual?.isCylinderReturned
-                    ? "Yes"
-                    : "No"}
+                  {tokenData?.gas?.isCylinderReturned ? "Yes" : "No"}
                 </p>
               )}
               <p className="flex gap-1 text-sm">
                 <span className="font-bold">Gas Quantity:</span>
-                {tokenData?.gas?.individual?.gasQuantity || "N/A"}
+                {tokenData?.gas?.gasQuantity || "N/A"}
               </p>
             </div>
             <Link>View</Link>

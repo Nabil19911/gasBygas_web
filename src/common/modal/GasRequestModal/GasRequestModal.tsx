@@ -8,7 +8,7 @@ import { requestTypeOptions } from "../../../constant/selectOptions";
 import useApiFetch from "../../../hooks/useApiFetch";
 import useGetOutlets from "../../../hooks/useGetOutlets";
 import ICustomer from "../../../type/ICustomer";
-import IGasRequest from "../../../type/IGasRequest";
+import { IIndividualCustomerGasRequest } from "../../../type/IGasRequest";
 import ISelectOption from "../../../type/ISelectOption";
 import Banner from "../../ui-components/banner";
 import {
@@ -37,9 +37,10 @@ const GasRequestModal = ({
     GasRequestTypeEnum.Refilled_Gas
   );
   const [selectedOutlet, setSelectedOutlet] = useState<string>();
-  const { isLoading, error, postData } = useApiFetch<IGasRequest>({
-    url: "/gas-request/create",
-  });
+  const { isLoading, error, postData } =
+    useApiFetch<IIndividualCustomerGasRequest>({
+      url: "/gas-request/create",
+    });
 
   const { data: outlets } = useGetOutlets();
 
@@ -58,20 +59,20 @@ const GasRequestModal = ({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<IGasRequest>();
+  } = useForm<IIndividualCustomerGasRequest>();
 
-  const onSubmit: SubmitHandler<IGasRequest> = async (data) => {
-    const saveData: IGasRequest = {
+  const onSubmit: SubmitHandler<IIndividualCustomerGasRequest> = async (
+    data
+  ) => {
+    const saveData: IIndividualCustomerGasRequest = {
       ...data,
       userId: user?._id!,
       gas: {
         ...data.gas,
-        individual: {
-          type: data.gas.individual?.type as GasTypeEnum,
-          requestType: data.gas.individual?.requestType!,
-          gasQuantity: 1,
-          isCylinderReturned: false,
-        },
+        type: data.gas?.type as GasTypeEnum,
+        requestType: data.gas?.requestType!,
+        isCylinderReturned: false,
+        gasQuantity: 1,
       },
       createdBy: user?.role as RolesEnum,
     };
@@ -99,8 +100,8 @@ const GasRequestModal = ({
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <Select
               label="Request Type"
-              error={errors.gas?.individual?.requestType?.message}
-              {...register("gas.individual.requestType", {
+              error={errors.gas?.requestType?.message}
+              {...register("gas.requestType", {
                 required: "Please select Request Type",
                 onChange: (e) => setGasRequestType(e.target.value),
               })}
@@ -111,7 +112,7 @@ const GasRequestModal = ({
             <Radio
               label="Select Gas Type"
               options={gasTypeOption}
-              {...register("gas.individual.type", {
+              {...register("gas.type", {
                 required: "Please select a gas type",
               })}
               selected={gasTypeOption[0].value}

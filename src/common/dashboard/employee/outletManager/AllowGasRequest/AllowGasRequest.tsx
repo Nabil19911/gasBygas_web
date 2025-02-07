@@ -1,7 +1,7 @@
 import { ArrowDownCircle } from "lucide-react";
 import { useState } from "react";
 import PathsEnum from "../../../../../constant/pathsEnum";
-import useGetGasRequest from "../../../../../hooks/useGetGasRequest";
+import useGetIndividualGasRequest from "../../../../../hooks/useGetIndividualGasRequest";
 import { getUserProfile } from "../../../../../store/selectors/profileSelector";
 import { useAppSelector } from "../../../../../store/store";
 import ICustomer from "../../../../../type/ICustomer";
@@ -18,7 +18,7 @@ import { Button, Link } from "../../../../ui-components/form-fields";
 const AllowGasRequest = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { data: profile } = useAppSelector(getUserProfile);
-  const { data: activeGasRequests } = useGetGasRequest({
+  const { data: activeGasRequests } = useGetIndividualGasRequest({
     outletId: profile?.outlet?._id,
   });
 

@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from "../ui-components/card/Card";
 import { Button, Link, TextInput } from "../ui-components/form-fields";
-import useGetGasRequest from "../../hooks/useGetGasRequest";
+import useGetIndividualGasRequest from "../../hooks/useGetIndividualGasRequest";
 import IToken from "../../type/IToken";
 
 interface ISearch {
@@ -30,7 +30,7 @@ const CustomerRequestGasByOutlet = () => {
     url: "/user",
   });
 
-  const { data: gasRequest, fetchData } = useGetGasRequest({
+  const { data: gasRequest, fetchData } = useGetIndividualGasRequest({
     userId: user?._id,
   });
 

@@ -1,11 +1,14 @@
-import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 import gasTypeOption from "../../../constant/gasTypeOptions";
-import GasTypeEnum from "../../../constant/gasTypesEnum";
 import {
   districtsOptions,
   statusOptions,
 } from "../../../constant/selectOptions";
-import { ICylinderStock, IOutlet } from "../../../type/IOutlet";
+import useApiFetch from "../../../hooks/useApiFetch";
+import useGetOutlets from "../../../hooks/useGetOutlets";
+import { IOutlet } from "../../../type/IOutlet";
+import Banner from "../../ui-components/banner";
 import {
   Card,
   CardContent,
@@ -14,11 +17,7 @@ import {
   CardTitle,
 } from "../../ui-components/card/Card";
 import { Button, Select, TextInput } from "../../ui-components/form-fields";
-import useApiFetch from "../../../hooks/useApiFetch";
-import Banner from "../../ui-components/banner";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
-import { useNavigate } from "react-router";
-import useGetOutlets from "../../../hooks/useGetOutlets";
 
 const OutletForm = () => {
   const navigator = useNavigate();
@@ -34,35 +33,13 @@ const OutletForm = () => {
   const {
     register,
     handleSubmit,
-    control,
     reset,
-    watch,
     formState: { errors },
   } = useForm<IOutlet>();
 
-  const {
-    fields: cylinders,
-    append,
-    remove,
-  } = useFieldArray({
-    control,
-    name: "cylinders_stock",
-  });
-
-  const watchCylinders = watch("cylinders_stock", []);
-
-  const selectedTypes = watchCylinders.map(
-    (cylinder: ICylinderStock) => cylinder?.type
-  );
-
-  const availableOptions = (index: number) =>
-    gasTypeOption.filter(
-      (option) =>
-        !selectedTypes.includes(option.value) ||
-        option.value === watchCylinders[index]?.type
-    );
 
   const onSubmit: SubmitHandler<IOutlet> = async (data) => {
+    console.log(data);
     await createOutlet(data);
     await fetchData();
     if (!isLoading) {
@@ -79,9 +56,9 @@ const OutletForm = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
+        {isLoading && <LoadingSpinner />}
+        {error && <Banner type="error">{error}</Banner>}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {isLoading && <LoadingSpinner />}
-          {error && <Banner type="error">{error}</Banner>}
           <TextInput
             label="Outlet Name"
             error={errors.name?.message}
@@ -143,81 +120,56 @@ const OutletForm = () => {
           <div>
             <h3 className="text-lg font-medium mb-4">Stock Management</h3>
             <div className="space-y-4">
-              {cylinders.map((cylinder, index) => (
-                <div
-                  key={cylinder.id}
-                  className="border rounded-md p-4 space-y-4"
-                >
-                  <Select
-                    label="Cylinder Type"
-                    options={availableOptions(index)}
-                    // error={errors?.stock?.cylinders?.[index]?.type?.message}
-                    {...register(`cylinders_stock.${index}.type`, {
-                      required: "Cylinder Type is required",
-                    })}
-                  />
-                  <TextInput
-                    label="Current Stock"
-                    type="number"
-                    // error={
-                    //   errors?.stock?.cylinders?.[index]?.currentStock?.message
-                    // }
-                    {...register(`cylinders_stock.${index}.currentStock`, {
-                      required: "Current Stock is required",
-                      valueAsNumber: true,
-                    })}
-                  />
-                  <TextInput
-                    label="Minimum Threshold"
-                    type="number"
-                    // error={
-                    //   errors?.stock?.cylinders?.[index]?.minimumThreshold
-                    //     ?.message
-                    // }
-                    {...register(`cylinders_stock.${index}.minimumThreshold`, {
-                      required: "Minimum Threshold is required",
-                      valueAsNumber: true,
-                    })}
-                  />
-                  <TextInput
-                    label="Maximum Capacity"
-                    type="number"
-                    // error={
-                    //   errors?.stock?.cylinders?.[index]?.maximumCapacity
-                    //     ?.message
-                    // }
-                    {...register(`cylinders_stock.${index}.maximumCapacity`, {
-                      required: "Maximum Capacity is required",
-                      valueAsNumber: true,
-                    })}
-                  />
-                  <div className="flex justify-end">
-                    <Button
-                      type="button"
-                      className="bg-red-600 hover:bg-red-700"
-                      onClick={() => remove(index)}
-                    >
-                      Remove
-                    </Button>
+              {gasTypeOption.map((gasType, index) => {
+                return (
+                  <div key={index} className="grid grid-cols-4 gap-2">
+                    <TextInput
+                      label={`Gas Type ${index + 1}`}
+                      disabled
+                      value={gasType.value}
+                      {...register(`cylinders_stock.${index}.type`, {})}
+                    />
+                    <TextInput
+                      label="Minimum Threshold"
+                      type="number"
+                      error={
+                        errors?.cylinders_stock?.[index]?.minimumThreshold
+                          ?.message
+                      }
+                      {...register(
+                        `cylinders_stock.${index}.minimumThreshold`,
+                        {
+                          required: "Minimum Threshold is required",
+                          valueAsNumber: true,
+                        }
+                      )}
+                    />
+                    <TextInput
+                      label="Maximum Capacity"
+                      type="number"
+                      error={
+                        errors?.cylinders_stock?.[index]?.maximumCapacity
+                          ?.message
+                      }
+                      {...register(`cylinders_stock.${index}.maximumCapacity`, {
+                        required: "Maximum Capacity is required",
+                        valueAsNumber: true,
+                      })}
+                    />
+                    <TextInput
+                      label="Current Stock"
+                      type="number"
+                      error={
+                        errors?.cylinders_stock?.[index]?.currentStock?.message
+                      }
+                      {...register(`cylinders_stock.${index}.currentStock`, {
+                        required: "Current Stock is required",
+                        valueAsNumber: true,
+                      })}
+                    />
                   </div>
-                </div>
-              ))}
-              {cylinders.length < gasTypeOption.length && (
-                <Button
-                  type="button"
-                  className="bg-green-600 hover:bg-green-700"
-                  onClick={() =>
-                    append({
-                      type: "" as GasTypeEnum,
-                      currentStock: 0,
-                      minimumThreshold: 0,
-                      maximumCapacity: 0,
-                    })
-                  }
-                >
-                  Add Cylinder
-                </Button>
-              )}
+                );
+              })}
             </div>
           </div>
 
