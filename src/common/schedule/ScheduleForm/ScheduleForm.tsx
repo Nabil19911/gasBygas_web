@@ -14,6 +14,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
+  CardTitle,
 } from "../../ui-components/card/Card";
 import {
   Button,
@@ -22,6 +23,7 @@ import {
   Textarea,
 } from "../../ui-components/form-fields";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
+import { ArrowDownCircle } from "lucide-react";
 
 const ScheduleForm = () => {
   const navigator = useNavigate();
@@ -81,6 +83,11 @@ const ScheduleForm = () => {
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
+        <CardTitle className="text-xl font-semibold flex items-center">
+          <div className="flex items-center flex-initial w-full">
+            Delivery Details
+          </div>
+        </CardTitle>
         <CardDescription>Fill in the delivery details below.</CardDescription>
       </CardHeader>
       <CardContent>
@@ -108,6 +115,7 @@ const ScheduleForm = () => {
           {/* Districts Selection */}
           <Select
             label="Districts"
+            disabled
             options={districtsOptions}
             error={errors.district?.message}
             {...register("district", { required: "Districts is required" })}

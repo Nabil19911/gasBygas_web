@@ -1,4 +1,5 @@
 import Customer from "../../common/dashboard/customer";
+import DeliveryOfficer from "../../common/dashboard/employee/deliveryOfficer";
 import Dispatcher from "../../common/dashboard/employee/dispatcher";
 import OutletManager from "../../common/dashboard/employee/outletManager";
 import SystemAdmin from "../../common/dashboard/employee/systemAdmin";
@@ -25,6 +26,8 @@ const DashboardManager = () => {
       return <OutletManager />;
     case RolesEnum.DISPATCH_OFFICER:
       return <Dispatcher />;
+    case RolesEnum.DELIVERY_OFFICER:
+      return <DeliveryOfficer />;
 
     default:
       return <></>;

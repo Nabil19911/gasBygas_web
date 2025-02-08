@@ -2,14 +2,13 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import ActiveStatus from "../../../../constant/activeStatusOptions";
 import gasTypeOption from "../../../../constant/gasTypeOptions";
 import RequestStatusEnum from "../../../../constant/requestStatusEnum";
-import { requestTypeOptions } from "../../../../constant/selectOptions";
 import useApiFetch from "../../../../hooks/useApiFetch";
 import useGetOrganizationGasRequest from "../../../../hooks/useGetOrganizationGasRequest";
 import ICustomer from "../../../../type/ICustomer";
 import { IOrganizationGasRequest } from "../../../../type/IGasRequest";
 import IToken from "../../../../type/IToken";
 import Banner from "../../../ui-components/banner";
-import { Button, Select, TextInput } from "../../../ui-components/form-fields";
+import { Button, TextInput } from "../../../ui-components/form-fields";
 import LoadingSpinner from "../../../ui-components/loadingSpinner";
 
 interface IOrganizationProps {
@@ -100,6 +99,7 @@ const Organization = ({ profile }: IOrganizationProps) => {
       </h1>
       {error && <Banner type="error">{error}</Banner>}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <h2>Refil Gas</h2>
         {gasTypeOption.map((gasType, gasIndex) => {
           return (
             <div key={gasIndex} className="grid grid-cols-3 gap-2">
@@ -109,18 +109,21 @@ const Organization = ({ profile }: IOrganizationProps) => {
                 value={gasType.value}
                 {...register(`gas.${gasIndex}.type`, {})}
               />
-              <Select
-                label="Request Type"
-                {...register(`gas.${gasIndex}.requestType`, {
-                  required: "Please select Request Type",
-                })}
-                options={requestTypeOptions}
-              />
               <TextInput
-                label={`Request Stock`}
+                label="Refill"
                 type="number"
                 defaultValue={0}
-                {...register(`gas.${gasIndex}.gasQuantity`, {})}
+                {...register(
+                  `gas.${gasIndex}.gasRefillRequests.gasQuantity`,
+                  {}
+                )}
+                min={0}
+              />
+              <TextInput
+                label={`New`}
+                type="number"
+                defaultValue={0}
+                {...register(`gas.${gasIndex}.gasNewRequests.gasQuantity`, {})}
                 min={0}
               />
             </div>

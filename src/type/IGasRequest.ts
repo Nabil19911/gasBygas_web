@@ -49,12 +49,28 @@ interface IHeadOfficeApproval {
   comment?: string;
 }
 
+interface IGasRefillRequest {
+  gasQuantity?: number;
+  approvedQuantity?: number;
+}
+
+interface IGasNewRequest extends IGasRefillRequest {
+  isCylinderReturned?: boolean;
+  cylinderReturnedCount?: number;
+}
+
+interface IOrganizationGas {
+  type?: GasTypeEnum;
+  gasRefillRequests?: IGasRefillRequest;
+  gasNewRequests?: IGasNewRequest;
+}
+
 export interface IOrganizationGasRequest {
   _id?: string;
   userId: TProfileData | string;
   tokenId?: string;
   deliveryDate?: Date;
-  gas?: IGas[];
+  gas?: IOrganizationGas[];
   payment?: IPayment;
   headOfficeApproval?: IHeadOfficeApproval;
   comment?: string;

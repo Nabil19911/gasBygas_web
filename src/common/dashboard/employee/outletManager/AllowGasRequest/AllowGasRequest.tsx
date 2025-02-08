@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "../../../../ui-components/card/Card";
 import { Button, Link } from "../../../../ui-components/form-fields";
+import Banner from "../../../../ui-components/banner";
 
 const AllowGasRequest = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,6 +22,8 @@ const AllowGasRequest = () => {
   const { data: activeGasRequests } = useGetIndividualGasRequest({
     outletId: profile?.outlet?._id,
   });
+
+  const activeGas = profile?.outlet?.gas_request;
 
   return (
     <Card>
@@ -44,6 +47,11 @@ const AllowGasRequest = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
+        {activeGas?.is_allowed && (
+          <Banner type="info">{`Gas Request is active until ${new Date(
+            activeGas?.active_until ?? ""
+          ).toLocaleDateString()}`}</Banner>
+        )}
         <ul className="space-y-4">
           {activeGasRequests.map((activeGasRequest) => {
             return (
@@ -54,7 +62,7 @@ const AllowGasRequest = () => {
                 <div>
                   <p className="font-medium text-gray-500">
                     {
-                      (activeGasRequest?.userId as ICustomer)
+                      (activeGasRequest?.userId as unknown as ICustomer)
                         ?.individual_details?.first_name
                     }
                   </p>
@@ -63,7 +71,7 @@ const AllowGasRequest = () => {
                   </p>
                   <p className="text-sm">
                     {new Date(
-                      (activeGasRequest?.scheduleId as ISchedule)
+                      (activeGasRequest?.scheduleId as unknown as ISchedule)
                         ?.deliveryDate || ""
                     ).toLocaleDateString()}
                   </p>
@@ -72,7 +80,7 @@ const AllowGasRequest = () => {
                 <Link
                   size="sm"
                   className="cursor-pointer"
-                  href={`${PathsEnum.SCHEDULE}/${"asdasd"}`}
+                  href={`${PathsEnum.TOKEN}/${activeGasRequest._id}`}
                 >
                   View
                 </Link>

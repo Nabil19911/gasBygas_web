@@ -57,6 +57,7 @@ const useApiFetch = <T extends unknown>({
             error instanceof Error ? error.message : "Unknown error occurred";
           setError(axiosErrorMessage || errorMessage);
         }
+        setData(null);
       } finally {
         setLoading(false);
       }

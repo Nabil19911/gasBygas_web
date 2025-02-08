@@ -101,50 +101,62 @@ const OrganizationGasRequestApprovalView = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <h2 className="mb-2 font-bold">Gas request</h2>
           {gasRequest?.gas?.map((gasType, index) => (
-            <div key={index} className="grid grid-cols-4 gap-4">
+            <div key={index} className="space-y-4">
               <TextInput
                 label={`Gas Type ${index + 1}`}
                 disabled
                 value={gasType.type}
                 {...register(`gas.${index}.type`, {})}
               />
-              <TextInput
-                label={`Request Type ${index + 1}`}
-                disabled
-                value={gasType.requestType}
-                {...register(`gas.${index}.requestType`, {})}
-              />
-              <TextInput
-                label="Requested QTY"
-                type="number"
-                disabled
-                value={gasType.gasQuantity}
-                {...register(`gas.${index}.gasQuantity`, {})}
-              />
-              <TextInput
-                label="Approved QTY"
-                type="number"
-                {...register(`gas.${index}.approvedQuantity`, {})}
-              />
+              <div className="grid grid-cols-2 gap-4">
+                <TextInput
+                  label={`Refill Request QTY`}
+                  type="number"
+                  disabled
+                  value={gasType.gasRefillRequests?.gasQuantity ?? 0}
+                  {...register(
+                    `gas.${index}.gasRefillRequests.gasQuantity`,
+                    {}
+                  )}
+                />
+                <TextInput
+                  label="Approved QTY"
+                  type="number"
+                  defaultValue={
+                    gasType.gasRefillRequests?.approvedQuantity ??
+                    gasType.gasRefillRequests?.gasQuantity
+                  }
+                  disabled={gasType.gasRefillRequests?.gasQuantity === 0}
+                  {...register(
+                    `gas.${index}.gasRefillRequests.approvedQuantity`,
+                    {}
+                  )}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <TextInput
+                  label={`New Request QTY`}
+                  type="number"
+                  disabled
+                  value={gasType.gasNewRequests?.gasQuantity ?? 0}
+                  {...register(`gas.${index}.gasNewRequests.gasQuantity`, {})}
+                />
+                <TextInput
+                  label="Approved QTY"
+                  type="number"
+                  defaultValue={
+                    gasType.gasNewRequests?.approvedQuantity ??
+                    gasType.gasNewRequests?.gasQuantity
+                  }
+                  disabled={gasType.gasNewRequests?.gasQuantity === 0}
+                  {...register(
+                    `gas.${index}.gasNewRequests.approvedQuantity`,
+                    {}
+                  )}
+                />
+              </div>
             </div>
           ))}
-
-          {/* <h2 className="font-bold">Payment</h2>
-
-          <div className="grid grid-cols-2 gap-4">
-            <Select
-              label="Payment Method"
-              {...register("payment.method")}
-              defaultValue={paymentMethodOptions[0].value}
-              options={paymentMethodOptions}
-            />
-
-            <TextInput
-              label="Amount"
-              type="number"
-              {...register("payment.totalAmount")}
-            />
-          </div> */}
 
           <Textarea
             label="Comment"

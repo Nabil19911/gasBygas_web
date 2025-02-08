@@ -12,6 +12,7 @@ enum PathsEnum {
   PROFILE = "/profile",
   STOCK = "/stock",
   SCHEDULE = "/schedule",
+  TOKEN = "/token",
   ORGANIZATION_DOCUMENT_APPROVAL = "/organization-document-approval",
   OUTLET_GAS_REQUEST_APPROVAL = "/outlet-gas-request-approval",
   ORGANIZATION_GAS_REQUEST_APPROVAL = "/organization-gas-request-approval",

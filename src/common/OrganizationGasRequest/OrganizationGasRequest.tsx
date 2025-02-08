@@ -9,11 +9,10 @@ import useGetAllOrganizationGasRequest from "../../hooks/useGetAllOrganizationGa
 import { Link } from "../ui-components/form-fields";
 import PathsEnum from "../../constant/pathsEnum";
 import { TProfileData } from "../../store/silces/profileSlice";
+import RequestStatusEnum from "../../constant/requestStatusEnum";
 
 const OrganizationGasRequest = () => {
   const { data: organizationGasRequests } = useGetAllOrganizationGasRequest();
-
-  console.log({ organizationGasRequests });
 
   return (
     <Card>
@@ -25,37 +24,42 @@ const OrganizationGasRequest = () => {
       </CardHeader>
       <CardContent>
         <ul className="space-y-4">
-          {organizationGasRequests.map((outletGasRequest) => {
-            return (
-              <li
-                key={outletGasRequest._id}
-                className="flex justify-between items-center"
-              >
-                <div>
-                  <p className="font-medium">
-                    {
-                      (outletGasRequest?.userId as TProfileData)
-                        .organization_details?.business_name
-                    }
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">
-                    {outletGasRequest.headOfficeApproval?.status!}
-                  </p>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <Link
-                    size="sm"
-                    className="cursor-pointer"
-                    href={`${PathsEnum.ORGANIZATION_GAS_REQUEST_APPROVAL}/${outletGasRequest._id}`}
-                  >
-                    Review
-                  </Link>
-                </div>
-              </li>
-            );
-          })}
+          {organizationGasRequests
+            .filter(
+              (item) =>
+                item.headOfficeApproval?.status === RequestStatusEnum.PENDING
+            )
+            .map((outletGasRequest) => {
+              return (
+                <li
+                  key={outletGasRequest._id}
+                  className="flex justify-between items-center"
+                >
+                  <div>
+                    <p className="font-medium">
+                      {
+                        (outletGasRequest?.userId as TProfileData)
+                          .organization_details?.business_name
+                      }
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">
+                      {outletGasRequest.headOfficeApproval?.status!}
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <Link
+                      size="sm"
+                      className="cursor-pointer"
+                      href={`${PathsEnum.ORGANIZATION_GAS_REQUEST_APPROVAL}/${outletGasRequest._id}`}
+                    >
+                      Review
+                    </Link>
+                  </div>
+                </li>
+              );
+            })}
         </ul>
       </CardContent>
     </Card>

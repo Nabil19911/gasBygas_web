@@ -12,11 +12,13 @@ import {
 } from "../ui-components/card/Card";
 import { Button, Link, TextInput } from "../ui-components/form-fields";
 import GasRequestTypeEnum from "../../constant/gasRequestTypeEnum";
+import LoadingSpinner from "../ui-components/loadingSpinner";
 
 const VerifyToken = () => {
   const {
     data: tokenData,
     postData,
+    isLoading,
     error,
   } = useApiFetch<Partial<IIndividualCustomerGasRequest>>({
     url: "/token/check",
@@ -28,7 +30,7 @@ const VerifyToken = () => {
   const { register, handleSubmit } = useForm<IToken>();
 
   const onSubmit: SubmitHandler<IToken> = async (data) => {
-    await postData(data as any);
+    await postData(data);
   };
 
   return (
@@ -61,6 +63,7 @@ const VerifyToken = () => {
       </CardHeader>
       <CardContent>
         {error && <Banner type="error">{error}</Banner>}
+        {isLoading && <LoadingSpinner />}
 
         {tokenData && (
           <div className="flex justify-between items-center">
