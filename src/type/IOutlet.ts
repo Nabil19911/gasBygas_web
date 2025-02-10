@@ -14,6 +14,7 @@ export interface IGasRequest {
   active_until?: Date;
   is_allowed?: boolean;
   allowed_qty?: number;
+  scheduleId?: string;
 }
 
 export interface IOutlet {

@@ -3,7 +3,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import gasTypeOption from "../../../constant/gasTypeOptions";
 import { deliveryStatusOptions } from "../../../constant/selectOptions";
 import useApiFetch from "../../../hooks/useApiFetch";
-// import useGetOutlets from "../../../hooks/useGetOutlets";
 import useGetSchedule from "../../../hooks/useGetSchedule";
 import { TProfileData } from "../../../store/silces/profileSlice";
 import { IOutletGasRequest } from "../../../type/IOutletGasRequest";
@@ -39,19 +38,7 @@ const OutletGasRequestModal = ({
     url: "/outlet/gas-request",
   });
 
-  // const { data: outlets } = useGetOutlets();
   const { data: schedules } = useGetSchedule();
-
-  // const outletOptions = useMemo(() => {
-  //   if (!outlets) {
-  //     return [];
-  //   }
-
-  //   return outlets.map((outlet) => ({
-  //     label: outlet.name,
-  //     value: outlet._id!,
-  //   }));
-  // }, [outlets]);
 
   const scheduleOptions = useMemo(() => {
     if (!schedules) {
@@ -78,7 +65,6 @@ const OutletGasRequestModal = ({
 
   const onSubmit: SubmitHandler<IOutletGasRequest> = async (data) => {
     const outletId = employee?.outlet?._id!;
-    // const saveData: IOutletGasRequest = {};
     await createGasRequest({
       ...data,
       outletId,
@@ -120,7 +106,7 @@ const OutletGasRequestModal = ({
             />
             {gasTypeOption.map((gasType, gasIndex) => {
               return (
-                <div key={gasIndex} className="grid grid-cols-4 gap-4">
+                <div key={gasIndex} className="grid grid-cols-2 gap-4">
                   <TextInput
                     label={`Gas Type ${gasIndex + 1}`}
                     disabled
@@ -128,7 +114,7 @@ const OutletGasRequestModal = ({
                     {...register(`gas.${gasIndex}.type`, {})}
                   />
                   <TextInput
-                    label={`request Stock`}
+                    label={`Request Stock`}
                     type="number"
                     defaultValue={0}
                     {...register(`gas.${gasIndex}.gasQuantity`, {})}

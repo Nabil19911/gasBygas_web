@@ -15,6 +15,8 @@ import {
 } from "../../../../ui-components/card/Card";
 import { Button, Link } from "../../../../ui-components/form-fields";
 import Banner from "../../../../ui-components/banner";
+import useFetch from "../../../../../hooks/useFetch";
+import { IOutlet } from "../../../../../type/IOutlet";
 
 const AllowGasRequest = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,11 +25,17 @@ const AllowGasRequest = () => {
     outletId: profile?.outlet?._id,
   });
 
-  const activeGas = profile?.outlet?.gas_request;
+  const { data: outlet } = useFetch<IOutlet>({
+    url: `/outlet/${profile?.outlet?._id}`,
+    initialLoad: true,
+  });
+
+  const activeGas = outlet?.gas_request;
 
   return (
     <Card>
       <OutletGasRequestAllowModal
+        outlet={outlet}
         isOpen={isOpen}
         closeModal={() => setIsOpen(false)}
       />
@@ -35,11 +43,12 @@ const AllowGasRequest = () => {
         <CardTitle className="text-xl font-semibold flex items-center">
           <div className="flex items-center flex-initial w-full">
             <ArrowDownCircle className="mr-2 h-5 w-5" />
-            Outlet Pending Gas Request
+            Gas Request
           </div>
           <Button
             size="sm"
             className="flex-initial w-1/4"
+            // disabled={activeGas?.is_allowed}
             onClick={() => setIsOpen(true)}
           >
             Allowed Gas Request

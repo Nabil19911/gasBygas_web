@@ -23,7 +23,6 @@ import {
   Textarea,
 } from "../../ui-components/form-fields";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
-import { ArrowDownCircle } from "lucide-react";
 
 const ScheduleForm = () => {
   const navigator = useNavigate();

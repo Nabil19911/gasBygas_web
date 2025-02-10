@@ -49,7 +49,7 @@ const Individual = ({ profile }: IndividualProps) => {
     }
 
     return outlets.map((outlet) => ({
-      label: outlet.name!,
+      label: `${outlet.branch_code} - ${outlet.name}`,
       value: outlet._id!,
     }));
   }, [outlets]);
@@ -97,12 +97,23 @@ const Individual = ({ profile }: IndividualProps) => {
     [selectedOutlet, outlets]
   );
 
-  const hasNotGasRequestEnabled =
-    selectedOutletData &&
-    !(
-      selectedOutletData?.gas_request?.is_allowed &&
-      schedule?.status === DeliveryStatusEnum.Pending
+  const hasNotGasRequestEnabled = useMemo(() => {
+    const selectedOutletGasRequest = selectedOutletData?.gas_request;
+    const hasAllowedDateInRange = selectedOutletGasRequest?.active_until || "";
+
+    const givenDate = new Date(hasAllowedDateInRange);
+    const currentDate = new Date();
+
+    return (
+      selectedOutletData &&
+      !(
+        selectedOutletGasRequest?.is_allowed &&
+        selectedOutletGasRequest?.allowed_qty! > 0 &&
+        givenDate > currentDate &&
+        schedule?.status === DeliveryStatusEnum.Pending
+      )
     );
+  }, [selectedOutletData, schedule]);
 
   if (
     gasRequest &&
