@@ -84,10 +84,10 @@ const ScheduleForm = () => {
       <CardHeader>
         <CardTitle className="text-xl font-semibold flex items-center">
           <div className="flex items-center flex-initial w-full">
-            Delivery Details
+            Schedule Details
           </div>
         </CardTitle>
-        <CardDescription>Fill in the delivery details below.</CardDescription>
+        <CardDescription>Fill in the schedule details below.</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

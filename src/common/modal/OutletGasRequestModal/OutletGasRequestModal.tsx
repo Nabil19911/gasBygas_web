@@ -16,6 +16,8 @@ import {
 import { Button, Select, TextInput } from "../../ui-components/form-fields";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
 import Modal from "../../ui-components/modal/Modal";
+import useGetOutletGasRequestById from "../../../hooks/useGetOutletGasRequestById";
+import { ISchedule } from "../../../type/IDeliveryRequest";
 
 interface IOutletGasRequestModalProps {
   employee?: Partial<TProfileData> | null;
@@ -37,8 +39,13 @@ const OutletGasRequestModal = ({
   } = useApiFetch<IOutletGasRequest>({
     url: "/outlet/gas-request",
   });
+  const outletId = employee?.outlet?._id!;
 
   const { data: schedules } = useGetSchedule();
+
+  const { data: outletGasRequests } = useGetOutletGasRequestById({
+    outletId,
+  });
 
   const scheduleOptions = useMemo(() => {
     if (!schedules) {
@@ -48,12 +55,18 @@ const OutletGasRequestModal = ({
     const outletDistrict = employee?.outlet?.full_address.district;
 
     return schedules
-      .filter((schedule) => schedule.district === outletDistrict)
+      .filter(
+        (schedule) =>
+          schedule.district === outletDistrict &&
+          !outletGasRequests.some(
+            (item) => (item.scheduleId as ISchedule)._id === schedule._id
+          )
+      )
       .map((schedule) => ({
         label: new Date(schedule.deliveryDate!).toISOString(),
         value: schedule._id!,
       }));
-  }, [schedules]);
+  }, [schedules, outletGasRequests]);
 
   const {
     register,
@@ -64,7 +77,6 @@ const OutletGasRequestModal = ({
   const isLoading = isCreateGasRequestLoading;
 
   const onSubmit: SubmitHandler<IOutletGasRequest> = async (data) => {
-    const outletId = employee?.outlet?._id!;
     await createGasRequest({
       ...data,
       outletId,

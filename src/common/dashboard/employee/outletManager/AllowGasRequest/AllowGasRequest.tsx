@@ -1,28 +1,37 @@
 import { ArrowDownCircle } from "lucide-react";
 import { useState } from "react";
-import PathsEnum from "../../../../../constant/pathsEnum";
+import RequestStatusEnum from "../../../../../constant/requestStatusEnum";
+import useFetch from "../../../../../hooks/useFetch";
 import useGetIndividualGasRequest from "../../../../../hooks/useGetIndividualGasRequest";
+import useGetOutletGasRequestById from "../../../../../hooks/useGetOutletGasRequestById";
 import { getUserProfile } from "../../../../../store/selectors/profileSelector";
 import { useAppSelector } from "../../../../../store/store";
 import ICustomer from "../../../../../type/ICustomer";
 import { ISchedule } from "../../../../../type/IDeliveryRequest";
+import { IOutlet } from "../../../../../type/IOutlet";
 import OutletGasRequestAllowModal from "../../../../modal/OutletGasRequestAllowModal";
+import ReallocateModal from "../../../../modal/ReallocateModal/ReallocateModal";
+import Banner from "../../../../ui-components/banner";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "../../../../ui-components/card/Card";
-import { Button, Link } from "../../../../ui-components/form-fields";
-import Banner from "../../../../ui-components/banner";
-import useFetch from "../../../../../hooks/useFetch";
-import { IOutlet } from "../../../../../type/IOutlet";
+import { Button } from "../../../../ui-components/form-fields";
 
 const AllowGasRequest = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isAllowModalOpen, setIsAllowModalOpen] = useState(false);
+  const [isViewModal, setIsViewModal] = useState(false);
+  const [selectedId, setSelectedId] = useState<string>();
+  const [selectedScheduleId, setSelectedScheduleId] = useState<string>();
   const { data: profile } = useAppSelector(getUserProfile);
-  const { data: activeGasRequests } = useGetIndividualGasRequest({
+  const { data: activeGasRequests, fetchData } = useGetIndividualGasRequest({
     outletId: profile?.outlet?._id,
+  });
+
+  const { data: outletGasRequests } = useGetOutletGasRequestById({
+    outletId: profile?.outlet?._id!,
   });
 
   const { data: outlet } = useFetch<IOutlet>({
@@ -34,10 +43,17 @@ const AllowGasRequest = () => {
 
   return (
     <Card>
+      <ReallocateModal
+        closeModal={() => setIsViewModal(false)}
+        isOpen={isViewModal}
+        selectedId={selectedId}
+        fetchData={() => fetchData({ outletId: profile?.outlet?._id })}
+        selectedScheduleId={selectedScheduleId}
+      />
       <OutletGasRequestAllowModal
         outlet={outlet}
-        isOpen={isOpen}
-        closeModal={() => setIsOpen(false)}
+        isOpen={isAllowModalOpen}
+        closeModal={() => setIsAllowModalOpen(false)}
       />
       <CardHeader>
         <CardTitle className="text-xl font-semibold flex items-center">
@@ -48,8 +64,11 @@ const AllowGasRequest = () => {
           <Button
             size="sm"
             className="flex-initial w-1/4"
-            // disabled={activeGas?.is_allowed}
-            onClick={() => setIsOpen(true)}
+            disabled={outletGasRequests.some(
+              (item) =>
+                item.headOfficeApproval?.status !== RequestStatusEnum.APPROVED
+            )}
+            onClick={() => setIsAllowModalOpen(true)}
           >
             Allowed Gas Request
           </Button>
@@ -71,7 +90,7 @@ const AllowGasRequest = () => {
                 <div>
                   <p className="font-medium text-gray-500">
                     {
-                      (activeGasRequest?.userId as unknown as ICustomer)
+                      (activeGasRequest?.userId as ICustomer)
                         ?.individual_details?.first_name
                     }
                   </p>
@@ -80,19 +99,38 @@ const AllowGasRequest = () => {
                   </p>
                   <p className="text-sm">
                     {new Date(
-                      (activeGasRequest?.scheduleId as unknown as ISchedule)
+                      (activeGasRequest?.scheduleId as ISchedule)
                         ?.deliveryDate || ""
                     ).toLocaleDateString()}
                   </p>
+                  {activeGasRequest.reallocateGasRequest?.is_reallocated && (
+                    <p>
+                      Reallocated{" "}
+                      {
+                        (
+                          activeGasRequest?.reallocateGasRequest?.toSheduleId as ISchedule
+                        ).deliveryDate
+                      }
+                    </p>
+                  )}
                 </div>
-
-                <Link
-                  size="sm"
-                  className="cursor-pointer"
-                  href={`${PathsEnum.TOKEN}/${activeGasRequest._id}`}
-                >
-                  View
-                </Link>
+                <div>
+                  {!activeGasRequest.reallocateGasRequest?.is_reallocated && (
+                    <Button
+                      size="sm"
+                      className="cursor-pointer"
+                      onClick={() => {
+                        setSelectedId(activeGasRequest?._id!);
+                        setSelectedScheduleId(
+                          (activeGasRequest?.scheduleId as ISchedule)?._id
+                        );
+                        setIsViewModal(true);
+                      }}
+                    >
+                      Reallocate
+                    </Button>
+                  )}
+                </div>
               </li>
             );
           })}

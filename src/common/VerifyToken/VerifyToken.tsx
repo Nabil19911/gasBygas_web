@@ -13,6 +13,8 @@ import {
 import { Button, Link, TextInput } from "../ui-components/form-fields";
 import GasRequestTypeEnum from "../../constant/gasRequestTypeEnum";
 import LoadingSpinner from "../ui-components/loadingSpinner";
+import PathsEnum from "../../constant/pathsEnum";
+import useGetIndividualGasRequest from "../../hooks/useGetIndividualGasRequest";
 
 const VerifyToken = () => {
   const {
@@ -25,6 +27,10 @@ const VerifyToken = () => {
     options: {
       method: "post",
     },
+  });
+
+  const { data: activeGasRequests } = useGetIndividualGasRequest({
+    tokenId: tokenData?._id,
   });
 
   const { register, handleSubmit } = useForm<IToken>();
@@ -100,7 +106,14 @@ const VerifyToken = () => {
                 {tokenData?.gas?.gasQuantity || "N/A"}
               </p>
             </div>
-            <Link>View</Link>
+
+            <Link
+              size="sm"
+              className="cursor-pointer"
+              href={`${PathsEnum.TOKEN}/${activeGasRequests[0]._id}`}
+            >
+              View
+            </Link>
           </div>
         )}
       </CardContent>

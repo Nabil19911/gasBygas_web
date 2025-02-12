@@ -75,8 +75,12 @@ const OutletGasRequestApprovalView = () => {
       {isLoading && <LoadingSpinner />}
       {error && <Banner type="error">{error}</Banner>}
       {errorApproval && <Banner type="error">{errorApproval}</Banner>}
-      <CardHeader>
-        <CardTitle>Approve Outlet Gas Request</CardTitle>
+      <CardHeader className="text-xl font-semibold flex items-center">
+        <CardTitle>
+          <div className="flex items-center flex-initial w-full">
+            Approve Outlet Gas Request
+          </div>
+        </CardTitle>
         <CardDescription>Outlet gas request details below.</CardDescription>
       </CardHeader>
       <CardContent>
@@ -107,9 +111,10 @@ const OutletGasRequestApprovalView = () => {
           </div>
         </div>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <h2 className="font-bold">Requested gas</h2>
           {gasRquest?.gas?.map((gasType, gasIndex) => {
             return (
-              <div key={gasIndex} className="grid grid-cols-4 gap-4">
+              <div key={gasIndex} className="grid grid-cols-3 gap-4">
                 <TextInput
                   label={`Gas Type ${gasIndex + 1}`}
                   disabled

@@ -5,6 +5,10 @@ import PaymentStatusEnum from "../constant/paymentStatusEnum";
 import RequestStatusEnum from "../constant/requestStatusEnum";
 import RolesEnum from "../constant/rolesEnum";
 import { TProfileData } from "../store/silces/profileSlice";
+import ICustomer from "./ICustomer";
+import { ISchedule } from "./IDeliveryRequest";
+import { IOutlet } from "./IOutlet";
+import IToken from "./IToken";
 
 interface IGas {
   type?: GasTypeEnum;
@@ -16,11 +20,12 @@ interface IGas {
 
 interface IReallocateGasRequest {
   is_reallocated?: boolean;
-  toSheduleId?: string;
+  toSheduleId?: ISchedule | string;
+  fromScheduleId?: ISchedule | string;
   comments?: string;
 }
 
-interface IPayment {
+export interface IPayment {
   status?: PaymentStatusEnum;
   totalAmount?: number;
   method?: PaymentMethodEnum;
@@ -29,10 +34,10 @@ interface IPayment {
 
 export interface IIndividualCustomerGasRequest {
   _id?: string;
-  userId: string;
-  outletId: string;
-  tokenId: string;
-  scheduleId: string;
+  userId: ICustomer | string;
+  outletId: IOutlet | string;
+  tokenId: IToken | string;
+  scheduleId: ISchedule | string;
   gas: IGas;
   reallocateGasRequest?: IReallocateGasRequest;
   payment?: IPayment;

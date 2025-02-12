@@ -45,12 +45,9 @@ const OutletGasRequestView = () => {
                   </p>
                 </div>
                 <div>
-                  <p>{(outletGasRequest?.outletId! as IOutlet)?.name}</p>
+                  <p>Outlet Name: {(outletGasRequest?.outletId! as IOutlet)?.name}</p>
                   <p className="text-sm text-gray-500">
-                    {(outletGasRequest?.outletId! as IOutlet)?.branch_code}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {(outletGasRequest?.scheduleId! as ISchedule)?.status}
+                    Branch Code: {(outletGasRequest?.outletId! as IOutlet)?.branch_code}
                   </p>
                 </div>
                 <div className="flex items-center space-x-4">
