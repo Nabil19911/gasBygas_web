@@ -26,6 +26,7 @@ import {
   CardTitle,
 } from "../../ui-components/card/Card";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
+import TokenGeneratorModal from "../../modal/TokenGeneratorModal/TokenGeneratorModal";
 
 type TCustomer = Omit<ICustomer, "password" | "confirm_password">;
 
@@ -33,6 +34,8 @@ const CustomerForm = () => {
   const navigator = useNavigate();
   const [selectedBusinessType, setSelectedBusinessType] =
     useState<CustomerTypeEnum>();
+  const [tokenGeneratorModal, setTokenGeneratorModal] = useState(false);
+  const [savedCustomerId, setSavedCustomerId]= useState("");
 
   const { isLoading, error, postData } = useApiFetch({
     url: "/user/create",
@@ -114,7 +117,14 @@ const CustomerForm = () => {
         JSON.stringify(data.organization_details)
       );
     }
-    await postData(formData);
+    const savedData = await postData(formData) as TCustomer;
+
+    setSavedCustomerId(savedData?._id!)
+
+    console.log({savedData})
+    if (selectedBusinessType === CustomerTypeEnum.INDIVIDUAL) {
+      setTokenGeneratorModal(true);
+    }
   };
 
   const renderOptionalFields = useCallback(() => {
@@ -200,6 +210,11 @@ const CustomerForm = () => {
         <CardDescription>Fill in the customer details below.</CardDescription>
       </CardHeader>
       <CardContent>
+        <TokenGeneratorModal
+          isOpen={tokenGeneratorModal}
+          savedCustomerId={savedCustomerId}
+          closeModal={() => setTokenGeneratorModal(false)}
+        />
         {error && <Banner type="error">{error}</Banner>}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Business Type Selection */}

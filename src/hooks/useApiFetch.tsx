@@ -11,7 +11,7 @@ interface UsePostResponse<T> {
   data: T | null;
   isLoading: boolean;
   error: string | null;
-  postData: (postData: T) => Promise<void>;
+  postData: (postData: T) => Promise<unknown>;
   cancelRequest: () => void;
 }
 
@@ -48,6 +48,7 @@ const useApiFetch = <T extends unknown>({
         });
 
         setData(responseData);
+        return responseData
       } catch (error) {
         if (abortController.signal.aborted) {
           setError("Request cancelled");

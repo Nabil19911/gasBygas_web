@@ -1,5 +1,6 @@
 import { ArrowDownCircle } from "lucide-react";
 import { useState } from "react";
+import DeliveryStatusEnum from "../../../../../constant/DeliveryStatusEnum";
 import RequestStatusEnum from "../../../../../constant/requestStatusEnum";
 import useFetch from "../../../../../hooks/useFetch";
 import useGetIndividualGasRequest from "../../../../../hooks/useGetIndividualGasRequest";
@@ -108,14 +109,16 @@ const AllowGasRequest = () => {
                       Reallocated{" "}
                       {
                         (
-                          activeGasRequest?.reallocateGasRequest?.toSheduleId as ISchedule
+                          activeGasRequest?.reallocateGasRequest
+                            ?.toSheduleId as ISchedule
                         ).deliveryDate
                       }
                     </p>
                   )}
                 </div>
                 <div>
-                  {!activeGasRequest.reallocateGasRequest?.is_reallocated && (
+                  {(activeGasRequest?.scheduleId as ISchedule)?.status ===
+                    DeliveryStatusEnum.Cancelled && (
                     <Button
                       size="sm"
                       className="cursor-pointer"
