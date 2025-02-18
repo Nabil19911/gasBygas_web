@@ -1,6 +1,8 @@
 import { Bars3Icon } from "@heroicons/react/16/solid";
 import useAuth from "../../../hooks/useAuth";
 import DropdownMenu from "../../ui-components/menu";
+import { useAppSelector } from "../../../store/store";
+import { getUserProfile } from "../../../store/selectors/profileSelector";
 
 interface HeaderProps {
   openSidebar: () => void;
@@ -8,6 +10,7 @@ interface HeaderProps {
 
 const Header = ({ openSidebar }: HeaderProps) => {
   const { signout } = useAuth();
+  const { data: profile } = useAppSelector(getUserProfile);
 
   const menuItems = [
     { label: "Profile", to: "/profile" },
@@ -26,7 +29,7 @@ const Header = ({ openSidebar }: HeaderProps) => {
       </div>
 
       <div className="flex items-center space-x-4">
-        <h2 className="text-lg font-medium">Welcome, User!</h2>
+        <h2 className="text-lg font-medium">Welcome, {profile?.first_name}</h2>
 
         <DropdownMenu items={menuItems} />
       </div>

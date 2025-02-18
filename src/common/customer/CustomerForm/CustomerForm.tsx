@@ -35,7 +35,7 @@ const CustomerForm = () => {
   const [selectedBusinessType, setSelectedBusinessType] =
     useState<CustomerTypeEnum>();
   const [tokenGeneratorModal, setTokenGeneratorModal] = useState(false);
-  const [savedCustomerId, setSavedCustomerId]= useState("");
+  const [savedCustomerId, setSavedCustomerId] = useState("");
 
   const { isLoading, error, postData } = useApiFetch({
     url: "/user/create",
@@ -90,7 +90,6 @@ const CustomerForm = () => {
     formData.append("contact", data.contact);
     formData.append("email", data.email);
     formData.append("full_address", JSON.stringify(data.full_address));
-    formData.append("password", "0000");
     if (data.individual_details) {
       formData.append(
         "individual_details",
@@ -117,12 +116,10 @@ const CustomerForm = () => {
         JSON.stringify(data.organization_details)
       );
     }
-    const savedData = await postData(formData) as TCustomer;
+    const savedData = (await postData(formData)) as TCustomer;
 
-    setSavedCustomerId(savedData?._id!)
-
-    console.log({savedData})
-    if (selectedBusinessType === CustomerTypeEnum.INDIVIDUAL) {
+    if (selectedBusinessType === CustomerTypeEnum.INDIVIDUAL && savedData) {
+      setSavedCustomerId(savedData?._id!);
       setTokenGeneratorModal(true);
     }
   };

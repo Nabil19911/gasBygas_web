@@ -16,6 +16,7 @@ import {
 } from "../../ui-components/form-fields";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
 import Modal from "../../ui-components/modal/Modal";
+import DeliveryStatusEnum from "../../../constant/DeliveryStatusEnum";
 
 interface IOutletGasRequestAllowModalProps {
   isOpen: boolean;
@@ -58,10 +59,12 @@ const OutletGasRequestAllowModal = ({
     if (schedules.length === 0) {
       return [] as ISelectOption[];
     }
-    return schedules?.map((schedule) => ({
-      value: schedule?._id || "",
-      label: schedule?.deliveryDate || "",
-    }));
+    return schedules
+      ?.filter((item) => item.status === DeliveryStatusEnum.Pending)
+      .map((schedule) => ({
+        value: schedule?._id || "",
+        label: schedule?.deliveryDate || "",
+      }));
   }, [schedules]);
 
   const onSubmit: SubmitHandler<IGasRequest> = async (data) => {

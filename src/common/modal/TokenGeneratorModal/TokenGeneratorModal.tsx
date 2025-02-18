@@ -19,6 +19,9 @@ import { useMemo, useState } from "react";
 import useGetOutlets from "../../../hooks/useGetOutlets";
 import GasRequestTypeEnum from "../../../constant/gasRequestTypeEnum";
 import useGetSchedule from "../../../hooks/useGetSchedule";
+import RolesEnum from "../../../constant/rolesEnum";
+import { useNavigate } from "react-router";
+import PathsEnum from "../../../constant/pathsEnum";
 
 interface ITokenGeneratorModalProps {
   isOpen: boolean;
@@ -39,6 +42,8 @@ const TokenGeneratorModal = ({
     useApiFetch<IIndividualCustomerGasRequest>({
       url: `/gas-request/individual`,
     });
+
+  const navigator = useNavigate();
 
   const { data: profile } = useAppSelector(getUserProfile);
 
@@ -79,7 +84,10 @@ const TokenGeneratorModal = ({
     const saveData: IIndividualCustomerGasRequest = {
       ...data,
       userId: savedCustomerId!,
-      outletId: selectedOutlet!,
+      outletId:
+        profile?.role === RolesEnum.ADMIN
+          ? selectedOutlet!
+          : profile?.outlet?._id!,
       scheduleId: schedule?._id!,
       gas: {
         ...data.gas,
@@ -95,6 +103,7 @@ const TokenGeneratorModal = ({
     if (savedData) {
       reset();
       closeModal();
+      navigator(PathsEnum.DASHBOARD);
     }
   };
 
@@ -126,19 +135,24 @@ const TokenGeneratorModal = ({
               selected={gasTypeOption[0].value}
               // disabled={hasNotGasRequestEnabled}
             />
-            <Select
-              label="Outlet"
-              error={errors.outletId?.message}
-              {...register("outletId", {
-                required: "Please select Outlet",
-                onChange: (e) => setSelectedOutlet(e.target.value),
-              })}
-              options={outletOptions}
-            />
+            {profile?.role === RolesEnum.ADMIN && (
+              <Select
+                label="Outlet"
+                error={errors.outletId?.message}
+                {...register("outletId", {
+                  required: "Please select Outlet",
+                  onChange: (e) => setSelectedOutlet(e.target.value),
+                })}
+                options={outletOptions}
+              />
+            )}
             <div className="flex justify-end space-x-4">
               <Button type="submit">Yes</Button>
               <Button
-                onClick={closeModal}
+                onClick={() => {
+                  closeModal();
+                  navigator(PathsEnum.DASHBOARD);
+                }}
                 className="bg-red-500 hover:bg-red-400"
               >
                 No

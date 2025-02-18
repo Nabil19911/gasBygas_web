@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import DeliveryStatusEnum from "../../../constant/DeliveryStatusEnum";
 import useApiFetch from "../../../hooks/useApiFetch";
 import useGetSchedule from "../../../hooks/useGetSchedule";
 import { IIndividualCustomerGasRequest } from "../../../type/IGasRequest";
@@ -7,9 +8,7 @@ import ISelectOption from "../../../type/ISelectOption";
 import Banner from "../../ui-components/banner";
 import {
   Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
+  CardContent
 } from "../../ui-components/card/Card";
 import { Button, Select, Textarea } from "../../ui-components/form-fields";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
@@ -20,7 +19,7 @@ interface IReallocateModalProps {
   closeModal: () => void;
   selectedId?: string;
   selectedScheduleId?: string;
-  fetchData: () => Promise<void>
+  fetchData: () => Promise<void>;
 }
 
 const ReallocateModal = ({
@@ -48,10 +47,12 @@ const ReallocateModal = ({
     if (schedules.length === 0) {
       return [] as ISelectOption[];
     }
-    return schedules?.map((schedule) => ({
-      value: schedule?._id || "",
-      label: schedule?.deliveryDate || "",
-    }));
+    return schedules
+      ?.filter((item) => item.status === DeliveryStatusEnum.Pending)
+      .map((schedule) => ({
+        value: schedule?._id || "",
+        label: schedule?.deliveryDate || "",
+      }));
   }, [schedules]);
 
   const onSubmit: SubmitHandler<
@@ -75,18 +76,14 @@ const ReallocateModal = ({
     <Modal
       isOpen={isOpen}
       onClose={closeModal}
-      title="Request Gas"
+      title="Reallocate Gas Request"
       className="w-lg"
     >
       {isLoading && <LoadingSpinner />}
       {error && <Banner type="error">{error}</Banner>}
-      <Card className="w-full max-w-2xl mx-auto">
-        <CardHeader>
-          <CardDescription>Fill in the delivery details below.</CardDescription>
-        </CardHeader>
+      <Card className="w-full max-w-2xl mx-auto p-4">
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <h2 className="mb-2 font-bold">Reallocate Gas Request</h2>
             <Select
               label="Select Schedule"
               {...register("reallocateGasRequest.toSheduleId", {
