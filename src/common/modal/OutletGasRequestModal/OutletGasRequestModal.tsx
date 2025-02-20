@@ -84,6 +84,8 @@ const OutletGasRequestModal = ({
     await fetchData({ outletId });
   };
 
+  const hasScheduleEnabled = scheduleOptions.length === 0;
+
   return (
     <Modal
       isOpen={isOpen}
@@ -93,6 +95,9 @@ const OutletGasRequestModal = ({
     >
       {isLoading && <LoadingSpinner />}
       {error && <Banner type="error">{error}</Banner>}
+      {hasScheduleEnabled && (
+        <Banner type="info">Schedule is not enabled for the district</Banner>
+      )}
       <Card className="w-full max-w-2xl mx-auto">
         <CardHeader>
           <CardDescription>Fill in the delivery details below.</CardDescription>
@@ -106,6 +111,7 @@ const OutletGasRequestModal = ({
               defaultValue={scheduleOptions[0]?.value}
               error={errors.status?.message}
               {...register("scheduleId", { required: "Status is required" })}
+              disabled={hasScheduleEnabled}
             />
 
             {/* Status Selection */}
@@ -128,6 +134,7 @@ const OutletGasRequestModal = ({
                   <TextInput
                     label={`Request Stock`}
                     type="number"
+                    disabled={hasScheduleEnabled}
                     defaultValue={0}
                     {...register(`gas.${gasIndex}.gasQuantity`, {})}
                     min={0}
@@ -138,7 +145,9 @@ const OutletGasRequestModal = ({
 
             {/* Form Buttons */}
             <div className="flex justify-end space-x-4">
-              <Button type="submit">Save</Button>
+              <Button type="submit" disabled={hasScheduleEnabled}>
+                Save
+              </Button>
               <Button
                 type="button"
                 onClick={closeModal}

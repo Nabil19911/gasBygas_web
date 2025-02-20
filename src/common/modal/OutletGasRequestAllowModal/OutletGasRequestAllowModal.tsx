@@ -45,9 +45,15 @@ const OutletGasRequestAllowModal = ({
 
   const { data: schedules, isLoading: isScheduleLoading } = useGetSchedule();
 
+  const hasFieldsDisabled = schedules.length === 0;
+
   const { register, handleSubmit, reset } = useForm<IGasRequest>();
 
   useEffect(() => {
+    if (hasFieldsDisabled) {
+      reset();
+      return;
+    }
     if (outlet) {
       reset(outlet.gas_request);
     }
@@ -86,8 +92,6 @@ const OutletGasRequestAllowModal = ({
       closeModal();
     }
   };
-
-  const hasFieldsDisabled = schedules.length === 0;
 
   return (
     <Modal

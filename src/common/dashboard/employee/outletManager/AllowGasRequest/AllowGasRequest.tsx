@@ -76,7 +76,7 @@ const AllowGasRequest = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {activeGas?.is_allowed && (
+        {activeGas?.is_allowed && activeGas?.active_until && (
           <Banner type="info">{`Gas Request is active until ${new Date(
             activeGas?.active_until ?? ""
           ).toLocaleDateString()}`}</Banner>
