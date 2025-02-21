@@ -82,6 +82,10 @@ const OutletGasRequestModal = ({
       outletId,
     });
     await fetchData({ outletId });
+
+    if (!isLoading) {
+      closeModal();
+    }
   };
 
   const hasScheduleEnabled = scheduleOptions.length === 0;
@@ -100,7 +104,9 @@ const OutletGasRequestModal = ({
       )}
       <Card className="w-full max-w-2xl mx-auto">
         <CardHeader>
-          <CardDescription>Fill in the delivery details below.</CardDescription>
+          <CardDescription>
+            Fill in the Outlet delivery details below.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
