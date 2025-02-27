@@ -23,6 +23,7 @@ import {
   Textarea,
 } from "../../ui-components/form-fields";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
+import DeliveryStatusEnum from "../../../constant/DeliveryStatusEnum";
 
 const ScheduleForm = () => {
   const navigator = useNavigate();
@@ -79,6 +80,9 @@ const ScheduleForm = () => {
     }
   };
 
+  const hasDisabled =
+    exsitingSchedule?.status === DeliveryStatusEnum.OutForDelivery;
+
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
@@ -96,6 +100,7 @@ const ScheduleForm = () => {
           {/* Delivery Date */}
           <DateTimePicker
             label="Delivery Date"
+            disabled={hasDisabled}
             error={errors.deliveryDate?.message}
             {...register("deliveryDate", {
               required: "Delivery date is required",
@@ -105,6 +110,7 @@ const ScheduleForm = () => {
           {/* Status Selection */}
           <Select
             label="Status"
+            disabled={hasDisabled}
             options={deliveryStatusOptions}
             defaultValue={deliveryStatusOptions[0].value}
             error={errors.status?.message}
@@ -123,13 +129,16 @@ const ScheduleForm = () => {
           {/* Comment */}
           <Textarea
             label="Comment"
+            disabled={hasDisabled}
             placeholder="Enter any additional details"
             {...register("comment")}
           />
 
           {/* Form Buttons */}
           <div className="flex justify-end space-x-4">
-            <Button type="submit">Save</Button>
+            <Button disabled={hasDisabled} type="submit">
+              Save
+            </Button>
             <Button
               type="button"
               onClick={() => navigator(-1)}

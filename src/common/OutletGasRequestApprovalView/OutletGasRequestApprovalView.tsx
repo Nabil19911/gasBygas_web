@@ -70,6 +70,9 @@ const OutletGasRequestApprovalView = () => {
     }
   };
 
+  const hasFieldDisabled =
+    gasRquest?.headOfficeApproval?.status === RequestStatusEnum.APPROVED;
+
   return (
     <Card className="w-full max-w-2xl mx-auto">
       {isLoading && <LoadingSpinner />}
@@ -134,6 +137,7 @@ const OutletGasRequestApprovalView = () => {
                 <TextInput
                   label="Approved QTY"
                   type="number"
+                  disabled={hasFieldDisabled}
                   defaultValue={
                     gasType.approvedGasQuantity ?? gasType.gasQuantity
                   }
@@ -145,6 +149,7 @@ const OutletGasRequestApprovalView = () => {
 
           <Textarea
             label="Comment"
+            disabled={hasFieldDisabled}
             placeholder="Enter any additional details"
             {...register("headOfficeApproval.comment")}
           />
@@ -153,7 +158,7 @@ const OutletGasRequestApprovalView = () => {
             <Button
               type="submit"
               onClick={() => handleButtonClick(RequestStatusEnum.REGECTED)}
-              disabled={isLoading}
+              disabled={isLoading || hasFieldDisabled}
               className="bg-red-500 text-white hover:bg-red-600"
             >
               Reject
@@ -161,7 +166,7 @@ const OutletGasRequestApprovalView = () => {
             <Button
               type="submit"
               onClick={() => handleButtonClick(RequestStatusEnum.APPROVED)}
-              disabled={isLoading}
+              disabled={isLoading || hasFieldDisabled}
             >
               Approve
             </Button>
