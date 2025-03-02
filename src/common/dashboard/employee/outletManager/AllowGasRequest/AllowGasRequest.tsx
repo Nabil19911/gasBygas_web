@@ -20,6 +20,7 @@ import {
   CardTitle,
 } from "../../../../ui-components/card/Card";
 import { Button } from "../../../../ui-components/form-fields";
+import IToken from "../../../../../type/IToken";
 
 const AllowGasRequest = () => {
   const [isAllowModalOpen, setIsAllowModalOpen] = useState(false);
@@ -86,27 +87,48 @@ const AllowGasRequest = () => {
             return (
               <li
                 key={activeGasRequest._id}
-                className="flex justify-between items-center"
+                className="flex justify-between items-center p-2 space-x-4"
+                style={{
+                  border:
+                    activeGasRequest.payment?.status === "OVERDUE"
+                      ? "1px solid red"
+                      : "",
+                }}
               >
                 <div>
-                  <p className="font-medium text-gray-500">
+                  <p className="font-medium">
+                    <span className="font-bold">Name:</span>{" "}
                     {
                       (activeGasRequest?.userId as ICustomer)
                         ?.individual_details?.first_name
                     }
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm  text-gray-500">
+                    <span className="font-bold">Payment Status:</span>{" "}
                     {activeGasRequest?.payment?.status}
                   </p>
-                  <p className="text-sm">
+                  <p className="text-sm text-gray-500">
+                    <span className="font-bold">Delivery At:</span>{" "}
                     {new Date(
                       (activeGasRequest?.scheduleId as ISchedule)
                         ?.deliveryDate || ""
                     ).toLocaleDateString()}
                   </p>
+                  <p className="text-sm text-gray-500">
+                    <span className="font-bold">Token:</span>{" "}
+                    {(activeGasRequest?.tokenId as IToken)?.token || ""}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    <span className="font-bold">Token Active Until:</span>{" "}
+                    {new Date(
+                      (activeGasRequest?.tokenId as IToken)?.expiryDate || ""
+                    ).toLocaleDateString()}
+                  </p>
                   {activeGasRequest.reallocateGasRequest?.is_reallocated && (
                     <p>
-                      Reallocated{" "}
+                      <span className="font-bold text-gray-500">
+                        Reallocated to:
+                      </span>{" "}
                       {
                         (
                           activeGasRequest?.reallocateGasRequest

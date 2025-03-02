@@ -45,19 +45,7 @@ const OutletGasRequestAllowModal = ({
 
   const { data: schedules, isLoading: isScheduleLoading } = useGetSchedule();
 
-  const hasFieldsDisabled = schedules.length === 0;
-
   const { register, handleSubmit, reset } = useForm<IGasRequest>();
-
-  useEffect(() => {
-    if (hasFieldsDisabled) {
-      reset();
-      return;
-    }
-    if (outlet) {
-      reset(outlet.gas_request);
-    }
-  }, [outlet]);
 
   const isLoading = isOutletUpdateLoading || isScheduleLoading;
 
@@ -72,6 +60,18 @@ const OutletGasRequestAllowModal = ({
         label: schedule?.deliveryDate || "",
       }));
   }, [schedules]);
+
+  const hasFieldsDisabled = scheduleOptions.length === 0;
+
+  useEffect(() => {
+    if (hasFieldsDisabled) {
+      reset();
+      return;
+    }
+    if (outlet) {
+      reset(outlet.gas_request);
+    }
+  }, [outlet]);
 
   const onSubmit: SubmitHandler<IGasRequest> = async (data) => {
     const deliveryDate =

@@ -55,10 +55,13 @@ const Organization = ({ profile }: IOrganizationProps) => {
     );
   }
 
+  const token = gasRequest[0]?.tokenId as unknown as IToken;
+
   if (
     gasRequest &&
     gasRequest.length > 0 &&
-    (gasRequest[0].tokenId as unknown as IToken)?.status === ActiveStatus.ACTIVE
+    token?.status === ActiveStatus.ACTIVE &&
+    new Date(token?.expiryDate) > new Date()
   ) {
     return (
       <div className="h-1/2 flex flex-col items-center justify-center bg-gray-100 p-2">
@@ -67,7 +70,7 @@ const Organization = ({ profile }: IOrganizationProps) => {
         </p>
         <p className="text-sm sm:text-base md:text-lg lg:text-xl text-center text-gray-600 mt-2">
           <span className="font-bold text-blue-600 bg-yellow-200 px-2 py-1 rounded-lg">
-            {(gasRequest[0].tokenId as unknown as IToken).token}
+            {token?.token}
           </span>
         </p>
       </div>
