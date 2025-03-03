@@ -49,8 +49,12 @@ const OutletActiveGasRequest = () => {
     options: { method: "patch" },
   });
 
-  const { register, reset, handleSubmit } =
-    useForm<Partial<IIndividualCustomerGasRequest>>();
+  const {
+    register,
+    reset,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Partial<IIndividualCustomerGasRequest>>();
 
   useEffect(() => {
     reset({ ...gasRequest });
@@ -140,7 +144,10 @@ const OutletActiveGasRequest = () => {
           <Select
             label="Payment Method"
             options={paymentMethodOptions}
-            {...register("payment.method")}
+            {...register("payment.method", {
+              required: "Payment method is required",
+            })}
+            error={errors.payment?.method?.message}
           />
 
           <div className="flex justify-end space-x-4">
