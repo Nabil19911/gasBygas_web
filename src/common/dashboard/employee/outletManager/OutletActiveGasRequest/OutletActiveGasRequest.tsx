@@ -26,6 +26,7 @@ import {
 import LoadingSpinner from "../../../../ui-components/loadingSpinner";
 import { useEffect } from "react";
 import IGasType from "../../../../../type/IGasType";
+import PaymentStatusEnum from "../../../../../constant/paymentStatusEnum";
 
 const OutletActiveGasRequest = () => {
   const { id } = useParams();
@@ -62,6 +63,9 @@ const OutletActiveGasRequest = () => {
 
   const isLoading = isGasRquestLoading || isUpdating;
 
+  const hasFieldDisabled =
+    gasRequest?.payment?.status === PaymentStatusEnum.PAID;
+
   const onSubmit: SubmitHandler<
     Partial<IIndividualCustomerGasRequest>
   > = async (data) => {
@@ -88,8 +92,6 @@ const OutletActiveGasRequest = () => {
   return (
     <Card className="w-full max-w-2xl mx-auto">
       {isLoading && <LoadingSpinner />}
-      {error && <Banner type="error">{error}</Banner>}
-      {updateError && <Banner type="error">{updateError}</Banner>}
 
       <CardHeader>
         <CardTitle>Manage Gas Request</CardTitle>
@@ -99,6 +101,11 @@ const OutletActiveGasRequest = () => {
       </CardHeader>
 
       <CardContent>
+        {error && <Banner type="error">{error}</Banner>}
+        {updateError && <Banner type="error">{updateError}</Banner>}
+        {hasFieldDisabled && (
+          <Banner type="info">Payment is Already done</Banner>
+        )}
         <div className="grid grid-cols-1 gap-4 mb-6">
           <div className="grid grid-cols-2">
             <p className="font-semibold">Name:</p>
@@ -127,17 +134,20 @@ const OutletActiveGasRequest = () => {
           <h2 className="mb-2 font-bold">Update Payment</h2>
           <CheckboxInput
             label="Gas returned"
+            disabled={hasFieldDisabled}
             id="gas_request"
             {...register("gas.isCylinderReturned")}
           />
           <Select
             label="Payment Status"
             options={paymentOptions}
+            disabled={hasFieldDisabled}
             {...register("payment.status")}
           />
           <TextInput
             label="Total Amount"
             type="number"
+            disabled={hasFieldDisabled}
             value={(gasRequest?.gas?.type as IGasType)?.price}
             {...register("payment.totalAmount")}
           />
@@ -147,11 +157,12 @@ const OutletActiveGasRequest = () => {
             {...register("payment.method", {
               required: "Payment method is required",
             })}
+            disabled={hasFieldDisabled}
             error={errors.payment?.method?.message}
           />
 
           <div className="flex justify-end space-x-4">
-            <Button type="submit" disabled={isLoading}>
+            <Button type="submit" disabled={isLoading || hasFieldDisabled}>
               Pay
             </Button>
             <Button
