@@ -3,10 +3,9 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import ActiveStatus from "../../../../constant/activeStatusOptions";
 import DeliveryStatusEnum from "../../../../constant/DeliveryStatusEnum";
 import GasRequestTypeEnum from "../../../../constant/gasRequestTypeEnum";
-import gasTypeOption from "../../../../constant/gasTypeOptions";
-import GasTypeEnum from "../../../../constant/gasTypesEnum";
 import { requestTypeOptions } from "../../../../constant/selectOptions";
 import useApiFetch from "../../../../hooks/useApiFetch";
+import useGetGasTypes from "../../../../hooks/useGetGasTypes";
 import useGetIndividualGasRequest from "../../../../hooks/useGetIndividualGasRequest";
 import useGetOutlets from "../../../../hooks/useGetOutlets";
 import useGetSchedule from "../../../../hooks/useGetSchedule";
@@ -36,12 +35,24 @@ const Individual = ({ profile }: IndividualProps) => {
     userId: profile._id,
   });
   const { data: schedules } = useGetSchedule();
+  const { data: gasTypeData } = useGetGasTypes();
   const { isLoading, error, postData } =
     useApiFetch<IIndividualCustomerGasRequest>({
       url: "/gas-request/individual",
     });
 
   const { data: outlets } = useGetOutlets();
+
+  const gasTypeOption = useMemo(() => {
+    if (!gasTypeData) {
+      return [];
+    }
+
+    return gasTypeData.map((gasType) => ({
+      label: `${gasType.name} - ${gasType.description} - LKR ${gasType.price}`,
+      value: gasType._id!,
+    }));
+  }, [gasTypeData]);
 
   const outletOptions = useMemo(() => {
     if (!outlets) {
@@ -80,7 +91,7 @@ const Individual = ({ profile }: IndividualProps) => {
       scheduleId: schedule?._id!,
       gas: {
         ...data.gas,
-        type: data.gas?.type as GasTypeEnum,
+        type: data.gas?.type,
         requestType: data.gas?.requestType!,
         isCylinderReturned: false,
         gasQuantity: 1,
@@ -168,7 +179,7 @@ const Individual = ({ profile }: IndividualProps) => {
             {...register("gas.type", {
               required: "Please select a gas type",
             })}
-            selected={gasTypeOption[0].value}
+            selected={gasTypeData[0]?.name}
             disabled={hasNotGasRequestEnabled}
           />
           <Select

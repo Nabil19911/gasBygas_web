@@ -1,7 +1,11 @@
 import { SquareCheck } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import GasRequestTypeEnum from "../../constant/gasRequestTypeEnum";
+import PathsEnum from "../../constant/pathsEnum";
 import useApiFetch from "../../hooks/useApiFetch";
+import useGetIndividualGasRequest from "../../hooks/useGetIndividualGasRequest";
 import { IIndividualCustomerGasRequest } from "../../type/IGasRequest";
+import IGasType from "../../type/IGasType";
 import IToken from "../../type/IToken";
 import Banner from "../ui-components/banner";
 import {
@@ -11,10 +15,7 @@ import {
   CardTitle,
 } from "../ui-components/card/Card";
 import { Button, Link, TextInput } from "../ui-components/form-fields";
-import GasRequestTypeEnum from "../../constant/gasRequestTypeEnum";
 import LoadingSpinner from "../ui-components/loadingSpinner";
-import PathsEnum from "../../constant/pathsEnum";
-import useGetIndividualGasRequest from "../../hooks/useGetIndividualGasRequest";
 
 const VerifyToken = () => {
   const {
@@ -88,7 +89,7 @@ const VerifyToken = () => {
               </p>
               <p className="flex gap-1 text-sm">
                 <span className="font-bold">Gas Type:</span>
-                {tokenData?.gas?.type || "N/A"}
+                {(tokenData?.gas?.type as IGasType).name || "N/A"}
               </p>
               <p className="flex gap-1 text-sm">
                 <span className="font-bold">Request Type:</span>
