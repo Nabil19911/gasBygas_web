@@ -25,6 +25,7 @@ import {
 } from "../../../../ui-components/form-fields";
 import LoadingSpinner from "../../../../ui-components/loadingSpinner";
 import { useEffect } from "react";
+import IGasType from "../../../../../type/IGasType";
 
 const OutletActiveGasRequest = () => {
   const { id } = useParams();
@@ -106,7 +107,7 @@ const OutletActiveGasRequest = () => {
           </div>
           <div className="grid grid-cols-2">
             <p className="font-semibold">Gas Type:</p>
-            <p>{gasRequest?.gas?.type}</p>
+            <p>{(gasRequest?.gas?.type as IGasType)?.name}</p>
           </div>
           <div className="grid grid-cols-2">
             <p className="font-semibold">Current Schedule Date:</p>
@@ -133,6 +134,7 @@ const OutletActiveGasRequest = () => {
           <TextInput
             label="Total Amount"
             type="number"
+            value={(gasRequest?.gas?.type as IGasType)?.price}
             {...register("payment.totalAmount")}
           />
           <Select
@@ -143,7 +145,7 @@ const OutletActiveGasRequest = () => {
 
           <div className="flex justify-end space-x-4">
             <Button type="submit" disabled={isLoading}>
-              Save
+              Pay
             </Button>
             <Button
               onClick={() => navigate(-1)}
