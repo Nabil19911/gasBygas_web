@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import gasTypeOption from "../../../constant/gasTypeOptions";
 import useApiFetch from "../../../hooks/useApiFetch";
+import useGetGasTypes from "../../../hooks/useGetGasTypes";
 import IStock from "../../../type/IStock";
 import Banner from "../../ui-components/banner";
 import {
@@ -12,6 +13,7 @@ import {
 import { Button, TextInput } from "../../ui-components/form-fields";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
 import Modal from "../../ui-components/modal/Modal";
+import GasTypeModal from "../GasTypeModal";
 
 interface IStockModalProps {
   isOpen: boolean;
@@ -26,16 +28,24 @@ const StockModal = ({
   fetchStock,
   closeModal,
 }: IStockModalProps) => {
+  const [isGasTypeModalOpen, setIsGasTypeModalOpen] = useState(false);
   const {
     postData: updateStock,
     isLoading,
     error,
   } = useApiFetch<IStock>({
-    url: `/stock/update/${stock._id}`,
+    url: `/stock/${stock._id || ""}`,
     options: {
-      method: "put",
+      method: stock._id ? "put" : "post",
     },
   });
+
+  const {
+    data: gasTypeData,
+    isLoading: isGasTypeLoading,
+    error: errorInGasType,
+    fetchData: refetchGasType,
+  } = useGetGasTypes();
 
   const { register, handleSubmit, reset, watch } = useForm<IStock>();
 
@@ -48,69 +58,102 @@ const StockModal = ({
     }
   };
 
+  const hasNoGasType = gasTypeData?.length === 0;
+
   return (
-    <Modal isOpen={isOpen} onClose={closeModal} title="Add Stock">
+    <Modal
+      isOpen={isOpen}
+      onClose={closeModal}
+      title="Add Stock"
+      className="w-full max-w-2xl"
+    >
+      <GasTypeModal
+        isOpen={isGasTypeModalOpen}
+        closeModal={() => setIsGasTypeModalOpen(false)}
+        refetchGasType={refetchGasType}
+      />
       <Card className="w-full max-w-2xl mx-auto">
-        {isLoading && <LoadingSpinner />}
+        {isLoading && isGasTypeLoading && <LoadingSpinner />}
         <CardHeader>
-          <CardDescription>Fill in the Stock details below.</CardDescription>
+          {!hasNoGasType && (
+            <CardDescription>Fill in the Stock details below.</CardDescription>
+          )}
+          <Button size="sm" onClick={() => setIsGasTypeModalOpen(true)}>
+            Add Gas Type
+          </Button>
         </CardHeader>
-        <CardContent>
-          {error && <Banner type="error">{error}</Banner>}
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {gasTypeOption.map((gasType, gasIndex) => {
-              const maxValue = stock?.stock
-                ? stock?.stock[gasIndex]?.maximumCapacity
-                : 0;
+        {!hasNoGasType && (
+          <CardContent>
+            {error && <Banner type="error">{error}</Banner>}
+            {errorInGasType && <Banner type="error">{errorInGasType}</Banner>}
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              {gasTypeData?.map((gasType, gasIndex) => {
+                const maxValue = stock?.stock
+                  ? stock?.stock[gasIndex]?.maximumCapacity
+                  : 0;
 
-              const currentStock = stock?.stock
-                ? stock?.stock[gasIndex]?.currentStock
-                : 0;
-              return (
-                <div key={gasIndex} className="grid grid-cols-4 gap-4">
-                  <TextInput
-                    label={`Gas Type ${gasIndex + 1}`}
-                    disabled
-                    value={gasType.value}
-                    {...register(`stock.${gasIndex}.gasType`, {})}
-                  />
+                const currentStock = stock?.stock
+                  ? stock?.stock[gasIndex]?.currentStock
+                  : 0;
+                return (
+                  <div key={gasIndex} className="grid grid-cols-5 gap-6">
+                    <div className="flex items-center">
+                      <p
+                        {...register(`stock.${gasIndex}.gasType`, {
+                          value: gasType._id,
+                        })}
+                      >
+                        {gasType.name}
+                      </p>
+                    </div>
 
-                  <TextInput
-                    label="Maximum Capacity"
-                    type="number"
-                    defaultValue={maxValue}
-                    {...register(`stock.${gasIndex}.maximumCapacity`, {})}
-                  />
-                  <TextInput
-                    label="Minimum Threshold"
-                    type="number"
-                    defaultValue={
-                      stock?.stock
-                        ? stock?.stock[gasIndex]?.minimumThreshold
-                        : 0
-                    }
-                    {...register(`stock.${gasIndex}.minimumThreshold`, {})}
-                  />
-                  <TextInput
-                    label={`Current Stock - ${currentStock}`}
-                    type="number"
-                    {...register(`stock.${gasIndex}.currentStock`, {})}
-                    max={watch(`stock.${gasIndex}.maximumCapacity`) || maxValue}
-                  />
-                </div>
-              );
-            })}
-            <div className="flex justify-end space-x-4">
-              <Button type="submit">Save</Button>
-              <Button
-                onClick={closeModal}
-                className="bg-red-500 hover:bg-red-400"
-              >
-                Close
-              </Button>
-            </div>
-          </form>
-        </CardContent>
+                    <TextInput
+                      label="Max Capacity"
+                      type="number"
+                      disabled={hasNoGasType}
+                      defaultValue={maxValue}
+                      {...register(`stock.${gasIndex}.maximumCapacity`, {})}
+                    />
+                    <TextInput
+                      label="Min Threshold"
+                      type="number"
+                      disabled={hasNoGasType}
+                      defaultValue={
+                        stock?.stock
+                          ? stock?.stock[gasIndex]?.minimumThreshold
+                          : 0
+                      }
+                      {...register(`stock.${gasIndex}.minimumThreshold`, {})}
+                    />
+                    <TextInput
+                      label={`Current Stock - ${currentStock}`}
+                      type="number"
+                      disabled={hasNoGasType}
+                      {...register(`stock.${gasIndex}.currentStock`, {})}
+                      max={
+                        watch(`stock.${gasIndex}.maximumCapacity`) || maxValue
+                      }
+                    />
+                    <div className="flex items-end">
+                      <Button type="button" size="sm">
+                        Edit
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+              <div className="flex justify-end space-x-4">
+                <Button type="submit">Save</Button>
+                <Button
+                  onClick={closeModal}
+                  className="bg-red-500 hover:bg-red-400"
+                >
+                  Close
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        )}
       </Card>
     </Modal>
   );

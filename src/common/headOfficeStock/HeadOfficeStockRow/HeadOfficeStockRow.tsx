@@ -1,14 +1,17 @@
+import IGasType from "../../../type/IGasType";
 import Table from "../../ui-components/table";
 
 interface HeadOfficeStockRowProps {
-  item: { gasType: string; currentStock: number };
+  item: { gasType: IGasType; currentStock: number, reservedStock: number };
 }
 
 const HeadOfficeStockRow = ({ item }: HeadOfficeStockRowProps) => {
   return (
     <Table.Row>
-      <Table.Cell>{item.gasType}</Table.Cell>
+      <Table.Cell>{item.gasType.name}</Table.Cell>
+      <Table.Cell>{item.reservedStock}</Table.Cell>
       <Table.Cell>{item.currentStock}</Table.Cell>
+      <Table.Cell>{item.gasType.price}</Table.Cell>
     </Table.Row>
   );
 };

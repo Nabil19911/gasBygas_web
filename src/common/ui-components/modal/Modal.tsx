@@ -56,7 +56,7 @@ export const Modal = ({
       ></div>
       <div
         ref={modalRef}
-        className={`relative w-auto max-w-3xl mx-auto my-6 bg-white rounded-lg shadow-lg ${className}`}
+        className={`relative mx-auto my-6 bg-white rounded-lg shadow-lg w-full max-w-2xl ${className}`}
         tabIndex={-1}
       >
         <div className="flex items-start justify-between p-5 border-b border-solid rounded-t border-blueGray-200">

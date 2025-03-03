@@ -1,9 +1,8 @@
-import GasTypeEnum from "../constant/gasTypesEnum";
-
+import IGasType from "./IGasType";
 
 export interface IStockItem {
   currentStock: number;
-  gasType: GasTypeEnum; // The gas type should be one of the enum values
+  gasType: IGasType[] | string; // The gas type should be one of the enum values
   reservedStock?: number;
   minimumThreshold?: number;
   maximumCapacity?: number;

@@ -7,11 +7,12 @@ import RolesEnum from "../constant/rolesEnum";
 import { TProfileData } from "../store/silces/profileSlice";
 import ICustomer from "./ICustomer";
 import { ISchedule } from "./IDeliveryRequest";
+import IGasType from "./IGasType";
 import { IOutlet } from "./IOutlet";
 import IToken from "./IToken";
 
 interface IGas {
-  type?: GasTypeEnum;
+  type?: IGasType | string;
   requestType?: GasRequestTypeEnum;
   isCylinderReturned?: boolean;
   gasQuantity?: number;

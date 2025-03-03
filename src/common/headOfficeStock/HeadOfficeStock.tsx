@@ -10,6 +10,7 @@ import {
 import { Button } from "../ui-components/form-fields";
 import Table from "../ui-components/table";
 import HeadOfficeStockRow from "./HeadOfficeStockRow";
+import IGasType from "../../type/IGasType";
 
 interface IHeadOfficeStockProps {
   openModal: () => void;
@@ -19,7 +20,14 @@ interface IHeadOfficeStockProps {
 const HeadOfficeStock = ({ stock, openModal }: IHeadOfficeStockProps) => {
   const renderStockRows = useCallback(() => {
     return stock?.stock?.map((item) => (
-      <HeadOfficeStockRow key={item.gasType} item={item} />
+      <HeadOfficeStockRow
+        key={(item.gasType as unknown as IGasType)._id}
+        item={{
+          ...item,
+          gasType: item.gasType as unknown as IGasType,
+          reservedStock: item.reservedStock ?? 0,
+        }}
+      />
     ));
   }, [stock]);
 
@@ -32,7 +40,7 @@ const HeadOfficeStock = ({ stock, openModal }: IHeadOfficeStockProps) => {
             Stock Level
           </div>
           <Button size="sm" onClick={openModal}>
-            Update Stock
+            Add Stock
           </Button>
         </CardTitle>
       </CardHeader>
@@ -41,7 +49,9 @@ const HeadOfficeStock = ({ stock, openModal }: IHeadOfficeStockProps) => {
         <Table>
           <Table.Header>
             <Table.Column>Gas Type</Table.Column>
+            <Table.Column>Reserved Stock</Table.Column>
             <Table.Column>Current Stock</Table.Column>
+            <Table.Column>Unit Price</Table.Column>
           </Table.Header>
           <Table.Body>{renderStockRows()}</Table.Body>
         </Table>
