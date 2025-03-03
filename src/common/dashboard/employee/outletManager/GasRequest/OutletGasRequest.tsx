@@ -1,17 +1,17 @@
 import { ArrowDownCircle } from "lucide-react";
+import { useCallback, useState } from "react";
+import useGetOutletGasRequestById from "../../../../../hooks/useGetOutletGasRequestById";
+import { getUserProfile } from "../../../../../store/selectors/profileSelector";
+import { useAppSelector } from "../../../../../store/store";
+import { ISchedule } from "../../../../../type/IDeliveryRequest";
+import OutletGasRequestModal from "../../../../modal/OutletGasRequestModal";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "../../../../ui-components/card/Card";
-import { Button, Link } from "../../../../ui-components/form-fields";
-import OutletGasRequestModal from "../../../../modal/OutletGasRequestModal";
-import { useCallback, useState } from "react";
-import { useAppSelector } from "../../../../../store/store";
-import { getUserProfile } from "../../../../../store/selectors/profileSelector";
-import useGetOutletGasRequestById from "../../../../../hooks/useGetOutletGasRequestById";
-import { ISchedule } from "../../../../../type/IDeliveryRequest";
+import { Button } from "../../../../ui-components/form-fields";
 
 const OutletGasRequest = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,9 +36,6 @@ const OutletGasRequest = () => {
           <p className="font-medium">
             {outletGasRequest?.headOfficeApproval?.status}
           </p>
-          <Link size="sm" href="">
-            View
-          </Link>
         </li>
       );
     });

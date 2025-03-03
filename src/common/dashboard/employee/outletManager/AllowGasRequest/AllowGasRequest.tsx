@@ -108,7 +108,7 @@ const AllowGasRequest = () => {
                     {activeGasRequest?.payment?.status}
                   </p>
                   <p className="text-sm text-gray-500">
-                    <span className="font-bold">Delivery At:</span>{" "}
+                    <span className="font-bold">Delivery on:</span>{" "}
                     {new Date(
                       (activeGasRequest?.scheduleId as ISchedule)
                         ?.deliveryDate || ""

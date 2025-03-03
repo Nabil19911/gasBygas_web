@@ -28,7 +28,7 @@ const OrganizationApprovals = () => {
       <CardHeader>
         <CardTitle className="text-xl font-semibold flex items-center">
           <ClipboardCheck className="mr-2 h-5 w-5" />
-          Pending Organization Approvals
+          Organization Register Approvals
         </CardTitle>
       </CardHeader>
       <CardContent>
