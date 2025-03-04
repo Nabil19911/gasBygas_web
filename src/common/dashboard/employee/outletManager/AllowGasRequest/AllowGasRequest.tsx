@@ -11,7 +11,7 @@ import ICustomer from "../../../../../type/ICustomer";
 import { ISchedule } from "../../../../../type/IDeliveryRequest";
 import { IOutlet } from "../../../../../type/IOutlet";
 import OutletGasRequestAllowModal from "../../../../modal/OutletGasRequestAllowModal";
-import ReallocateModal from "../../../../modal/ReallocateModal/ReallocateModal";
+import ReallocateScheduleModal from "../../../../modal/ReallocateScheduleModal";
 import Banner from "../../../../ui-components/banner";
 import {
   Card,
@@ -21,12 +21,17 @@ import {
 } from "../../../../ui-components/card/Card";
 import { Button } from "../../../../ui-components/form-fields";
 import IToken from "../../../../../type/IToken";
+import ReallocateCustomerModal from "../../../../modal/ReallocateCustomerModal";
 
 const AllowGasRequest = () => {
   const [isAllowModalOpen, setIsAllowModalOpen] = useState(false);
   const [isViewModal, setIsViewModal] = useState(false);
+  const [isReallocateCustomerModal, setIsReallocateCustomerModal] =
+    useState(false);
   const [selectedId, setSelectedId] = useState<string>();
   const [selectedScheduleId, setSelectedScheduleId] = useState<string>();
+
+  const [currentCustomerId, setCurrentCustomerId] = useState<string>();
   const { data: profile } = useAppSelector(getUserProfile);
   const { data: activeGasRequests, fetchData } = useGetIndividualGasRequest({
     outletId: profile?.outlet?._id,
@@ -45,12 +50,19 @@ const AllowGasRequest = () => {
 
   return (
     <Card>
-      <ReallocateModal
+      <ReallocateScheduleModal
         closeModal={() => setIsViewModal(false)}
         isOpen={isViewModal}
         selectedId={selectedId}
         fetchData={() => fetchData({ outletId: profile?.outlet?._id })}
         selectedScheduleId={selectedScheduleId}
+      />
+      <ReallocateCustomerModal
+        closeModal={() => setIsReallocateCustomerModal(false)}
+        isOpen={isReallocateCustomerModal}
+        activeGasRequests={activeGasRequests}
+        currentCustomerId={currentCustomerId!}
+        fetchData={() => fetchData({ outletId: profile?.outlet?._id })}
       />
       <OutletGasRequestAllowModal
         outlet={outlet}
@@ -82,83 +94,116 @@ const AllowGasRequest = () => {
             activeGas?.active_until ?? ""
           ).toLocaleDateString()}`}</Banner>
         )}
+        <Button
+          size="sm"
+          className="cursor-pointer"
+          onClick={() => {
+            // setSelectedId(activeGasRequest?._id!);
+            // setSelectedScheduleId(
+            //   (activeGasRequest?.scheduleId as ISchedule)?._id
+            // );
+            setIsViewModal(true);
+          }}
+        >
+          Reallocate to another schedule
+        </Button>
         <ul className="space-y-4">
-          {activeGasRequests.map((activeGasRequest) => {
-            return (
-              <li
-                key={activeGasRequest._id}
-                className="flex justify-between items-center p-2 space-x-4"
-                style={{
-                  border:
-                    activeGasRequest.payment?.status === "OVERDUE"
-                      ? "1px solid red"
-                      : "",
-                }}
-              >
-                <div>
-                  <p className="font-medium">
-                    <span className="font-bold">Name:</span>{" "}
-                    {
-                      (activeGasRequest?.userId as ICustomer)
-                        ?.individual_details?.first_name
-                    }
-                  </p>
-                  <p className="text-sm  text-gray-500">
-                    <span className="font-bold">Payment Status:</span>{" "}
-                    {activeGasRequest?.payment?.status}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    <span className="font-bold">Delivery on:</span>{" "}
-                    {new Date(
-                      (activeGasRequest?.scheduleId as ISchedule)
-                        ?.deliveryDate || ""
-                    ).toLocaleDateString()}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    <span className="font-bold">Token:</span>{" "}
-                    {(activeGasRequest?.tokenId as IToken)?.token || ""}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    <span className="font-bold">Token Active Until:</span>{" "}
-                    {new Date(
-                      (activeGasRequest?.tokenId as IToken)?.expiryDate || ""
-                    ).toLocaleDateString()}
-                  </p>
-                  {activeGasRequest.reallocateGasRequest?.is_reallocated && (
-                    <p>
-                      <span className="font-bold text-gray-500">
-                        Reallocated to:
-                      </span>{" "}
+          {activeGasRequests
+            .filter((activeGasRequest) => activeGasRequest.tokenId)
+            .map((activeGasRequest) => {
+              return (
+                <li
+                  key={activeGasRequest._id}
+                  className="flex justify-between items-center p-2 space-x-4"
+                  style={{
+                    border:
+                      activeGasRequest.payment?.status === "OVERDUE"
+                        ? "1px solid red"
+                        : "",
+                  }}
+                >
+                  <div>
+                    <p className="font-medium">
+                      <span className="font-bold">Name:</span>{" "}
                       {
-                        (
-                          activeGasRequest?.reallocateGasRequest
-                            ?.toSheduleId as ISchedule
-                        ).deliveryDate
+                        (activeGasRequest?.userId as ICustomer)
+                          ?.individual_details?.first_name
                       }
                     </p>
-                  )}
-                </div>
-                <div>
-                  {(activeGasRequest?.scheduleId as ISchedule)?.status ===
-                    DeliveryStatusEnum.Cancelled && (
+                    <p className="text-sm  text-gray-500">
+                      <span className="font-bold">Payment Status:</span>{" "}
+                      {activeGasRequest?.payment?.status}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      <span className="font-bold">Delivery on:</span>{" "}
+                      {new Date(
+                        (activeGasRequest?.scheduleId as ISchedule)
+                          ?.deliveryDate || ""
+                      ).toLocaleDateString()}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      <span className="font-bold">Token:</span>{" "}
+                      {(activeGasRequest?.tokenId as IToken)?.token || ""}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      <span className="font-bold">Token Active Until:</span>{" "}
+                      {new Date(
+                        (activeGasRequest?.tokenId as IToken)?.expiryDate || ""
+                      ).toLocaleDateString()}
+                    </p>
+                    {activeGasRequest.reallocateGasRequest?.is_reallocated && (
+                      <p>
+                        <span className="font-bold text-gray-500">
+                          Reallocated to:
+                        </span>{" "}
+                        {
+                          (
+                            activeGasRequest?.reallocateGasRequest
+                              ?.toSheduleId as ISchedule
+                          ).deliveryDate
+                        }
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    {/* {(activeGasRequest?.scheduleId as ISchedule)?.status ===
+                      DeliveryStatusEnum.Cancelled && (
+                      <Button
+                        size="sm"
+                        className="cursor-pointer"
+                        onClick={() => {
+                          setSelectedId(activeGasRequest?._id!);
+                          setSelectedScheduleId(
+                            (activeGasRequest?.scheduleId as ISchedule)?._id
+                          );
+                          setIsViewModal(true);
+                        }}
+                      >
+                        Reallocate
+                      </Button>
+                    )} */}
                     <Button
                       size="sm"
-                      className="cursor-pointer"
                       onClick={() => {
-                        setSelectedId(activeGasRequest?._id!);
-                        setSelectedScheduleId(
-                          (activeGasRequest?.scheduleId as ISchedule)?._id
+                        setIsReallocateCustomerModal(true);
+                        setCurrentCustomerId(
+                          (activeGasRequest?.userId as ICustomer)?._id
                         );
-                        setIsViewModal(true);
                       }}
                     >
-                      Reallocate
+                      Reallocate token
                     </Button>
-                  )}
-                </div>
-              </li>
-            );
-          })}
+                    <Button
+                      className="bg-red-500 text-white hover:bg-red-600"
+                      size="sm"
+                      onClick={() => console.log("hi")}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </li>
+              );
+            })}
         </ul>
       </CardContent>
     </Card>

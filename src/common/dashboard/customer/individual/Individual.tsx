@@ -135,7 +135,7 @@ const Individual = ({ profile }: IndividualProps) => {
     return (
       <div className="h-1/2 flex flex-col items-center justify-center bg-gray-100 p-2">
         <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-center font-semibold text-gray-800">
-          You are request has been in waiting list. Once available token, you will be notified by email.
+          You are request has been in waiting list. Once token available, you will be notified by email.
         </p>
       </div>
     );

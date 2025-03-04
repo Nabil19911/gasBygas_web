@@ -1,100 +1,101 @@
 import { useMemo } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import DeliveryStatusEnum from "../../../constant/DeliveryStatusEnum";
 import useApiFetch from "../../../hooks/useApiFetch";
-import useGetSchedule from "../../../hooks/useGetSchedule";
+import ICustomer from "../../../type/ICustomer";
 import { IIndividualCustomerGasRequest } from "../../../type/IGasRequest";
-import ISelectOption from "../../../type/ISelectOption";
-import Banner from "../../ui-components/banner";
-import {
-  Card,
-  CardContent
-} from "../../ui-components/card/Card";
+import IToken from "../../../type/IToken";
+import { Card, CardContent } from "../../ui-components/card/Card";
 import { Button, Select, Textarea } from "../../ui-components/form-fields";
-import LoadingSpinner from "../../ui-components/loadingSpinner";
 import Modal from "../../ui-components/modal/Modal";
 
-interface IReallocateModalProps {
+interface IReallocateCustomerModalProps {
   isOpen: boolean;
   closeModal: () => void;
-  selectedId?: string;
-  selectedScheduleId?: string;
+  activeGasRequests: IIndividualCustomerGasRequest[];
+  currentCustomerId: string;
   fetchData: () => Promise<void>;
 }
 
-const ReallocateModal = ({
+const ReallocateCustomerModal = ({
   isOpen,
   closeModal,
-  selectedId,
-  selectedScheduleId,
+  activeGasRequests,
+  currentCustomerId,
   fetchData,
-}: IReallocateModalProps) => {
+}: IReallocateCustomerModalProps) => {
   const { register, handleSubmit } =
     useForm<Partial<IIndividualCustomerGasRequest>>();
 
-  const { data: schedules } = useGetSchedule();
-
   const {
     postData: updateGasRequest,
-    isLoading,
+    isLoading: isReallocationLoading,
     error,
   } = useApiFetch<Partial<IIndividualCustomerGasRequest>>({
-    url: `/gas-request/individual/reallocate/${selectedId}`,
+    url: `/gas-request/individual/reallocate-customer`,
     options: { method: "patch" },
   });
 
-  const scheduleOptions = useMemo(() => {
-    if (schedules.length === 0) {
-      return [] as ISelectOption[];
-    }
-    return schedules
-      ?.filter((item) => item.status === DeliveryStatusEnum.Pending)
-      .map((schedule) => ({
-        value: schedule?._id || "",
-        label: schedule?.deliveryDate || "",
-      }));
-  }, [schedules]);
+  const customerOption = useMemo(() => {
+    return activeGasRequests
+      .filter((activeGasRequest) => !activeGasRequest.tokenId)
+      .map((item) => {
+        const customer = item.userId as ICustomer;
+        return {
+          label:
+            `${customer.individual_details?.first_name} ${customer.individual_details?.last_name}` ||
+            "",
+          value: customer._id || "",
+        };
+      });
+  }, [activeGasRequests]);
 
   const onSubmit: SubmitHandler<
     Partial<IIndividualCustomerGasRequest>
   > = async (data) => {
-    await updateGasRequest({
-      reallocateGasRequest: {
-        is_reallocated: true,
-        fromScheduleId: selectedScheduleId,
-        toSheduleId: data.reallocateGasRequest?.toSheduleId,
-        comments: data.reallocateGasRequest?.comments,
-      },
-    });
+    const activeToken = (
+      activeGasRequests.find(
+        (item) => (item.userId as ICustomer)._id === currentCustomerId
+      )?.tokenId as IToken
+    )._id;
+
+    const saveData = {
+      comment: data.comment,
+      activeToken,
+      selectedCustomerId: data.userId,
+      currentCustomerId,
+    };
+
+    await updateGasRequest(saveData);
+
     await fetchData();
     if (!isLoading && !error) {
       closeModal();
     }
   };
-
+  const isLoading = isReallocationLoading;
   return (
     <Modal
       isOpen={isOpen}
       onClose={closeModal}
-      title="Reallocate Gas Request"
+      title="Reallocate Customer"
       className="w-lg"
     >
-      {isLoading && <LoadingSpinner />}
-      {error && <Banner type="error">{error}</Banner>}
+      {/* {isLoading && <LoadingSpinner />}
+      {error && <Banner type="error">{error}</Banner>} */}
       <Card className="w-full max-w-2xl mx-auto p-4">
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <Select
-              label="Select Schedule"
-              {...register("reallocateGasRequest.toSheduleId", {
+              label="Select Customer"
+              {...register("userId", {
                 required: true,
               })}
-              options={scheduleOptions}
+              options={customerOption}
             />
             <Textarea
               label="Comments (Optional)"
               placeholder="Enter reason for reallocation"
-              {...register("reallocateGasRequest.comments")}
+              {...register("comment")}
             />
 
             <div className="flex justify-end space-x-4">
@@ -116,4 +117,4 @@ const ReallocateModal = ({
   );
 };
 
-export default ReallocateModal;
+export default ReallocateCustomerModal;
