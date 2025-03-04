@@ -11,7 +11,7 @@ const HeadOfficeStockRow = ({ item }: HeadOfficeStockRowProps) => {
       <Table.Cell>{item.gasType.name}</Table.Cell>
       <Table.Cell>{item.reservedStock}</Table.Cell>
       <Table.Cell>{item.currentStock}</Table.Cell>
-      <Table.Cell>{item.gasType.price}</Table.Cell>
+      <Table.Cell>LKR {item.gasType.price}</Table.Cell>
     </Table.Row>
   );
 };

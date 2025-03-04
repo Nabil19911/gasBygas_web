@@ -6,15 +6,19 @@ import { Card, CardContent } from "../../ui-components/card/Card";
 import { Button, Textarea, TextInput } from "../../ui-components/form-fields";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
 import Modal from "../../ui-components/modal/Modal";
+import useFetch from "../../../hooks/useFetch";
+import { useEffect } from "react";
 
 interface IGasTypeProps {
   isOpen: boolean;
+  gasTypeId?: string;
   closeModal: () => void;
   refetchGasType: () => Promise<void>;
 }
 
 const GasTypeModal = ({
   isOpen,
+  gasTypeId,
   closeModal,
   refetchGasType,
 }: IGasTypeProps) => {
@@ -23,13 +27,28 @@ const GasTypeModal = ({
     isLoading,
     error,
   } = useApiFetch<IGasType>({
-    url: "/gas-type/",
+    url: `/gas-type/${gasTypeId}`,
     options: {
-      method: "post",
+      method: gasTypeId ? "patch" : "post",
     },
   });
 
+  const { getNewData } = useFetch<IGasType>({
+    url: `/gas-type/${gasTypeId}`,
+    initialLoad: true,
+  });
+
   const { register, handleSubmit, reset } = useForm<IGasType>();
+
+  useEffect(() => {
+    const fetch = async () => {
+      const res = await getNewData();
+      if (res) {
+        reset(res as unknown as IGasType);
+      }
+    };
+    fetch();
+  }, [gasTypeId]);
 
   const onSubmit = async (data: IGasType) => {
     await addGasType(data);
@@ -41,7 +60,11 @@ const GasTypeModal = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={closeModal} title="Add New Gas Type">
+    <Modal
+      isOpen={isOpen}
+      onClose={closeModal}
+      title={`${gasTypeId ? "Edit" : "Add"} New Gas Type`}
+    >
       <Card className="w-full max-w-2xl mx-auto">
         {isLoading && <LoadingSpinner />}
         <CardContent>

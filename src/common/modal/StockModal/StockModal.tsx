@@ -29,6 +29,8 @@ const StockModal = ({
   closeModal,
 }: IStockModalProps) => {
   const [isGasTypeModalOpen, setIsGasTypeModalOpen] = useState(false);
+  const [gasTypeId, setGasTypeId] = useState<string>();
+
   const {
     postData: updateStock,
     isLoading,
@@ -69,6 +71,7 @@ const StockModal = ({
     >
       <GasTypeModal
         isOpen={isGasTypeModalOpen}
+        gasTypeId={gasTypeId}
         closeModal={() => setIsGasTypeModalOpen(false)}
         refetchGasType={refetchGasType}
       />
@@ -135,7 +138,10 @@ const StockModal = ({
                       }
                     />
                     <div className="flex items-end">
-                      <Button type="button" size="sm">
+                      <Button type="button" size="sm" onClick={() => {
+                        setIsGasTypeModalOpen(true)
+                        setGasTypeId(gasType._id)
+                      }}>
                         Edit
                       </Button>
                     </div>

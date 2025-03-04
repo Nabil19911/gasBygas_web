@@ -22,7 +22,7 @@ const OutletGasRequestView = () => {
           <ClipboardCheck className="mr-2 h-5 w-5" />
           Outlet gas requests
         </CardTitle>
-        <Link size="sm">History</Link>
+        {/* <Link size="sm">History</Link> */}
       </CardHeader>
       <CardContent>
         <ul className="space-y-4">

@@ -34,6 +34,7 @@ const useFetch = <T extends unknown>({
       });
       setData(responseData);
       setError(null);
+      return responseData
     } catch (error) {
       const axiosErrorMeesage = handleAxiosError(error as string);
       const errorMessage =
