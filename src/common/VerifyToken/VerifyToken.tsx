@@ -30,14 +30,15 @@ const VerifyToken = () => {
     },
   });
 
-  const { data: activeGasRequests } = useGetIndividualGasRequest({
-    tokenId: tokenData?._id,
-  });
+  const { data: activeGasRequests, fetchData } = useGetIndividualGasRequest({});
 
   const { register, handleSubmit } = useForm<IToken>();
 
   const onSubmit: SubmitHandler<IToken> = async (data) => {
-    await postData(data);
+    const res = (await postData(data)) as IIndividualCustomerGasRequest;
+    await fetchData({
+      tokenId: (res?.tokenId as IToken)?._id,
+    });
   };
 
   return (
