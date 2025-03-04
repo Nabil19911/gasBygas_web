@@ -22,12 +22,14 @@ interface IOutletGasRequestAllowModalProps {
   isOpen: boolean;
   outlet?: IOutlet;
   closeModal: () => void;
+  fetchData: () => void;
 }
 
 const OutletGasRequestAllowModal = ({
   isOpen,
   outlet,
   closeModal,
+  fetchData,
 }: IOutletGasRequestAllowModalProps) => {
   const [selectedSchedule, setSelectedSchedule] = useState<string>();
   const { data: profile } = useAppSelector(getUserProfile);
@@ -88,8 +90,11 @@ const OutletGasRequestAllowModal = ({
         scheduleId: selectedSchedule,
       },
     });
+    await fetchData();
+
     if (!isLoading) {
       closeModal();
+      reset();
     }
   };
 

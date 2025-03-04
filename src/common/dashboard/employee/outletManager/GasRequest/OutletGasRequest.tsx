@@ -54,7 +54,7 @@ const OutletGasRequest = () => {
           <div className="flex items-center flex-initial w-full">
             {/* <Route className="mr-2 h-5 w-5" /> */}
             <ArrowDownCircle className="mr-2 h-5 w-5" />
-            Gas Request Details
+            Request Details
           </div>
           <Button
             size="sm"

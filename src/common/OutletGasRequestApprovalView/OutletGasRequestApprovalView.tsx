@@ -1,9 +1,13 @@
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
 import RequestStatusEnum from "../../constant/requestStatusEnum";
 import useApiFetch from "../../hooks/useApiFetch";
 import useFetch from "../../hooks/useFetch";
+import { getUserProfile } from "../../store/selectors/profileSelector";
+import { useAppSelector } from "../../store/store";
 import { ISchedule } from "../../type/IDeliveryRequest";
+import IGasType from "../../type/IGasType";
 import { IOutlet } from "../../type/IOutlet";
 import { IOutletGasRequest } from "../../type/IOutletGasRequest";
 import Banner from "../ui-components/banner";
@@ -16,9 +20,6 @@ import {
 } from "../ui-components/card/Card";
 import { Button, Textarea, TextInput } from "../ui-components/form-fields";
 import LoadingSpinner from "../ui-components/loadingSpinner";
-import { useState } from "react";
-import { useAppSelector } from "../../store/store";
-import { getUserProfile } from "../../store/selectors/profileSelector";
 
 const OutletGasRequestApprovalView = () => {
   const [action, setAction] = useState<RequestStatusEnum>();
@@ -121,7 +122,7 @@ const OutletGasRequestApprovalView = () => {
                 <TextInput
                   label={`Gas Type ${gasIndex + 1}`}
                   disabled
-                  value={gasType.type}
+                  value={(gasType.type as IGasType).name}
                   {...register(`gas.${gasIndex}.type`, {})}
                 />
 
