@@ -1,7 +1,7 @@
 import DeliveryStatusEnum from "../constant/DeliveryStatusEnum";
-import GasTypeEnum from "../constant/gasTypesEnum";
 import RequestStatusEnum from "../constant/requestStatusEnum";
 import { ISchedule } from "./IDeliveryRequest";
+import IGasType from "./IGasType";
 import { IOutlet } from "./IOutlet";
 
 export interface IHeadOfficeApproval {
@@ -12,7 +12,7 @@ export interface IHeadOfficeApproval {
 }
 
 export interface IGas {
-  type?: GasTypeEnum;
+  type?: IGasType | string;
   gasQuantity?: number;
   approvedGasQuantity?: number;
 }

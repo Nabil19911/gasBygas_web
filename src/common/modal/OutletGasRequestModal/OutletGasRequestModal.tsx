@@ -1,10 +1,12 @@
 import { useMemo } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import gasTypeOption from "../../../constant/gasTypeOptions";
 import { deliveryStatusOptions } from "../../../constant/selectOptions";
 import useApiFetch from "../../../hooks/useApiFetch";
+import useGetGasTypes from "../../../hooks/useGetGasTypes";
+import useGetOutletGasRequestById from "../../../hooks/useGetOutletGasRequestById";
 import useGetSchedule from "../../../hooks/useGetSchedule";
 import { TProfileData } from "../../../store/silces/profileSlice";
+import { ISchedule } from "../../../type/IDeliveryRequest";
 import { IOutletGasRequest } from "../../../type/IOutletGasRequest";
 import Banner from "../../ui-components/banner";
 import {
@@ -16,8 +18,6 @@ import {
 import { Button, Select, TextInput } from "../../ui-components/form-fields";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
 import Modal from "../../ui-components/modal/Modal";
-import useGetOutletGasRequestById from "../../../hooks/useGetOutletGasRequestById";
-import { ISchedule } from "../../../type/IDeliveryRequest";
 
 interface IOutletGasRequestModalProps {
   employee?: Partial<TProfileData> | null;
@@ -74,7 +74,13 @@ const OutletGasRequestModal = ({
     formState: { errors },
   } = useForm<IOutletGasRequest>();
 
-  const isLoading = isCreateGasRequestLoading;
+  const {
+    data: gasTypeData,
+    isLoading: isGasTypeLoading,
+    error: errorInGasType,
+  } = useGetGasTypes();
+
+  const isLoading = isCreateGasRequestLoading || isGasTypeLoading;
 
   const onSubmit: SubmitHandler<IOutletGasRequest> = async (data) => {
     await createGasRequest({
@@ -99,6 +105,7 @@ const OutletGasRequestModal = ({
     >
       {isLoading && <LoadingSpinner />}
       {error && <Banner type="error">{error}</Banner>}
+      {errorInGasType && <Banner type="error">{errorInGasType}</Banner>}
       {hasScheduleEnabled && (
         <Banner type="info">Schedule is not enabled for the district</Banner>
       )}
@@ -128,15 +135,18 @@ const OutletGasRequestModal = ({
               disabled
               {...register("status", { required: "Status is required" })}
             />
-            {gasTypeOption.map((gasType, gasIndex) => {
+            {gasTypeData.map((gasType, gasIndex) => {
               return (
                 <div key={gasIndex} className="grid grid-cols-2 gap-4">
-                  <TextInput
-                    label={`Gas Type ${gasIndex + 1}`}
-                    disabled
-                    value={gasType.value}
-                    {...register(`gas.${gasIndex}.type`, {})}
-                  />
+                  <div className="flex items-center">
+                    <p
+                      {...register(`gas.${gasIndex}.type`, {
+                        value: gasType?._id || "",
+                      })}
+                    >
+                      {gasType.name}
+                    </p>
+                  </div>
                   <TextInput
                     label={`Request Stock`}
                     type="number"
