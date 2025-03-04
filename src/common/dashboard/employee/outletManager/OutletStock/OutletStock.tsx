@@ -10,13 +10,14 @@ import {
 } from "../../../../ui-components/card/Card";
 import Table from "../../../../ui-components/table";
 import OutletStockRow from "./OutletStockRow";
+import IGasType from "../../../../../type/IGasType";
 
 const OutletStock = () => {
   const { data: profile } = useAppSelector(getUserProfile);
 
   const renderStockRows = useCallback(() => {
     return profile?.outlet?.cylinders_stock.map((item) => (
-      <OutletStockRow key={item.type} item={item} />
+      <OutletStockRow key={(item.type as IGasType)._id} item={item} />
     ));
   }, [profile]);
 
@@ -38,6 +39,7 @@ const OutletStock = () => {
             <Table.Column>Current Stock</Table.Column>
             <Table.Column>Minimum Threshold</Table.Column>
             <Table.Column>Maximum Capacity</Table.Column>
+            <Table.Column>Unit Price</Table.Column>
           </Table.Header>
           <Table.Body>{renderStockRows()}</Table.Body>
         </Table>

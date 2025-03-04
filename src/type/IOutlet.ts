@@ -1,9 +1,9 @@
 import ActiveStatus from "../constant/activeStatusOptions";
-import GasTypeEnum from "../constant/gasTypesEnum";
 import IFullAddress from "./IFullAddress";
+import IGasType from "./IGasType";
 
 export interface ICylinderStock {
-  type: GasTypeEnum;
+  type: IGasType | string;
   currentStock: number;
   minimumThreshold: number;
   maximumCapacity: number;
