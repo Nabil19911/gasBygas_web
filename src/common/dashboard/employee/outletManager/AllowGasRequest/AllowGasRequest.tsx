@@ -1,5 +1,5 @@
 import { ArrowDownCircle } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DeliveryStatusEnum from "../../../../../constant/DeliveryStatusEnum";
 import RequestStatusEnum from "../../../../../constant/requestStatusEnum";
 import useFetch from "../../../../../hooks/useFetch";
@@ -25,11 +25,12 @@ import ReallocateCustomerModal from "../../../../modal/ReallocateCustomerModal";
 
 const AllowGasRequest = () => {
   const [isAllowModalOpen, setIsAllowModalOpen] = useState(false);
-  const [isViewModal, setIsViewModal] = useState(false);
+  const [isReallocateScheduleModal, setIsReallocateScheduleModal] =
+    useState(false);
   const [isReallocateCustomerModal, setIsReallocateCustomerModal] =
     useState(false);
   const [selectedId, setSelectedId] = useState<string>();
-  const [selectedScheduleId, setSelectedScheduleId] = useState<string>();
+  // const [selectedScheduleId, setSelectedScheduleId] = useState<string>();
 
   const [currentCustomerId, setCurrentCustomerId] = useState<string>();
   const { data: profile } = useAppSelector(getUserProfile);
@@ -41,21 +42,35 @@ const AllowGasRequest = () => {
     outletId: profile?.outlet?._id!,
   });
 
-  const { data: outlet } = useFetch<IOutlet>({
+  const { data: outlet, getNewData: fetchNewOutlet } = useFetch<IOutlet>({
     url: `/outlet/${profile?.outlet?._id}`,
     initialLoad: true,
   });
+  const scheduleId = outlet?.gas_request?.scheduleId;
+
+  const { data: schedule, getNewData } = useFetch<ISchedule>({
+    url: `/schedule/${scheduleId}`,
+  });
+
+  useEffect(() => {
+    if(scheduleId){
+      getNewData();
+    }
+  }, [scheduleId]);
 
   const activeGas = outlet?.gas_request;
+  const isReallocationEnabled =
+    schedule?.status === DeliveryStatusEnum.Cancelled;
+  const isCustomerReallocationEnabled = true;
 
   return (
     <Card>
       <ReallocateScheduleModal
-        closeModal={() => setIsViewModal(false)}
-        isOpen={isViewModal}
+        closeModal={() => setIsReallocateScheduleModal(false)}
+        isOpen={isReallocateScheduleModal}
         selectedId={selectedId}
         fetchData={() => fetchData({ outletId: profile?.outlet?._id })}
-        selectedScheduleId={selectedScheduleId}
+        selectedScheduleId={scheduleId}
       />
       <ReallocateCustomerModal
         closeModal={() => setIsReallocateCustomerModal(false)}
@@ -68,6 +83,7 @@ const AllowGasRequest = () => {
         outlet={outlet}
         isOpen={isAllowModalOpen}
         closeModal={() => setIsAllowModalOpen(false)}
+        fetchData={() => fetchNewOutlet()}
       />
       <CardHeader>
         <CardTitle className="text-xl font-semibold flex items-center">
@@ -75,13 +91,17 @@ const AllowGasRequest = () => {
             <ArrowDownCircle className="mr-2 h-5 w-5" />
             Gas Request
           </div>
+
           <Button
             size="sm"
             className="flex-initial w-1/4"
-            disabled={outletGasRequests.some(
-              (item) =>
-                item.headOfficeApproval?.status !== RequestStatusEnum.APPROVED
-            )}
+            disabled={
+              outletGasRequests.length === 0 ||
+              outletGasRequests.some(
+                (item) =>
+                  item.headOfficeApproval?.status !== RequestStatusEnum.APPROVED
+              )
+            }
             onClick={() => setIsAllowModalOpen(true)}
           >
             Allowed Gas Request
@@ -94,19 +114,21 @@ const AllowGasRequest = () => {
             activeGas?.active_until ?? ""
           ).toLocaleDateString()}`}</Banner>
         )}
-        <Button
-          size="sm"
-          className="cursor-pointer"
-          onClick={() => {
-            // setSelectedId(activeGasRequest?._id!);
-            // setSelectedScheduleId(
-            //   (activeGasRequest?.scheduleId as ISchedule)?._id
-            // );
-            setIsViewModal(true);
-          }}
-        >
-          Reallocate to another schedule
-        </Button>
+        {isReallocationEnabled && (
+          <Button
+            size="sm"
+            className="cursor-pointer"
+            onClick={() => {
+              // setSelectedId(activeGasRequest?._id!);
+              // setSelectedScheduleId(
+              //   (activeGasRequest?.scheduleId as ISchedule)?._id
+              // );
+              setIsReallocateScheduleModal(true);
+            }}
+          >
+            Reallocate to another schedule
+          </Button>
+        )}
         <ul className="space-y-4">
           {activeGasRequests
             .filter((activeGasRequest) => activeGasRequest.tokenId)
@@ -165,42 +187,28 @@ const AllowGasRequest = () => {
                       </p>
                     )}
                   </div>
-                  <div className="space-y-2">
-                    {/* {(activeGasRequest?.scheduleId as ISchedule)?.status ===
-                      DeliveryStatusEnum.Cancelled && (
+                  {isCustomerReallocationEnabled && (
+                    <div className="space-y-2">
                       <Button
                         size="sm"
-                        className="cursor-pointer"
                         onClick={() => {
-                          setSelectedId(activeGasRequest?._id!);
-                          setSelectedScheduleId(
-                            (activeGasRequest?.scheduleId as ISchedule)?._id
+                          setIsReallocateCustomerModal(true);
+                          setCurrentCustomerId(
+                            (activeGasRequest?.userId as ICustomer)?._id
                           );
-                          setIsViewModal(true);
                         }}
                       >
-                        Reallocate
+                        Reallocate token
                       </Button>
-                    )} */}
-                    <Button
-                      size="sm"
-                      onClick={() => {
-                        setIsReallocateCustomerModal(true);
-                        setCurrentCustomerId(
-                          (activeGasRequest?.userId as ICustomer)?._id
-                        );
-                      }}
-                    >
-                      Reallocate token
-                    </Button>
-                    <Button
-                      className="bg-red-500 text-white hover:bg-red-600"
-                      size="sm"
-                      onClick={() => console.log("hi")}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
+                      <Button
+                        className="bg-red-500 text-white hover:bg-red-600"
+                        size="sm"
+                        onClick={() => console.log("hi")}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  )}
                 </li>
               );
             })}
