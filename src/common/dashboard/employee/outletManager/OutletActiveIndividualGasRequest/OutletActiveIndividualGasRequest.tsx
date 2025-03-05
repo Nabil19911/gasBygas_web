@@ -97,7 +97,7 @@ const OutletActiveIndividualGasRequest = () => {
       <CardHeader>
         <CardTitle>Manage Gas Request</CardTitle>
         <CardDescription>
-          Update payment and reallocate schedule.
+          Update payment.
         </CardDescription>
       </CardHeader>
 
@@ -148,7 +148,7 @@ const OutletActiveIndividualGasRequest = () => {
           <TextInput
             label="Total Amount"
             type="number"
-            disabled={hasFieldDisabled}
+            disabled={true}
             value={(gasRequest?.gas?.type as IGasType)?.price}
             {...register("payment.totalAmount")}
           />

@@ -94,7 +94,7 @@ const OutletActiveOrganizationGasRequest = () => {
       <CardHeader>
         <CardTitle>Manage Gas Request</CardTitle>
         <CardDescription>
-          Update payment and reallocate schedule.
+          Update payment.
         </CardDescription>
       </CardHeader>
 
