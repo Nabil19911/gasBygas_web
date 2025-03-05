@@ -1,6 +1,5 @@
 import { ArrowDownCircle } from "lucide-react";
-import { useEffect, useState } from "react";
-import DeliveryStatusEnum from "../../../../../constant/DeliveryStatusEnum";
+import { useState } from "react";
 import RequestStatusEnum from "../../../../../constant/requestStatusEnum";
 import useFetch from "../../../../../hooks/useFetch";
 import useGetIndividualGasRequest from "../../../../../hooks/useGetIndividualGasRequest";
@@ -10,8 +9,9 @@ import { useAppSelector } from "../../../../../store/store";
 import ICustomer from "../../../../../type/ICustomer";
 import { ISchedule } from "../../../../../type/IDeliveryRequest";
 import { IOutlet } from "../../../../../type/IOutlet";
+import IToken from "../../../../../type/IToken";
 import OutletGasRequestAllowModal from "../../../../modal/OutletGasRequestAllowModal";
-import ReallocateScheduleModal from "../../../../modal/ReallocateScheduleModal";
+import ReallocateCustomerModal from "../../../../modal/ReallocateCustomerModal";
 import Banner from "../../../../ui-components/banner";
 import {
   Card,
@@ -20,16 +20,14 @@ import {
   CardTitle,
 } from "../../../../ui-components/card/Card";
 import { Button } from "../../../../ui-components/form-fields";
-import IToken from "../../../../../type/IToken";
-import ReallocateCustomerModal from "../../../../modal/ReallocateCustomerModal";
 
 const AllowGasRequest = () => {
   const [isAllowModalOpen, setIsAllowModalOpen] = useState(false);
-  const [isReallocateScheduleModal, setIsReallocateScheduleModal] =
-    useState(false);
+  // const [isReallocateScheduleModal, setIsReallocateScheduleModal] =
+  //   useState(false);
   const [isReallocateCustomerModal, setIsReallocateCustomerModal] =
     useState(false);
-  const [selectedId, setSelectedId] = useState<string>();
+  // const [selectedId, setSelectedId] = useState<string>();
   // const [selectedScheduleId, setSelectedScheduleId] = useState<string>();
 
   const [currentCustomerId, setCurrentCustomerId] = useState<string>();
@@ -46,32 +44,32 @@ const AllowGasRequest = () => {
     url: `/outlet/${profile?.outlet?._id}`,
     initialLoad: true,
   });
-  const scheduleId = outlet?.gas_request?.scheduleId;
+  // const scheduleId = outlet?.gas_request?.scheduleId;
 
-  const { data: schedule, getNewData } = useFetch<ISchedule>({
-    url: `/schedule/${scheduleId}`,
-  });
+  // const { data: schedule, getNewData } = useFetch<ISchedule>({
+  //   url: `/schedule/${scheduleId}`,
+  // });
 
-  useEffect(() => {
-    if(scheduleId){
-      getNewData();
-    }
-  }, [scheduleId]);
+  // useEffect(() => {
+  //   if(scheduleId){
+  //     getNewData();
+  //   }
+  // }, [scheduleId]);
 
   const activeGas = outlet?.gas_request;
-  const isReallocationEnabled =
-    schedule?.status === DeliveryStatusEnum.Cancelled;
+  // const isReallocationEnabled =
+  //   schedule?.status === DeliveryStatusEnum.Cancelled;
   const isCustomerReallocationEnabled = true;
 
   return (
     <Card>
-      <ReallocateScheduleModal
+      {/* <ReallocateScheduleModal
         closeModal={() => setIsReallocateScheduleModal(false)}
         isOpen={isReallocateScheduleModal}
         selectedId={selectedId}
         fetchData={() => fetchData({ outletId: profile?.outlet?._id })}
         selectedScheduleId={scheduleId}
-      />
+      /> */}
       <ReallocateCustomerModal
         closeModal={() => setIsReallocateCustomerModal(false)}
         isOpen={isReallocateCustomerModal}
@@ -114,7 +112,7 @@ const AllowGasRequest = () => {
             activeGas?.active_until ?? ""
           ).toLocaleDateString()}`}</Banner>
         )}
-        {isReallocationEnabled && (
+        {/* {isReallocationEnabled && (
           <Button
             size="sm"
             className="cursor-pointer"
@@ -128,7 +126,7 @@ const AllowGasRequest = () => {
           >
             Reallocate to another schedule
           </Button>
-        )}
+        )} */}
         <ul className="space-y-4">
           {activeGasRequests
             .filter((activeGasRequest) => activeGasRequest.tokenId)
