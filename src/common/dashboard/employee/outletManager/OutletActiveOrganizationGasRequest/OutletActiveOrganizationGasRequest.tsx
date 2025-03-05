@@ -1,15 +1,13 @@
-import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
-import {
-  paymentMethodOptions,
-  paymentOptions,
-} from "../../../../../constant/selectOptions";
-import useApiFetch from "../../../../../hooks/useApiFetch";
 import useFetch from "../../../../../hooks/useFetch";
-import ICustomer from "../../../../../type/ICustomer";
-import { ISchedule } from "../../../../../type/IDeliveryRequest";
-import { IIndividualCustomerGasRequest } from "../../../../../type/IGasRequest";
-import Banner from "../../../../ui-components/banner";
+import useApiFetch from "../../../../../hooks/useApiFetch";
+import {
+  IIndividualCustomerGasRequest,
+  IOrganizationGasRequest,
+} from "../../../../../type/IGasRequest";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useEffect } from "react";
+import PaymentStatusEnum from "../../../../../constant/paymentStatusEnum";
 import {
   Card,
   CardContent,
@@ -17,18 +15,24 @@ import {
   CardHeader,
   CardTitle,
 } from "../../../../ui-components/card/Card";
+import LoadingSpinner from "../../../../ui-components/loadingSpinner";
+import Banner from "../../../../ui-components/banner";
+import ICustomer from "../../../../../type/ICustomer";
+import IGasType from "../../../../../type/IGasType";
+import { ISchedule } from "../../../../../type/IDeliveryRequest";
 import {
   Button,
   CheckboxInput,
   Select,
   TextInput,
 } from "../../../../ui-components/form-fields";
-import LoadingSpinner from "../../../../ui-components/loadingSpinner";
-import { useEffect } from "react";
-import IGasType from "../../../../../type/IGasType";
-import PaymentStatusEnum from "../../../../../constant/paymentStatusEnum";
+import {
+  deliveryStatusOptions,
+  paymentMethodOptions,
+  paymentOptions,
+} from "../../../../../constant/selectOptions";
 
-const OutletActiveGasRequest = () => {
+const OutletActiveOrganizationGasRequest = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -36,8 +40,8 @@ const OutletActiveGasRequest = () => {
     data: gasRequest,
     isLoading: isGasRquestLoading,
     error,
-  } = useFetch<IIndividualCustomerGasRequest>({
-    url: `/gas-request/individual/${id}`,
+  } = useFetch<IOrganizationGasRequest>({
+    url: `/gas-request/organization/${id}`,
     initialLoad: true,
   });
 
@@ -45,8 +49,8 @@ const OutletActiveGasRequest = () => {
     postData: updateGasRequest,
     isLoading: isUpdating,
     error: updateError,
-  } = useApiFetch<Partial<IIndividualCustomerGasRequest>>({
-    url: `/gas-request/individual/${id}`,
+  } = useApiFetch<Partial<IOrganizationGasRequest>>({
+    url: `/gas-request/organization/${id}`,
     options: { method: "patch" },
   });
 
@@ -55,34 +59,36 @@ const OutletActiveGasRequest = () => {
     reset,
     handleSubmit,
     formState: { errors },
-  } = useForm<Partial<IIndividualCustomerGasRequest>>();
+  } = useForm<Partial<IOrganizationGasRequest>>();
 
   useEffect(() => {
     reset({ ...gasRequest });
   }, [gasRequest]);
+
+  console.log({ gasRequest });
 
   const isLoading = isGasRquestLoading || isUpdating;
 
   const hasFieldDisabled =
     gasRequest?.payment?.status === PaymentStatusEnum.PAID;
 
-  const onSubmit: SubmitHandler<
-    Partial<IIndividualCustomerGasRequest>
-  > = async (data) => {
-    await updateGasRequest({
-      ...gasRequest,
-      payment: {
-        ...gasRequest?.payment,
-        status: data.payment?.status,
-        totalAmount: Number(data.payment?.totalAmount),
-        method: data.payment?.method,
-        paymentDate: new Date(),
-      },
-      gas: {
-        ...gasRequest?.gas,
-        isCylinderReturned: data.gas?.isCylinderReturned,
-      },
-    });
+  const onSubmit: SubmitHandler<Partial<IOrganizationGasRequest>> = async (
+    data
+  ) => {
+    // await updateGasRequest({
+    //   ...gasRequest,
+    //   payment: {
+    //     ...gasRequest?.payment,
+    //     status: data.payment?.status,
+    //     totalAmount: Number(data.payment?.totalAmount),
+    //     method: data.payment?.method,
+    //     paymentDate: new Date(),
+    //   },
+    //   gas: {
+    //     ...gasRequest?.gas,
+    //     isCylinderReturned: data.gas?.isCylinderReturned,
+    //   },
+    // });
 
     if (!isLoading && !updateError) {
       navigate(-1);
@@ -111,46 +117,49 @@ const OutletActiveGasRequest = () => {
             <p className="font-semibold">Name:</p>
             <p>
               {
-                (gasRequest?.userId! as ICustomer)?.individual_details
-                  ?.first_name
+                (gasRequest?.userId! as ICustomer)?.organization_details
+                  ?.business_name
               }
             </p>
           </div>
-          <div className="grid grid-cols-2">
-            <p className="font-semibold">Gas Type:</p>
-            <p>{(gasRequest?.gas?.type as IGasType)?.name}</p>
-          </div>
-          <div className="grid grid-cols-2">
-            <p className="font-semibold">Current Schedule Date:</p>
-            <p>
-              {new Date(
-                (gasRequest?.scheduleId as ISchedule)?.deliveryDate || ""
-              ).toDateString() || "Not Scheduled"}
-            </p>
-          </div>
+
+          {gasRequest?.gas?.map((item) => {
+            return (
+              <>
+                <div className="grid grid-cols-2">
+                  <p className="font-semibold">Gas Type:</p>
+                  <p>{(item.type as IGasType)?.name}</p>
+                </div>
+                <div className="grid grid-cols-2">
+                  <p className="font-semibold">Total Price:</p>
+                  <p>{(item.type as IGasType)?.price || ""}</p>
+                </div>
+              </>
+            );
+          })}
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <h2 className="mb-2 font-bold">Update Payment</h2>
-          <CheckboxInput
+          {/* <CheckboxInput
             label="Gas returned"
             disabled={hasFieldDisabled}
             id="gas_request"
             {...register("gas.isCylinderReturned")}
-          />
+          /> */}
           <Select
             label="Payment Status"
             options={paymentOptions}
             disabled={hasFieldDisabled}
             {...register("payment.status")}
           />
-          <TextInput
+          {/* <TextInput
             label="Total Amount"
             type="number"
             disabled={hasFieldDisabled}
             value={(gasRequest?.gas?.type as IGasType)?.price}
             {...register("payment.totalAmount")}
-          />
+          /> */}
           <Select
             label="Payment Method"
             options={paymentMethodOptions}
@@ -159,6 +168,12 @@ const OutletActiveGasRequest = () => {
             })}
             disabled={hasFieldDisabled}
             error={errors.payment?.method?.message}
+          />
+
+          <Select
+            label="Status"
+            options={deliveryStatusOptions}
+            {...register("status", {})}
           />
 
           <div className="flex justify-end space-x-4">
@@ -179,4 +194,4 @@ const OutletActiveGasRequest = () => {
   );
 };
 
-export default OutletActiveGasRequest;
+export default OutletActiveOrganizationGasRequest;

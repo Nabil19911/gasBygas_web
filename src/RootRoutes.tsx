@@ -11,7 +11,8 @@ import ScheduleForm from "./common/schedule/ScheduleForm";
 import OrganizationApprovalView from "./common/OrganizationApprovalView";
 import OutletGasRequestApprovalView from "./common/OutletGasRequestApprovalView";
 import OrganizationGasRequestApproval from "./common/OrganizationGasRequestApproval";
-import OutletActiveGasRequest from "./common/dashboard/employee/outletManager/OutletActiveGasRequest";
+import OutletActiveIndividualGasRequest from "./common/dashboard/employee/outletManager/OutletActiveIndividualGasRequest";
+import OutletActiveOrganizationGasRequest from "./common/dashboard/employee/outletManager/OutletActiveOrganizationGasRequest";
 
 const EmployeeForm = lazy(() => import("./common/employee/EmployeeForm"));
 const CustomerForm = lazy(() => import("./common/customer/CustomerForm"));
@@ -120,10 +121,18 @@ function RootRoutes() {
           }
         />
         <Route
-          path={`${PathsEnum.TOKEN}/:id`}
+          path={`${PathsEnum.TOKEN}${PathsEnum.INDIVIDUAL}/:id`}
           element={
             <RoleGuard allowedRoles={[RolesEnum.BRANCH_MANAGER]}>
-              <OutletActiveGasRequest />
+              <OutletActiveIndividualGasRequest />
+            </RoleGuard>
+          }
+        />
+        <Route
+          path={`${PathsEnum.TOKEN}${PathsEnum.ORGANIZATION}/:id`}
+          element={
+            <RoleGuard allowedRoles={[RolesEnum.BRANCH_MANAGER]}>
+              <OutletActiveOrganizationGasRequest />
             </RoleGuard>
           }
         />

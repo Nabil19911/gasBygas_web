@@ -1,8 +1,8 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import ActiveStatus from "../../../../constant/activeStatusOptions";
-import gasTypeOption from "../../../../constant/gasTypeOptions";
 import RequestStatusEnum from "../../../../constant/requestStatusEnum";
 import useApiFetch from "../../../../hooks/useApiFetch";
+import useGetGasTypes from "../../../../hooks/useGetGasTypes";
 import useGetOrganizationGasRequest from "../../../../hooks/useGetOrganizationGasRequest";
 import ICustomer from "../../../../type/ICustomer";
 import { IOrganizationGasRequest } from "../../../../type/IGasRequest";
@@ -23,6 +23,8 @@ const Organization = ({ profile }: IOrganizationProps) => {
   const { data: gasRequest, fetchData } = useGetOrganizationGasRequest({
     userId: profile._id,
   });
+
+  const { data: gasTypeData } = useGetGasTypes();
 
   const { register, handleSubmit } = useForm<IOrganizationGasRequest>();
 
@@ -102,16 +104,18 @@ const Organization = ({ profile }: IOrganizationProps) => {
       </h1>
       {error && <Banner type="error">{error}</Banner>}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <h2>Refil Gas</h2>
-        {gasTypeOption.map((gasType, gasIndex) => {
+        {gasTypeData.map((gasType, gasIndex) => {
           return (
             <div key={gasIndex} className="grid grid-cols-3 gap-2">
-              <TextInput
-                label={`Gas Type ${gasIndex + 1}`}
-                disabled
-                value={gasType.value}
-                {...register(`gas.${gasIndex}.type`, {})}
-              />
+              <div className="flex items-center">
+                <p
+                  {...register(`gas.${gasIndex}.type`, {
+                    value: gasType?._id || "",
+                  })}
+                >
+                  {gasType.name}
+                </p>
+              </div>
               <TextInput
                 label="Refill"
                 type="number"

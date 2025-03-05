@@ -18,6 +18,7 @@ import {
 } from "../ui-components/card/Card";
 import { Button, Textarea, TextInput } from "../ui-components/form-fields";
 import LoadingSpinner from "../ui-components/loadingSpinner";
+import IGasType from "../../type/IGasType";
 
 const OrganizationGasRequestApprovalView = () => {
   const [action, setAction] = useState<RequestStatusEnum>();
@@ -102,12 +103,15 @@ const OrganizationGasRequestApprovalView = () => {
           <h2 className="mb-2 font-bold">Gas request</h2>
           {gasRequest?.gas?.map((gasType, index) => (
             <div key={index} className="space-y-4">
-              <TextInput
-                label={`Gas Type ${index + 1}`}
-                disabled
-                value={gasType.type}
-                {...register(`gas.${index}.type`, {})}
-              />
+              <div className="flex items-center">
+                <p
+                  {...register(`gas.${index}.type`, {
+                    value: (gasType.type as IGasType)._id || "",
+                  })}
+                >
+                  {(gasType.type as IGasType).name}
+                </p>
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <TextInput
                   label={`Refill Request QTY`}
@@ -167,19 +171,19 @@ const OrganizationGasRequestApprovalView = () => {
           <div className="flex justify-end space-x-4">
             <Button
               type="submit"
-              onClick={() => handleButtonClick(RequestStatusEnum.REGECTED)}
-              disabled={isUpdating}
-              className="bg-red-500 text-white hover:bg-red-600"
-            >
-              Reject
-            </Button>
-            <Button
-              type="submit"
               onClick={() => handleButtonClick(RequestStatusEnum.APPROVED)}
               disabled={isUpdating}
               className="bg-green-500 text-white hover:bg-green-600"
             >
               Approve
+            </Button>
+            <Button
+              type="submit"
+              onClick={() => handleButtonClick(RequestStatusEnum.REGECTED)}
+              disabled={isUpdating}
+              className="bg-red-500 text-white hover:bg-red-600"
+            >
+              Reject
             </Button>
           </div>
         </form>

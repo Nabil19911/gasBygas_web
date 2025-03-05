@@ -2,9 +2,9 @@ enum DeliveryStatusEnum {
   Pending = "Pending",
   OutForDelivery = "OutForDelivery",
   Delivered = "Delivered",
-  Returned = "Returned",
+  // Returned = "Returned",
   Cancelled = "Cancelled",
-  Failed = "Failed",
+  // Failed = "Failed",
 }
 
 export default DeliveryStatusEnum;

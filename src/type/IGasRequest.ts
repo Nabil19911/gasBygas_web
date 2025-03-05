@@ -1,5 +1,5 @@
+import DeliveryStatusEnum from "../constant/DeliveryStatusEnum";
 import GasRequestTypeEnum from "../constant/gasRequestTypeEnum";
-import GasTypeEnum from "../constant/gasTypesEnum";
 import PaymentMethodEnum from "../constant/paymentMethodEnum";
 import PaymentStatusEnum from "../constant/paymentStatusEnum";
 import RequestStatusEnum from "../constant/requestStatusEnum";
@@ -46,6 +46,7 @@ export interface IIndividualCustomerGasRequest {
   createdBy: RolesEnum;
   createdAt?: Date;
   updatedAt?: Date;
+  status?: DeliveryStatusEnum;
 }
 
 interface IHeadOfficeApproval {
@@ -66,7 +67,7 @@ interface IGasNewRequest extends IGasRefillRequest {
 }
 
 interface IOrganizationGas {
-  type?: GasTypeEnum;
+  type?: IGasType | string;
   gasRefillRequests?: IGasRefillRequest;
   gasNewRequests?: IGasNewRequest;
 }
@@ -83,4 +84,5 @@ export interface IOrganizationGasRequest {
   createdBy: RolesEnum;
   createdAt?: Date;
   updatedAt?: Date;
+  status?: DeliveryStatusEnum;
 }

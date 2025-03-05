@@ -47,7 +47,12 @@ const OutletGasRequestAllowModal = ({
 
   const { data: schedules, isLoading: isScheduleLoading } = useGetSchedule();
 
-  const { register, handleSubmit, reset } = useForm<IGasRequest>();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<IGasRequest>();
 
   const isLoading = isOutletUpdateLoading || isScheduleLoading;
 
@@ -72,6 +77,7 @@ const OutletGasRequestAllowModal = ({
     }
     if (outlet) {
       reset(outlet.gas_request);
+      setSelectedSchedule(outlet.gas_request?.scheduleId);
     }
   }, [outlet]);
 
@@ -117,9 +123,11 @@ const OutletGasRequestAllowModal = ({
               <Select
                 disabled={hasFieldsDisabled}
                 label="Select Schedule"
+                error={errors.scheduleId?.message}
                 {...register("scheduleId", {
-                  required: true,
+                  required: "Schedule is required Field",
                 })}
+                value={selectedSchedule}
                 options={scheduleOptions}
                 onChange={(e) => {
                   setSelectedSchedule(e.target.value);
@@ -130,9 +138,10 @@ const OutletGasRequestAllowModal = ({
                   <CheckboxInput
                     disabled={hasFieldsDisabled}
                     label={"Allow"}
+                    error={errors.is_allowed?.message}
                     id={"allow"}
                     {...register("is_allowed", {
-                      required: true,
+                      required: "Please allow",
                     })}
                   />
                 </div>
@@ -141,8 +150,9 @@ const OutletGasRequestAllowModal = ({
                     disabled={hasFieldsDisabled}
                     placeholder="QTY"
                     type="number"
+                    error={errors.allowed_qty?.message}
                     {...register("allowed_qty", {
-                      required: true,
+                      required: "Quantity is required field",
                     })}
                   />
                 </div>
@@ -155,7 +165,10 @@ const OutletGasRequestAllowModal = ({
               </Button>
               <Button
                 type="button"
-                onClick={closeModal}
+                onClick={() => {
+                  closeModal();
+                  reset();
+                }}
                 className="bg-red-500 hover:bg-red-400"
               >
                 Close

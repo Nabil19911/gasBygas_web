@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import RequestStatusEnum from "../../constant/requestStatusEnum";
 import useFetch from "../../hooks/useFetch";
 import ICustomer from "../../type/ICustomer";
@@ -15,6 +15,7 @@ import {
 } from "../ui-components/card/Card";
 
 const OrganizationApprovalView = () => {
+  const navigator = useNavigate();
   const { id } = useParams();
   const {
     data: user,
@@ -41,6 +42,10 @@ const OrganizationApprovalView = () => {
         approval_date: new Date().toISOString(),
       },
     });
+
+    if (!isLoading && !error) {
+      navigator(-1);
+    }
   };
 
   const fileUrl = user?.business_registration_certification_path
@@ -99,6 +104,16 @@ const OrganizationApprovalView = () => {
 
         <div className="flex justify-end space-x-4">
           <Button
+            onClick={() => handleUpdate(RequestStatusEnum.APPROVED)}
+            disabled={
+              isLoading ||
+              user?.organization_details?.approval_status !==
+                RequestStatusEnum.PENDING
+            }
+          >
+            Approve
+          </Button>
+          <Button
             onClick={() => handleUpdate(RequestStatusEnum.REGECTED)}
             disabled={
               isLoading ||
@@ -108,16 +123,6 @@ const OrganizationApprovalView = () => {
             className="bg-red-500 text-white hover:bg-red-600"
           >
             Reject
-          </Button>
-          <Button
-            onClick={() => handleUpdate(RequestStatusEnum.APPROVED)}
-            disabled={
-              isLoading ||
-              user?.organization_details?.approval_status !==
-                RequestStatusEnum.PENDING
-            }
-          >
-            Approve
           </Button>
         </div>
 
