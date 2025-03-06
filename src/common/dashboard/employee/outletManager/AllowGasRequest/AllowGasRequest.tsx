@@ -21,6 +21,7 @@ import {
 } from "../../../../ui-components/card/Card";
 import { Button } from "../../../../ui-components/form-fields";
 import GasRequestCancelModal from "../../../../modal/GasRequestCancelModal";
+import DeliveryStatusEnum from "../../../../../constant/DeliveryStatusEnum";
 
 const AllowGasRequest = () => {
   const [isAllowModalOpen, setIsAllowModalOpen] = useState(false);
@@ -101,7 +102,11 @@ const AllowGasRequest = () => {
         )}
         <ul className="space-y-4">
           {activeGasRequests
-            .filter((activeGasRequest) => activeGasRequest.tokenId)
+            .filter(
+              (activeGasRequest) =>
+                activeGasRequest.tokenId &&
+                activeGasRequest.status !== DeliveryStatusEnum.Cancelled
+            )
             .map((activeGasRequest) => {
               return (
                 <li

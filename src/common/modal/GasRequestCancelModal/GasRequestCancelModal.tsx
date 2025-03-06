@@ -4,10 +4,10 @@ import useApiFetch from "../../../hooks/useApiFetch";
 import { IIndividualCustomerGasRequest } from "../../../type/IGasRequest";
 import Banner from "../../ui-components/banner";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
 } from "../../ui-components/card/Card";
 import { Button, Textarea } from "../../ui-components/form-fields";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
@@ -65,7 +65,10 @@ const GasRequestCancelModal = ({
               {...register("comment", { required: "Please Fill The reason" })}
               error={errors.comment?.message}
             />
-            <Button type="submit" className="w-full">
+            <Button
+              type="submit"
+              className="bg-red-500 text-white hover:bg-red-600"
+            >
               Cancel
             </Button>
           </form>

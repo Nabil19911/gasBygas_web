@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
+import DeliveryStatusEnum from "../../../../../constant/DeliveryStatusEnum";
 import {
   deliveryStatusOptions,
   paymentMethodOptions,
@@ -10,6 +12,7 @@ import useFetch from "../../../../../hooks/useFetch";
 import ICustomer from "../../../../../type/ICustomer";
 import { ISchedule } from "../../../../../type/IDeliveryRequest";
 import { IIndividualCustomerGasRequest } from "../../../../../type/IGasRequest";
+import IGasType from "../../../../../type/IGasType";
 import Banner from "../../../../ui-components/banner";
 import {
   Card,
@@ -25,9 +28,6 @@ import {
   TextInput,
 } from "../../../../ui-components/form-fields";
 import LoadingSpinner from "../../../../ui-components/loadingSpinner";
-import { useEffect } from "react";
-import IGasType from "../../../../../type/IGasType";
-import PaymentStatusEnum from "../../../../../constant/paymentStatusEnum";
 
 const OutletActiveIndividualGasRequest = () => {
   const { id } = useParams();
@@ -64,8 +64,7 @@ const OutletActiveIndividualGasRequest = () => {
 
   const isLoading = isGasRquestLoading || isUpdating;
 
-  const hasFieldDisabled =
-    gasRequest?.payment?.status === PaymentStatusEnum.PAID;
+  const hasFieldDisabled = gasRequest?.status === DeliveryStatusEnum.Cancelled;
 
   const onSubmit: SubmitHandler<
     Partial<IIndividualCustomerGasRequest>
@@ -96,16 +95,18 @@ const OutletActiveIndividualGasRequest = () => {
 
       <CardHeader>
         <CardTitle>Manage Gas Request</CardTitle>
-        <CardDescription>
-          Update payment.
-        </CardDescription>
+        <CardDescription>Update payment.</CardDescription>
       </CardHeader>
 
       <CardContent>
         {error && <Banner type="error">{error}</Banner>}
         {updateError && <Banner type="error">{updateError}</Banner>}
         {hasFieldDisabled && (
-          <Banner type="info">Payment is Already done</Banner>
+          <Banner type="warning">
+            Gas Request is Canceled
+            <br />
+            Reason: {gasRequest.comment}
+          </Banner>
         )}
         <div className="grid grid-cols-1 gap-4 mb-6">
           <div className="grid grid-cols-2">
@@ -163,6 +164,7 @@ const OutletActiveIndividualGasRequest = () => {
           />
           <Select
             label="Status"
+            disabled={hasFieldDisabled}
             options={deliveryStatusOptions}
             {...register("status", {})}
           />
