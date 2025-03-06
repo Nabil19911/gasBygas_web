@@ -20,17 +20,16 @@ import {
   CardTitle,
 } from "../../../../ui-components/card/Card";
 import { Button } from "../../../../ui-components/form-fields";
+import GasRequestCancelModal from "../../../../modal/GasRequestCancelModal";
 
 const AllowGasRequest = () => {
   const [isAllowModalOpen, setIsAllowModalOpen] = useState(false);
-  // const [isReallocateScheduleModal, setIsReallocateScheduleModal] =
-  //   useState(false);
   const [isReallocateCustomerModal, setIsReallocateCustomerModal] =
     useState(false);
-  // const [selectedId, setSelectedId] = useState<string>();
-  // const [selectedScheduleId, setSelectedScheduleId] = useState<string>();
+  const [isCancelModal, setIsCancelModal] = useState(false);
 
   const [currentCustomerId, setCurrentCustomerId] = useState<string>();
+  const [activeGasRequestId, setActiveGasRequestId] = useState<string>();
   const { data: profile } = useAppSelector(getUserProfile);
   const { data: activeGasRequests, fetchData } = useGetIndividualGasRequest({
     outletId: profile?.outlet?._id,
@@ -44,32 +43,20 @@ const AllowGasRequest = () => {
     url: `/outlet/${profile?.outlet?._id}`,
     initialLoad: true,
   });
-  // const scheduleId = outlet?.gas_request?.scheduleId;
-
-  // const { data: schedule, getNewData } = useFetch<ISchedule>({
-  //   url: `/schedule/${scheduleId}`,
-  // });
-
-  // useEffect(() => {
-  //   if(scheduleId){
-  //     getNewData();
-  //   }
-  // }, [scheduleId]);
 
   const activeGas = outlet?.gas_request;
-  // const isReallocationEnabled =
-  //   schedule?.status === DeliveryStatusEnum.Cancelled;
-  const isCustomerReallocationEnabled = true;
+
+  const isCustomerReallocationEnabled =
+    activeGasRequests.filter((activeGasRequest) => activeGasRequest.isWaiting)
+      .length > 0;
 
   return (
     <Card>
-      {/* <ReallocateScheduleModal
-        closeModal={() => setIsReallocateScheduleModal(false)}
-        isOpen={isReallocateScheduleModal}
-        selectedId={selectedId}
-        fetchData={() => fetchData({ outletId: profile?.outlet?._id })}
-        selectedScheduleId={scheduleId}
-      /> */}
+      <GasRequestCancelModal
+        activeGasRequestId={activeGasRequestId!}
+        isOpen={isCancelModal}
+        closeModal={() => setIsCancelModal(false)}
+      />
       <ReallocateCustomerModal
         closeModal={() => setIsReallocateCustomerModal(false)}
         isOpen={isReallocateCustomerModal}
@@ -112,21 +99,6 @@ const AllowGasRequest = () => {
             activeGas?.active_until ?? ""
           ).toLocaleDateString()}`}</Banner>
         )}
-        {/* {isReallocationEnabled && (
-          <Button
-            size="sm"
-            className="cursor-pointer"
-            onClick={() => {
-              // setSelectedId(activeGasRequest?._id!);
-              // setSelectedScheduleId(
-              //   (activeGasRequest?.scheduleId as ISchedule)?._id
-              // );
-              setIsReallocateScheduleModal(true);
-            }}
-          >
-            Reallocate to another schedule
-          </Button>
-        )} */}
         <ul className="space-y-4">
           {activeGasRequests
             .filter((activeGasRequest) => activeGasRequest.tokenId)
@@ -185,8 +157,8 @@ const AllowGasRequest = () => {
                       </p>
                     )}
                   </div>
-                  {isCustomerReallocationEnabled && (
-                    <div className="space-y-2">
+                  <div className="space-y-2">
+                    {isCustomerReallocationEnabled && (
                       <Button
                         size="sm"
                         onClick={() => {
@@ -198,15 +170,18 @@ const AllowGasRequest = () => {
                       >
                         Reallocate token
                       </Button>
-                      <Button
-                        className="bg-red-500 text-white hover:bg-red-600"
-                        size="sm"
-                        onClick={() => console.log("hi")}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  )}
+                    )}
+                    <Button
+                      className="bg-red-500 text-white hover:bg-red-600"
+                      size="sm"
+                      onClick={() => {
+                        setIsCancelModal(true);
+                        setActiveGasRequestId(activeGasRequest._id);
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
                 </li>
               );
             })}

@@ -47,6 +47,7 @@ export interface IIndividualCustomerGasRequest {
   createdAt?: Date;
   updatedAt?: Date;
   status?: DeliveryStatusEnum;
+  isWaiting?: boolean;
 }
 
 interface IHeadOfficeApproval {
