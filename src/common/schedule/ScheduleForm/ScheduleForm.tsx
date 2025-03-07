@@ -77,6 +77,7 @@ const ScheduleForm = () => {
     await updateSchedule(data);
     await getNewData();
     if (!isLoading) {
+      navigator(-1);
     }
   };
 
@@ -100,7 +101,7 @@ const ScheduleForm = () => {
           {/* Delivery Date */}
           <DateTimePicker
             label="Delivery Date"
-            disabled={hasDisabled}
+            disabled={true}
             error={errors.deliveryDate?.message}
             {...register("deliveryDate", {
               required: "Delivery date is required",
