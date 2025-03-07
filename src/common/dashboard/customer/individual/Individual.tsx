@@ -126,16 +126,16 @@ const Individual = ({ profile }: IndividualProps) => {
     );
   }, [selectedOutletData, schedule]);
 
-  const token = gasRequest[0]?.tokenId as IToken;
+  const token = gasRequest.filter(
+    (item) => item.status === DeliveryStatusEnum.Pending
+  )[0]?.tokenId as IToken;
 
-  if (
-    gasRequest &&
-    gasRequest.length > 0 && !token
-  ) {
+  if (gasRequest && gasRequest.length > 0 && !token) {
     return (
       <div className="h-1/2 flex flex-col items-center justify-center bg-gray-100 p-2">
         <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-center font-semibold text-gray-800">
-          You are request has been in waiting list. Once token available, you will be notified by email.
+          You are request has been in waiting list. Once token available, you
+          will be notified by email.
         </p>
       </div>
     );
