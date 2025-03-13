@@ -27,7 +27,7 @@ const GasTypeModal = ({
     isLoading,
     error,
   } = useApiFetch<IGasType>({
-    url: `/gas-type/${gasTypeId}`,
+    url: `/gas-type/${gasTypeId ?? ""}`,
     options: {
       method: gasTypeId ? "patch" : "post",
     },
@@ -35,7 +35,6 @@ const GasTypeModal = ({
 
   const { getNewData } = useFetch<IGasType>({
     url: `/gas-type/${gasTypeId}`,
-    initialLoad: true,
   });
 
   const { register, handleSubmit, reset } = useForm<IGasType>();
@@ -47,7 +46,9 @@ const GasTypeModal = ({
         reset(res as unknown as IGasType);
       }
     };
-    fetch();
+    if(gasTypeId){
+      fetch();
+    }
   }, [gasTypeId]);
 
   const onSubmit = async (data: IGasType) => {
@@ -75,6 +76,11 @@ const GasTypeModal = ({
               label="Price"
               type="number"
               {...register("price", { required: true })}
+            />
+            <TextInput
+              label="Cylinder Price"
+              type="number"
+              {...register("cylinder_price", { required: true })}
             />
             <Textarea
               label="Description"
