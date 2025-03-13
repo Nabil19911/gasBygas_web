@@ -11,15 +11,19 @@ import {
 import Table from "../../../../ui-components/table";
 import OutletStockRow from "./OutletStockRow";
 import IGasType from "../../../../../type/IGasType";
+import useGetOutlets from "../../../../../hooks/useGetOutlets";
 
 const OutletStock = () => {
   const { data: profile } = useAppSelector(getUserProfile);
+  const { data: outlets } = useGetOutlets();
 
   const renderStockRows = useCallback(() => {
-    return profile?.outlet?.cylinders_stock.map((item) => (
-      <OutletStockRow key={(item.type as IGasType)._id} item={item} />
-    ));
-  }, [profile]);
+    return outlets
+      .find((item) => item._id === profile?.outlet?._id)
+      ?.cylinders_stock.map((item) => (
+        <OutletStockRow key={(item.type as IGasType)._id} item={item} />
+      ));
+  }, [profile, outlets]);
 
   return (
     <Card>
@@ -39,6 +43,7 @@ const OutletStock = () => {
             <Table.Column>Current Stock</Table.Column>
             <Table.Column>Minimum Threshold</Table.Column>
             <Table.Column>Maximum Capacity</Table.Column>
+            <Table.Column>Incomming Capacity</Table.Column>
             <Table.Column>Unit Price</Table.Column>
           </Table.Header>
           <Table.Body>{renderStockRows()}</Table.Body>
