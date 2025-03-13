@@ -18,6 +18,7 @@ import {
 import { Button, Select, TextInput } from "../../ui-components/form-fields";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
 import Modal from "../../ui-components/modal/Modal";
+import DeliveryStatusEnum from "../../../constant/DeliveryStatusEnum";
 
 interface IOutletGasRequestModalProps {
   employee?: Partial<TProfileData> | null;
@@ -58,6 +59,7 @@ const OutletGasRequestModal = ({
       .filter(
         (schedule) =>
           schedule.district === outletDistrict &&
+          schedule.status !== DeliveryStatusEnum.Cancelled &&
           !outletGasRequests.some(
             (item) => (item.scheduleId as ISchedule)._id === schedule._id
           )

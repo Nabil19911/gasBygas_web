@@ -77,17 +77,17 @@ const OutletGasRequestApprovalView = () => {
   return (
     <Card className="w-full max-w-2xl mx-auto">
       {isLoading && <LoadingSpinner />}
-      {error && <Banner type="error">{error}</Banner>}
-      {errorApproval && <Banner type="error">{errorApproval}</Banner>}
-      <CardHeader className="text-xl font-semibold flex items-center">
+      <CardHeader className="text-xl font-semibold flex">
         <CardTitle>
-          <div className="flex items-center flex-initial w-full">
+          <div className="flex flex-initial w-full">
             Approve Outlet Gas Request
           </div>
         </CardTitle>
         <CardDescription>Outlet gas request details below.</CardDescription>
       </CardHeader>
       <CardContent>
+        {error && <Banner type="error">{error}</Banner>}
+        {errorApproval && <Banner type="error">{errorApproval}</Banner>}
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div>
             <p className="font-semibold">Branch Code:</p>
@@ -119,12 +119,15 @@ const OutletGasRequestApprovalView = () => {
           {gasRquest?.gas?.map((gasType, gasIndex) => {
             return (
               <div key={gasIndex} className="grid grid-cols-3 gap-4">
-                <TextInput
-                  label={`Gas Type ${gasIndex + 1}`}
-                  disabled
-                  value={(gasType.type as IGasType).name}
-                  {...register(`gas.${gasIndex}.type`, {})}
-                />
+                <div className="flex items-center">
+                  <p
+                    {...register(`gas.${gasIndex}.type`, {
+                      value: (gasType.type as IGasType)._id || "",
+                    })}
+                  >
+                    {(gasType.type as IGasType).name}
+                  </p>
+                </div>
 
                 <TextInput
                   label="Requested QTY"

@@ -8,6 +8,7 @@ import {
   CardTitle
 } from "../ui-components/card/Card";
 import { Button, Link } from "../ui-components/form-fields";
+import DeliveryStatusEnum from "../../constant/DeliveryStatusEnum";
 
 interface IScheduleProps {
   schedules: ISchedule[];
@@ -30,7 +31,7 @@ const Schedule = ({ schedules, openModal }: IScheduleProps) => {
       </CardHeader>
       <CardContent>
         <ul className="space-y-4">
-          {schedules.map((schedule) => {
+          {schedules.filter(item => item.status !== DeliveryStatusEnum.Cancelled).map((schedule) => {
             if (!schedule) return "No Schedule";
             return (
               <li
