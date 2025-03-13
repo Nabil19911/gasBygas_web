@@ -172,6 +172,11 @@ const Individual = ({ profile }: IndividualProps) => {
             This outlet is not enabled for requests.
           </Banner>
         )}
+        {outletOptions.length === 0 && (
+          <Banner type="info">
+            No Outlets available
+          </Banner>
+        )}
         {isLoading && <LoadingSpinner />}
         {error && <Banner type="error">{error}</Banner>}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -184,7 +189,7 @@ const Individual = ({ profile }: IndividualProps) => {
             })}
             defaultValue={gasRequestType}
             options={requestTypeOptions}
-            disabled={hasNotGasRequestEnabled}
+            disabled={hasNotGasRequestEnabled || outletOptions.length === 0}
           />
           <Radio
             label="Select Gas Type"
@@ -193,7 +198,7 @@ const Individual = ({ profile }: IndividualProps) => {
               required: "Please select a gas type",
             })}
             selected={gasTypeData[0]?.name}
-            disabled={hasNotGasRequestEnabled}
+            disabled={hasNotGasRequestEnabled || outletOptions.length === 0}
           />
           <Select
             label="Outlet"
@@ -207,7 +212,7 @@ const Individual = ({ profile }: IndividualProps) => {
           <Button
             type="submit"
             className="w-full"
-            disabled={hasNotGasRequestEnabled}
+            disabled={hasNotGasRequestEnabled || outletOptions.length === 0}
           >
             Submit Request
           </Button>
