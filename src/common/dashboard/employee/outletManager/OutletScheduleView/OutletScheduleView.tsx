@@ -8,6 +8,7 @@ import {
 } from "../../../../ui-components/card/Card";
 import { useAppSelector } from "../../../../../store/store";
 import { getUserProfile } from "../../../../../store/selectors/profileSelector";
+import DeliveryStatusEnum from "../../../../../constant/DeliveryStatusEnum";
 
 const OutletScheduleView = () => {
   const { data: schedules } = useGetSchedule();
@@ -27,7 +28,12 @@ const OutletScheduleView = () => {
       <CardContent>
         <ul className="space-y-4">
           {schedules
-            .filter((schedule) => schedule.district === outletDistrict)
+            .filter(
+              (schedule) =>
+                schedule.district === outletDistrict &&
+                (schedule.status === DeliveryStatusEnum.Pending ||
+                  schedule.status === DeliveryStatusEnum.OutForDelivery)
+            )
             .map((schedule) => {
               if (!schedule) return "No Schedule";
               return (

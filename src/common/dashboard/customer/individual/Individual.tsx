@@ -75,10 +75,12 @@ const Individual = ({ profile }: IndividualProps) => {
     const selectedOutletD = outlets.find(
       (outlet) => outlet._id === selectedOutlet
     );
-    return schedules.find(
-      (schedule) =>
-        selectedOutletD?.full_address.district === schedule?.district
-    );
+    return schedules
+      .filter((schedule) => schedule.status === DeliveryStatusEnum.Pending)
+      .find(
+        (schedule) =>
+          selectedOutletD?.full_address.district === schedule?.district
+      );
   }, [schedules, profile, selectedOutlet]);
 
   const onSubmit: SubmitHandler<IIndividualCustomerGasRequest> = async (
@@ -173,9 +175,7 @@ const Individual = ({ profile }: IndividualProps) => {
           </Banner>
         )}
         {outletOptions.length === 0 && (
-          <Banner type="info">
-            No Outlets available
-          </Banner>
+          <Banner type="info">No Outlets available</Banner>
         )}
         {isLoading && <LoadingSpinner />}
         {error && <Banner type="error">{error}</Banner>}

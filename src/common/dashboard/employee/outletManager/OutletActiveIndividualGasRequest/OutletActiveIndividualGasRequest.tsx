@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
 import DeliveryStatusEnum from "../../../../../constant/DeliveryStatusEnum";
+import GasRequestTypeEnum from "../../../../../constant/gasRequestTypeEnum";
 import {
   deliveryStatusOptions,
   paymentMethodOptions,
@@ -89,6 +90,8 @@ const OutletActiveIndividualGasRequest = () => {
     }
   };
 
+  const isNewGas = gasRequest?.gas.requestType === GasRequestTypeEnum.New_Gas;
+
   return (
     <Card className="w-full max-w-2xl mx-auto">
       {isLoading && <LoadingSpinner />}
@@ -134,23 +137,29 @@ const OutletActiveIndividualGasRequest = () => {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <h2 className="mb-2 font-bold">Update Payment</h2>
-          <CheckboxInput
-            label="Gas returned"
-            disabled={hasFieldDisabled}
-            id="gas_request"
-            {...register("gas.isCylinderReturned")}
-          />
+          {isNewGas && (
+            <CheckboxInput
+              label="Gas returned"
+              disabled={hasFieldDisabled}
+              id="gas_request"
+              {...register("gas.isCylinderReturned")}
+            />
+          )}
           <Select
             label="Payment Status"
             options={paymentOptions}
-            disabled={hasFieldDisabled}
+            disabled={true}
             {...register("payment.status")}
           />
           <TextInput
             label="Total Amount"
             type="number"
             disabled={true}
-            value={(gasRequest?.gas?.type as IGasType)?.price}
+            value={
+              isNewGas
+                ? (gasRequest?.gas?.type as IGasType)?.cylinder_price
+                : (gasRequest?.gas?.type as IGasType)?.price
+            }
             {...register("payment.totalAmount")}
           />
           <Select
@@ -165,7 +174,9 @@ const OutletActiveIndividualGasRequest = () => {
           <Select
             label="Status"
             disabled={hasFieldDisabled}
-            options={deliveryStatusOptions}
+            options={deliveryStatusOptions.filter(
+              (item) => item.value !== DeliveryStatusEnum.OutForDelivery
+            )}
             {...register("status", {})}
           />
 
