@@ -1,5 +1,6 @@
 import { ArrowDownCircle } from "lucide-react";
 import { useState } from "react";
+import DeliveryStatusEnum from "../../../../../constant/DeliveryStatusEnum";
 import RequestStatusEnum from "../../../../../constant/requestStatusEnum";
 import useFetch from "../../../../../hooks/useFetch";
 import useGetIndividualGasRequest from "../../../../../hooks/useGetIndividualGasRequest";
@@ -10,6 +11,7 @@ import ICustomer from "../../../../../type/ICustomer";
 import { ISchedule } from "../../../../../type/IDeliveryRequest";
 import { IOutlet } from "../../../../../type/IOutlet";
 import IToken from "../../../../../type/IToken";
+import GasRequestCancelModal from "../../../../modal/GasRequestCancelModal";
 import OutletGasRequestAllowModal from "../../../../modal/OutletGasRequestAllowModal";
 import ReallocateCustomerModal from "../../../../modal/ReallocateCustomerModal";
 import Banner from "../../../../ui-components/banner";
@@ -20,11 +22,12 @@ import {
   CardTitle,
 } from "../../../../ui-components/card/Card";
 import { Button } from "../../../../ui-components/form-fields";
-import GasRequestCancelModal from "../../../../modal/GasRequestCancelModal";
-import DeliveryStatusEnum from "../../../../../constant/DeliveryStatusEnum";
+import ReallocateScheduleModal from "../../../../modal/ReallocateScheduleModal";
+import useGetSchedule from "../../../../../hooks/useGetSchedule";
 
 const AllowGasRequest = () => {
   const [isAllowModalOpen, setIsAllowModalOpen] = useState(false);
+  const [isReallocateSchedule, setReallocateSchedule] = useState(false);
   const [isReallocateCustomerModal, setIsReallocateCustomerModal] =
     useState(false);
   const [isCancelModal, setIsCancelModal] = useState(false);
@@ -36,6 +39,8 @@ const AllowGasRequest = () => {
     outletId: profile?.outlet?._id,
   });
 
+  const { data: schedules } = useGetSchedule();
+
   const { data: outletGasRequests } = useGetOutletGasRequestById({
     outletId: profile?.outlet?._id!,
   });
@@ -45,11 +50,19 @@ const AllowGasRequest = () => {
     initialLoad: true,
   });
 
-  const activeGas = outlet?.gas_request;
+  const isAllowRequestToOutlet = outlet?.gas_request;
+
+  const filteredDistrictSchedules = schedules.filter(
+    (item) => item.district === profile?.full_address?.district
+  );
 
   const isCustomerReallocationEnabled =
     activeGasRequests.filter((activeGasRequest) => activeGasRequest.isWaiting)
       .length > 0;
+
+  const isScheduleCanceled =
+    (outletGasRequests?.scheduleId as ISchedule)?.status ===
+    DeliveryStatusEnum.Cancelled;
 
   return (
     <Card>
@@ -57,6 +70,13 @@ const AllowGasRequest = () => {
         activeGasRequestId={activeGasRequestId!}
         isOpen={isCancelModal}
         closeModal={() => setIsCancelModal(false)}
+      />
+      <ReallocateScheduleModal
+        isOpen={isReallocateSchedule}
+        activeGasRequestIds={activeGasRequests.map((active) => active?._id!)}
+        selectedScheduleId={(outletGasRequests?.scheduleId as ISchedule)?._id}
+        closeModal={() => setReallocateSchedule(false)}
+        fetchData={() => fetchData({ outletId: profile?.outlet?._id })}
       />
       <ReallocateCustomerModal
         closeModal={() => setIsReallocateCustomerModal(false)}
@@ -82,11 +102,8 @@ const AllowGasRequest = () => {
             size="sm"
             className="flex-initial w-1/4"
             disabled={
-              outletGasRequests.length === 0 ||
-              outletGasRequests.some(
-                (item) =>
-                  item.headOfficeApproval?.status !== RequestStatusEnum.APPROVED
-              )
+              outletGasRequests?.headOfficeApproval?.status !==
+              RequestStatusEnum.APPROVED
             }
             onClick={() => setIsAllowModalOpen(true)}
           >
@@ -95,11 +112,25 @@ const AllowGasRequest = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {activeGas?.is_allowed && activeGas?.active_until && (
-          <Banner type="info">{`Gas Request is active until ${new Date(
-            activeGas?.active_until ?? ""
-          ).toLocaleDateString()}`}</Banner>
+        {isScheduleCanceled && (
+          <>
+            <Button
+              size="sm"
+              className="my-2"
+              onClick={() => setReallocateSchedule(true)}
+            >
+              Reallocate Gas Request
+            </Button>
+            <Banner type="warning">Gas Schedule Cancelled</Banner>
+          </>
         )}
+        {!isScheduleCanceled &&
+          isAllowRequestToOutlet?.is_allowed &&
+          isAllowRequestToOutlet?.active_until && (
+            <Banner type="info">{`Gas Request is active until ${new Date(
+              isAllowRequestToOutlet?.active_until ?? ""
+            ).toLocaleDateString()}`}</Banner>
+          )}
         <ul className="space-y-4">
           {activeGasRequests
             .filter(

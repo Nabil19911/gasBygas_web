@@ -19,7 +19,7 @@ interface IGas {
   approvedQuantity?: number;
 }
 
-interface IReallocateGasRequest {
+export interface IReallocateGasRequest {
   is_reallocated?: boolean;
   toSheduleId?: ISchedule | string;
   fromScheduleId?: ISchedule | string;

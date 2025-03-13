@@ -60,13 +60,11 @@ const OutletGasRequestModal = ({
         (schedule) =>
           schedule.district === outletDistrict &&
           schedule.status !== DeliveryStatusEnum.Cancelled &&
-          !outletGasRequests.some(
-            (item) => (item.scheduleId as ISchedule)._id === schedule._id
-          )
+          (outletGasRequests?.scheduleId as ISchedule)?._id !== schedule._id
       )
       .map((schedule) => ({
-        label: new Date(schedule.deliveryDate!).toISOString(),
-        value: schedule._id!,
+        label: new Date(schedule?.deliveryDate!).toISOString(),
+        value: schedule?._id!,
       }));
   }, [schedules, outletGasRequests]);
 

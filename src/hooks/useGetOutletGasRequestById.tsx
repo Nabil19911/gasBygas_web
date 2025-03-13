@@ -28,7 +28,7 @@ const useGetOutletGasRequestById = ({
 
   const isLoading = value?.status !== FetchStateEnum.FULFILLED;
   return {
-    data: value?.data || [],
+    data: value?.data  ,
     isLoading,
     error: value?.error?.message,
     fetchData,

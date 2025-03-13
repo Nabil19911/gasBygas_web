@@ -13,7 +13,7 @@ interface InitialState {
     error: IApiError | null;
   };
   outletGasRequets: {
-    data: IOutletGasRequest[] | null;
+    data: IOutletGasRequest | null;
     status: FetchStateEnum;
     error: IApiError | null;
   };
@@ -108,14 +108,14 @@ export const fetchOutlets = createAsyncThunk<
 });
 
 export const fetchOutletGasRequests = createAsyncThunk<
-  IOutletGasRequest[],
+  IOutletGasRequest,
   { outletId: string },
   { rejectValue: IApiError }
 >(
   "outlet/fetchOutletGasRequests",
   async ({ outletId }, { rejectWithValue }) => {
     try {
-      const response = await appFetch<IOutletGasRequest[]>({
+      const response = await appFetch<IOutletGasRequest>({
         url: `/outlet/gas-request/${outletId}`,
         method: "get",
       });

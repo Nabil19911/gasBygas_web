@@ -3,13 +3,13 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import DeliveryStatusEnum from "../../../constant/DeliveryStatusEnum";
 import useApiFetch from "../../../hooks/useApiFetch";
 import useGetSchedule from "../../../hooks/useGetSchedule";
-import { IIndividualCustomerGasRequest } from "../../../type/IGasRequest";
+import {
+  IIndividualCustomerGasRequest,
+  IReallocateGasRequest,
+} from "../../../type/IGasRequest";
 import ISelectOption from "../../../type/ISelectOption";
 import Banner from "../../ui-components/banner";
-import {
-  Card,
-  CardContent
-} from "../../ui-components/card/Card";
+import { Card, CardContent } from "../../ui-components/card/Card";
 import { Button, Select, Textarea } from "../../ui-components/form-fields";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
 import Modal from "../../ui-components/modal/Modal";
@@ -17,7 +17,7 @@ import Modal from "../../ui-components/modal/Modal";
 interface IReallocateModalProps {
   isOpen: boolean;
   closeModal: () => void;
-  selectedId?: string;
+  activeGasRequestIds?: string[];
   selectedScheduleId?: string;
   fetchData: () => Promise<void>;
 }
@@ -25,7 +25,7 @@ interface IReallocateModalProps {
 const ReallocateScheduleModal = ({
   isOpen,
   closeModal,
-  selectedId,
+  activeGasRequestIds,
   selectedScheduleId,
   fetchData,
 }: IReallocateModalProps) => {
@@ -38,8 +38,13 @@ const ReallocateScheduleModal = ({
     postData: updateGasRequest,
     isLoading,
     error,
-  } = useApiFetch<Partial<IIndividualCustomerGasRequest>>({
-    url: `/gas-request/individual/reallocate/${selectedId}`,
+  } = useApiFetch<
+    Partial<{
+      activeGasRequestIds: string[];
+      reallocateGasRequest: IReallocateGasRequest;
+    }>
+  >({
+    url: `/gas-request/individual/reallocate/`,
     options: { method: "patch" },
   });
 
@@ -59,6 +64,7 @@ const ReallocateScheduleModal = ({
     Partial<IIndividualCustomerGasRequest>
   > = async (data) => {
     await updateGasRequest({
+      activeGasRequestIds,
       reallocateGasRequest: {
         is_reallocated: true,
         fromScheduleId: selectedScheduleId,
