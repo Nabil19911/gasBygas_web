@@ -62,6 +62,10 @@ const OutletGasRequestView = () => {
                       Branch Code:{" "}
                       {(outletGasRequest?.outletId! as IOutlet)?.branch_code}
                     </p>
+                    <p className="text-sm text-gray-500">
+                      Delivery Statsu:{" "}
+                      {(outletGasRequest.scheduleId as ISchedule).status}
+                    </p>
                   </div>
                   <div className="flex items-center space-x-4">
                     <Link
