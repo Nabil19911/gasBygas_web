@@ -24,6 +24,7 @@ import {
 import { Button } from "../../../../ui-components/form-fields";
 import ReallocateScheduleModal from "../../../../modal/ReallocateScheduleModal";
 import useGetSchedule from "../../../../../hooks/useGetSchedule";
+import PaymentStatusEnum from "../../../../../constant/paymentStatusEnum";
 
 const AllowGasRequest = () => {
   const [isAllowModalOpen, setIsAllowModalOpen] = useState(false);
@@ -60,7 +61,8 @@ const AllowGasRequest = () => {
     activeGasRequests.filter((activeGasRequest) => activeGasRequest.isWaiting)
       .length > 0;
 
-  const isScheduleCanceled = !outletGasRequests && filteredDistrictSchedules.length > 0;
+  const isScheduleCanceled =
+    !outletGasRequests && filteredDistrictSchedules.length > 0;
 
   return (
     <Card>
@@ -93,7 +95,7 @@ const AllowGasRequest = () => {
         <CardTitle className="text-xl font-semibold flex items-center">
           <div className="flex items-center flex-initial w-full">
             <ArrowDownCircle className="mr-2 h-5 w-5" />
-            Gas Request
+            Allow Customer Gas Request
           </div>
 
           <Button
@@ -194,29 +196,41 @@ const AllowGasRequest = () => {
                     )}
                   </div>
                   <div className="space-y-2">
-                    {isCustomerReallocationEnabled && (
-                      <Button
-                        size="sm"
-                        onClick={() => {
-                          setIsReallocateCustomerModal(true);
-                          setCurrentCustomerId(
-                            (activeGasRequest?.userId as ICustomer)?._id
-                          );
-                        }}
-                      >
-                        Reallocate token
-                      </Button>
-                    )}
-                    <Button
-                      className="bg-red-500 text-white hover:bg-red-600"
-                      size="sm"
-                      onClick={() => {
-                        setIsCancelModal(true);
-                        setActiveGasRequestId(activeGasRequest._id);
-                      }}
-                    >
-                      Cancel
-                    </Button>
+                    {isCustomerReallocationEnabled &&
+                      activeGasRequest.handOver?.isRequestSend &&
+                      new Date(activeGasRequest.handOver.dueDate) <
+                        new Date() &&
+                      activeGasRequest.payment?.status !==
+                        PaymentStatusEnum.PAID && (
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            setIsReallocateCustomerModal(true);
+                            setCurrentCustomerId(
+                              (activeGasRequest?.userId as ICustomer)?._id
+                            );
+                          }}
+                        >
+                          Reallocate token
+                        </Button>
+                      )}
+                    {!isCustomerReallocationEnabled &&
+                      activeGasRequest.handOver?.isRequestSend &&
+                      new Date(activeGasRequest.handOver.dueDate) <
+                        new Date() &&
+                      activeGasRequest.payment?.status !==
+                        PaymentStatusEnum.PAID && (
+                        <Button
+                          className="bg-red-500 text-white hover:bg-red-600"
+                          size="sm"
+                          onClick={() => {
+                            setIsCancelModal(true);
+                            setActiveGasRequestId(activeGasRequest._id);
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                      )}
                   </div>
                 </li>
               );

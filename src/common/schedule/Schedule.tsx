@@ -5,7 +5,7 @@ import {
   Card,
   CardContent,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from "../ui-components/card/Card";
 import { Button, Link } from "../ui-components/form-fields";
 import DeliveryStatusEnum from "../../constant/DeliveryStatusEnum";
@@ -31,33 +31,39 @@ const Schedule = ({ schedules, openModal }: IScheduleProps) => {
       </CardHeader>
       <CardContent>
         <ul className="space-y-4">
-          {schedules.filter(item => item.status === DeliveryStatusEnum.Pending).map((schedule) => {
-            if (!schedule) return "No Schedule";
-            return (
-              <li
-                key={schedule!._id!}
-                className="flex justify-between items-center"
-              >
-                <div>
-                  <p className="font-medium text-gray-500">
-                    {schedule.district}
-                  </p>
-                  <p className="text-sm text-gray-500">{schedule.status}</p>
-                  <p className="text-sm">
-                    {new Date(schedule.deliveryDate!)?.toLocaleDateString()}
-                  </p>
-                </div>
-
-                <Link
-                  size="sm"
-                  className="cursor-pointer"
-                  href={`${PathsEnum.SCHEDULE}/${schedule._id}`}
+          {schedules
+            .filter(
+              (item) =>
+                item.status === DeliveryStatusEnum.Pending ||
+                item.status === DeliveryStatusEnum.OutForDelivery
+            )
+            .map((schedule) => {
+              if (!schedule) return "No Schedule";
+              return (
+                <li
+                  key={schedule!._id!}
+                  className="flex justify-between items-center"
                 >
-                  View
-                </Link>
-              </li>
-            );
-          })}
+                  <div>
+                    <p className="font-medium text-gray-500">
+                      {schedule.district}
+                    </p>
+                    <p className="text-sm text-gray-500">{schedule.status}</p>
+                    <p className="text-sm">
+                      {new Date(schedule.deliveryDate!)?.toLocaleDateString()}
+                    </p>
+                  </div>
+
+                  <Link
+                    size="sm"
+                    className="cursor-pointer"
+                    href={`${PathsEnum.SCHEDULE}/${schedule._id}`}
+                  >
+                    View
+                  </Link>
+                </li>
+              );
+            })}
         </ul>
       </CardContent>
     </Card>

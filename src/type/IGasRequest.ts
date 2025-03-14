@@ -48,6 +48,13 @@ export interface IIndividualCustomerGasRequest {
   updatedAt?: Date;
   status?: DeliveryStatusEnum;
   isWaiting?: boolean;
+  handOver?: IHandOver;
+}
+
+interface IHandOver {
+  isRequestSend?: Boolean;
+  requestSendDate?: Date;
+  dueDate: Date;
 }
 
 interface IHeadOfficeApproval {

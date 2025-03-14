@@ -29,6 +29,7 @@ import {
   TextInput,
 } from "../../../../ui-components/form-fields";
 import LoadingSpinner from "../../../../ui-components/loadingSpinner";
+import PaymentStatusEnum from "../../../../../constant/paymentStatusEnum";
 
 const OutletActiveIndividualGasRequest = () => {
   const { id } = useParams();
@@ -74,7 +75,7 @@ const OutletActiveIndividualGasRequest = () => {
       ...gasRequest,
       payment: {
         ...gasRequest?.payment,
-        status: data.payment?.status,
+        status: PaymentStatusEnum.PAID,
         totalAmount: Number(data.payment?.totalAmount),
         method: data.payment?.method,
         paymentDate: new Date(),
@@ -137,7 +138,7 @@ const OutletActiveIndividualGasRequest = () => {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <h2 className="mb-2 font-bold">Update Payment</h2>
-          {isNewGas && (
+          {!isNewGas && (
             <CheckboxInput
               label="Gas returned"
               disabled={hasFieldDisabled}

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import DeliveryStatusEnum from "../../../constant/DeliveryStatusEnum";
 import useApiFetch from "../../../hooks/useApiFetch";
 import useGetSchedule from "../../../hooks/useGetSchedule";
 import { getUserProfile } from "../../../store/selectors/profileSelector";
@@ -10,13 +11,11 @@ import Banner from "../../ui-components/banner";
 import { Card, CardContent } from "../../ui-components/card/Card";
 import {
   Button,
-  CheckboxInput,
   Select,
-  TextInput,
+  TextInput
 } from "../../ui-components/form-fields";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
 import Modal from "../../ui-components/modal/Modal";
-import DeliveryStatusEnum from "../../../constant/DeliveryStatusEnum";
 
 interface IOutletGasRequestAllowModalProps {
   isOpen: boolean;
@@ -92,6 +91,7 @@ const OutletGasRequestAllowModal = ({
       ...outlet!,
       gas_request: {
         ...data,
+        is_allowed: true,
         active_until: activeUntil,
         scheduleId: selectedSchedule,
       },
@@ -119,7 +119,7 @@ const OutletGasRequestAllowModal = ({
       <Card className="w-full max-w-2xl mx-auto">
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 p-5">
-            <div className="mb-4 space-y-2">
+            <div className="flex gap-2 items-center justify-center my-4">
               <Select
                 disabled={hasFieldsDisabled}
                 label="Select Schedule"
@@ -133,30 +133,16 @@ const OutletGasRequestAllowModal = ({
                   setSelectedSchedule(e.target.value);
                 }}
               />
-              <div className="flex gap-2 items-center justify-center mt-4">
-                <div>
-                  <CheckboxInput
-                    disabled={hasFieldsDisabled}
-                    label={"Allow"}
-                    error={errors.is_allowed?.message}
-                    id={"allow"}
-                    {...register("is_allowed", {
-                      required: "Please allow",
-                    })}
-                  />
-                </div>
-                <div className="flex-1">
-                  <TextInput
-                    disabled={hasFieldsDisabled}
-                    placeholder="QTY"
-                    type="number"
-                    error={errors.allowed_qty?.message}
-                    {...register("allowed_qty", {
-                      required: "Quantity is required field",
-                    })}
-                  />
-                </div>
-              </div>
+              <TextInput
+                label="Quantity"
+                disabled={hasFieldsDisabled}
+                placeholder="QTY"
+                type="number"
+                error={errors.allowed_qty?.message}
+                {...register("allowed_qty", {
+                  required: "Quantity is required field",
+                })}
+              />
             </div>
             {/* Form Buttons */}
             <div className="flex justify-end space-x-4">
