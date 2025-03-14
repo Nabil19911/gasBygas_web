@@ -80,10 +80,12 @@ const OutletActiveIndividualGasRequest = () => {
         method: data.payment?.method,
         paymentDate: new Date(),
       },
+      isWaiting: false,
       gas: {
         ...gasRequest?.gas,
         isCylinderReturned: data.gas?.isCylinderReturned,
       },
+      status: data.status
     });
 
     if (!isLoading && !updateError) {
@@ -169,7 +171,7 @@ const OutletActiveIndividualGasRequest = () => {
             {...register("payment.method", {
               required: "Payment method is required",
             })}
-            disabled={hasFieldDisabled}
+            disabled={hasFieldDisabled || gasRequest?.payment?.status === PaymentStatusEnum.PAID}
             error={errors.payment?.method?.message}
           />
           <Select
