@@ -53,7 +53,7 @@ const EmployeeForm = () => {
           )
       )
       .map((outlet) => ({
-        label: outlet.name,
+        label: outlet.name!,
         value: outlet._id!,
       }));
   }, [outlets]);

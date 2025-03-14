@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
+import DeliveryStatusEnum from "../../../constant/DeliveryStatusEnum";
 import {
   deliveryStatusOptions,
   districtsOptions,
@@ -23,7 +24,6 @@ import {
   Textarea,
 } from "../../ui-components/form-fields";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
-import DeliveryStatusEnum from "../../../constant/DeliveryStatusEnum";
 
 const ScheduleForm = () => {
   const navigator = useNavigate();

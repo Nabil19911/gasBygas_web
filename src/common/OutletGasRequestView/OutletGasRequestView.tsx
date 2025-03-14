@@ -29,8 +29,8 @@ const OutletGasRequestView = () => {
           {outletGasRequests
             .filter((item) => {
               return (
-                (item.scheduleId as ISchedule).status !==
-                DeliveryStatusEnum.OutForDelivery
+                (item.scheduleId as ISchedule)?.status ===
+                DeliveryStatusEnum.Pending
               );
             })
             .map((outletGasRequest) => {
