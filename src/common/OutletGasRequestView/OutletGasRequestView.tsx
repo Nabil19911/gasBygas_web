@@ -20,7 +20,7 @@ const OutletGasRequestView = () => {
       <CardHeader className="flex flex-row justify-between items-center">
         <CardTitle className="text-xl font-semibold flex items-center">
           <ClipboardCheck className="mr-2 h-5 w-5" />
-          Outlet gas requests
+          Outlet Gas Requests
         </CardTitle>
         {/* <Link size="sm">History</Link> */}
       </CardHeader>
