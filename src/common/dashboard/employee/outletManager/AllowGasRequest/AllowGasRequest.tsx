@@ -60,9 +60,7 @@ const AllowGasRequest = () => {
     activeGasRequests.filter((activeGasRequest) => activeGasRequest.isWaiting)
       .length > 0;
 
-  const isScheduleCanceled =
-    (outletGasRequests?.scheduleId as ISchedule)?.status ===
-    DeliveryStatusEnum.Cancelled;
+  const isScheduleCanceled = !outletGasRequests && filteredDistrictSchedules.length > 0;
 
   return (
     <Card>
