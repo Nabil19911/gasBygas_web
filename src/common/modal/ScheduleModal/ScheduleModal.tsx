@@ -84,6 +84,7 @@ const ScheduleModal = ({ isOpen, closeModal }: IScheduleModalProps) => {
               label="Status"
               options={deliveryStatusOptions}
               defaultValue={deliveryStatusOptions[0].value}
+              disabled={true}
               error={errors.status?.message}
               {...register("status", { required: "Status is required" })}
             />

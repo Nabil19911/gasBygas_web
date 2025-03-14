@@ -124,7 +124,9 @@ const AllowGasRequest = () => {
             <Banner type="warning">Gas Schedule Cancelled</Banner>
           </>
         )}
-        {!isScheduleCanceled &&
+        {outletGasRequests?.headOfficeApproval?.status ===
+          RequestStatusEnum.APPROVED &&
+          !isScheduleCanceled &&
           isAllowRequestToOutlet?.is_allowed &&
           isAllowRequestToOutlet?.active_until && (
             <Banner type="info">{`Gas Request is active until ${new Date(

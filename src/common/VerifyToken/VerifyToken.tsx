@@ -58,8 +58,6 @@ const VerifyToken = () => {
     });
   };
 
-  console.log({ activeGasRequests, activeOrgGasRequests });
-
   return (
     <Card>
       <CardHeader>

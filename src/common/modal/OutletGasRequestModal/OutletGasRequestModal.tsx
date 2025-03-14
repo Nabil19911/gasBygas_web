@@ -59,7 +59,7 @@ const OutletGasRequestModal = ({
       .filter(
         (schedule) =>
           schedule.district === outletDistrict &&
-          schedule.status !== DeliveryStatusEnum.Cancelled &&
+          schedule.status === DeliveryStatusEnum.Pending &&
           (outletGasRequests?.scheduleId as ISchedule)?._id !== schedule._id
       )
       .map((schedule) => ({

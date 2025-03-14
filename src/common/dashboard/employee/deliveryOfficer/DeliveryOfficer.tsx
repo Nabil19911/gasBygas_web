@@ -2,7 +2,7 @@ import VerifyToken from "../../../VerifyToken";
 
 const DeliveryOfficer = () => {
   return (
-    <div>
+    <div className="flex justify-center">
       <VerifyToken />
     </div>
   );

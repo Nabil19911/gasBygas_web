@@ -43,7 +43,7 @@ const OutletStock = () => {
             <Table.Column>Current Stock</Table.Column>
             <Table.Column>Minimum Threshold</Table.Column>
             <Table.Column>Maximum Capacity</Table.Column>
-            <Table.Column>Incomming Capacity</Table.Column>
+            <Table.Column>Incomming</Table.Column>
             <Table.Column>Unit Price</Table.Column>
           </Table.Header>
           <Table.Body>{renderStockRows()}</Table.Body>

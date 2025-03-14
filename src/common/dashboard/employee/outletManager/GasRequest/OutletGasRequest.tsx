@@ -12,6 +12,7 @@ import {
 } from "../../../../ui-components/card/Card";
 import { Button } from "../../../../ui-components/form-fields";
 import useGetOutletGasRequestById from "../../../../../hooks/useGetOutletGasRequestById";
+import DeliveryStatusEnum from "../../../../../constant/DeliveryStatusEnum";
 
 const OutletGasRequest = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,19 +24,27 @@ const OutletGasRequest = () => {
 
   const renderOutletGasRequest = useCallback(() => {
     return (
-      <li
-        key={outletGasRequests?._id + outletId}
-        className="flex justify-between items-center"
-      >
-        <p>
-          {new Date(
-            (outletGasRequests?.scheduleId as ISchedule)?.deliveryDate!
-          ).toDateString()}
-        </p>
-        <p className="font-medium">
-          {outletGasRequests?.headOfficeApproval?.status}
-        </p>
-      </li>
+      outletGasRequests?.status === DeliveryStatusEnum.Pending && (
+        <li key={outletGasRequests?._id + outletId} className="space-y-1">
+          <p className="font-medium">
+            Status: {outletGasRequests?.headOfficeApproval?.status}
+          </p>
+          {outletGasRequests?.headOfficeApproval?.approvedDate && (
+            <p className="font-small">
+              Approved Date:{" "}
+              {new Date(
+                outletGasRequests?.headOfficeApproval?.approvedDate || ""
+              ).toDateString()}
+            </p>
+          )}
+          <p>
+            Delivery Date:{" "}
+            {new Date(
+              (outletGasRequests?.scheduleId as ISchedule)?.deliveryDate || ""
+            ).toDateString()}
+          </p>
+        </li>
+      )
     );
   }, [outletGasRequests, outletId]);
 

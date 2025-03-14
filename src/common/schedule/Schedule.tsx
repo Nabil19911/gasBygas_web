@@ -31,7 +31,7 @@ const Schedule = ({ schedules, openModal }: IScheduleProps) => {
       </CardHeader>
       <CardContent>
         <ul className="space-y-4">
-          {schedules.filter(item => item.status !== DeliveryStatusEnum.Cancelled).map((schedule) => {
+          {schedules.filter(item => item.status === DeliveryStatusEnum.Pending).map((schedule) => {
             if (!schedule) return "No Schedule";
             return (
               <li
