@@ -132,7 +132,12 @@ const Individual = ({ profile }: IndividualProps) => {
     (item) => item.status === DeliveryStatusEnum.Pending
   )[0]?.tokenId as IToken;
 
-  if (gasRequest && gasRequest.length > 0 && gasRequest[0].isWaiting && !token) {
+  if (
+    gasRequest &&
+    gasRequest.length > 0 &&
+    gasRequest[0].isWaiting &&
+    !token
+  ) {
     return (
       <div className="h-1/2 flex flex-col items-center justify-center bg-gray-100 p-2">
         <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-center font-semibold text-gray-800">
@@ -144,10 +149,10 @@ const Individual = ({ profile }: IndividualProps) => {
   }
 
   if (
-    (gasRequest &&
-      gasRequest.length > 0 &&
-      token?.status === ActiveStatus.ACTIVE &&
-      new Date(token?.expiryDate) > new Date()) &&
+    gasRequest &&
+    gasRequest.length > 0 &&
+    token?.status === ActiveStatus.ACTIVE &&
+    new Date(token?.expiryDate) > new Date() &&
     gasRequest[0]?.status !== DeliveryStatusEnum.Delivered
   ) {
     return (

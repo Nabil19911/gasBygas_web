@@ -10,6 +10,12 @@ import IToken from "../../../../type/IToken";
 import Banner from "../../../ui-components/banner";
 import { Button, TextInput } from "../../../ui-components/form-fields";
 import LoadingSpinner from "../../../ui-components/loadingSpinner";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../../ui-components/card/Card";
 
 interface IOrganizationProps {
   profile: ICustomer;
@@ -96,51 +102,61 @@ const Organization = ({ profile }: IOrganizationProps) => {
     );
   }
 
+  const hasGasType = gasTypeData.length > 0;
+
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+    <Card className="w-full max-w-2xl mx-auto">
       {isLoading && <LoadingSpinner />}
-      <h1 className="text-2xl font-bold mb-6 text-center">
-        Organization Gas Request Form
-      </h1>
-      {error && <Banner type="error">{error}</Banner>}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {gasTypeData.map((gasType, gasIndex) => {
-          return (
-            <div key={gasIndex} className="grid grid-cols-3 gap-2">
-              <div className="flex items-center">
-                <p
-                  {...register(`gas.${gasIndex}.type`, {
-                    value: gasType?._id || "",
-                  })}
-                >
-                  {gasType.name}
-                </p>
+      <CardHeader>
+        <CardTitle>Organization Gas Request Form</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {error && <Banner type="error">{error}</Banner>}
+        {!hasGasType && (
+          <Banner type="info">No Gas types available</Banner>
+        )}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {gasTypeData.map((gasType, gasIndex) => {
+            return (
+              <div key={gasIndex} className="grid grid-cols-3 gap-2">
+                <div className="flex items-center">
+                  <p
+                    {...register(`gas.${gasIndex}.type`, {
+                      value: gasType?._id || "",
+                    })}
+                  >
+                    {gasType.name}
+                  </p>
+                </div>
+                <TextInput
+                  label="Refill"
+                  type="number"
+                  defaultValue={0}
+                  {...register(
+                    `gas.${gasIndex}.gasRefillRequests.gasQuantity`,
+                    {}
+                  )}
+                  min={0}
+                />
+                <TextInput
+                  label={`New`}
+                  type="number"
+                  defaultValue={0}
+                  {...register(
+                    `gas.${gasIndex}.gasNewRequests.gasQuantity`,
+                    {}
+                  )}
+                  min={0}
+                />
               </div>
-              <TextInput
-                label="Refill"
-                type="number"
-                defaultValue={0}
-                {...register(
-                  `gas.${gasIndex}.gasRefillRequests.gasQuantity`,
-                  {}
-                )}
-                min={0}
-              />
-              <TextInput
-                label={`New`}
-                type="number"
-                defaultValue={0}
-                {...register(`gas.${gasIndex}.gasNewRequests.gasQuantity`, {})}
-                min={0}
-              />
-            </div>
-          );
-        })}
-        <Button type="submit" className="w-full">
-          Submit Request
-        </Button>
-      </form>
-    </div>
+            );
+          })}
+          <Button disabled={!hasGasType} type="submit" className="w-full">
+            Submit Request
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
 
