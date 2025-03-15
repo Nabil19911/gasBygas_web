@@ -280,13 +280,13 @@ const CustomerForm = () => {
               options={districtsOptions}
             />
             <TextInput
-              label="Post Code"
+              label="Postal Code"
               error={errors.full_address?.post_code?.message}
               {...register("full_address.post_code", {
-                required: "Post Code is required",
+                required: "Postal Code is required",
                 validate: (value) =>
                   /^\d{5}$/.test(String(value)) ||
-                  "Post Code must be exactly 5 digits",
+                  "Postal Code must be exactly 5 digits",
                 disabled: !selectedBusinessType,
               })}
             />

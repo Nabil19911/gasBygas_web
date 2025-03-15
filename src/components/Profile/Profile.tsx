@@ -9,49 +9,78 @@ import {
   CardHeader,
   CardTitle,
 } from "../../common/ui-components/card/Card";
-import {
-  Button,
-  Select,
-  TextInput,
-} from "../../common/ui-components/form-fields";
+import { Button, TextInput } from "../../common/ui-components/form-fields";
 import LoadingSpinner from "../../common/ui-components/loadingSpinner";
-import ActiveStatus from "../../constant/activeStatusOptions";
 import useApiFetch from "../../hooks/useApiFetch";
-import { TProfileData } from "../../store/silces/profileSlice";
-import { useAppSelector } from "../../store/store";
 import { getUserProfile } from "../../store/selectors/profileSelector";
+import { useAppDispatch, useAppSelector } from "../../store/store";
+import RolesEnum from "../../constant/rolesEnum";
+import { fetchCustomerProfileDetail } from "../../store/silces/profileSlice";
+import ICustomer from "../../type/ICustomer";
+import CustomerTypeEnum from "../../constant/customerTypeEnum";
+import IEmployee from "../../type/IEmployee";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { data: profile } = useAppSelector(getUserProfile);
+  const dispatch = useAppDispatch();
   const { isLoading, error, postData } = useApiFetch({
-    url: "/user/update",
+    url: "/user/profile/update",
     options: {
-      headers: {
-        "Content-Type": "application/json",
-      },
+      method: "patch",
     },
   });
 
-  // UseForm hook to handle form submission and validation
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<TProfileData>();
+  } = useForm<Partial<ICustomer & IEmployee>>();
 
   const [isEditing, setIsEditing] = useState(false); // State to toggle between edit and view mode
 
-  const onSubmit: SubmitHandler<TProfileData> = async (data) => {
-    await postData(data);
+  const onSubmit: SubmitHandler<Partial<ICustomer & IEmployee>> = async (
+    data
+  ) => {
+    let saveData;
+    if (data.role === RolesEnum.CUSTOMER) {
+      saveData =
+        profile?.business_type === CustomerTypeEnum.INDIVIDUAL
+          ? {
+              ...profile,
+              email: data.email!,
+              role: data.role,
+              password: data.password,
+              contact: data.contact,
+              individual_details: {
+                ...profile?.individual_details,
+                nic: profile?.individual_details?.nic!,
+                first_name: data?.individual_details?.first_name,
+                last_name: data?.individual_details?.last_name,
+              },
+            }
+          : ({
+              ...profile,
+              email: data.email!,
+              role: data.role,
+              password: data.password,
+              contact: data.contact,
+              organization_details: {
+                business_name: data.organization_details?.business_name,
+              },
+            } as ICustomer);
+    } else {
+      saveData = {
+        ...profile,
+        username: data.email,
+        password: data.password,
+      } as IEmployee;
+    }
+    await postData(saveData);
+    await dispatch(fetchCustomerProfileDetail(data.email!));
 
     navigate(-1);
-    // if (response) {
-    //   // Navigate or show success message
-    //   alert("Profile updated successfully!");
-    //   setIsEditing(false); // Stop editing after success
-    // }
   };
 
   const handleEdit = () => {
@@ -65,6 +94,10 @@ const Profile = () => {
     }
   }, [profile]);
 
+  const isCustomer = profile?.role === RolesEnum.CUSTOMER;
+  const isOrganization =
+    profile?.business_type === CustomerTypeEnum.ORGANIZATION;
+
   return (
     <Card className="w-full max-w-2xl mx-auto">
       {isLoading && <LoadingSpinner />}
@@ -76,52 +109,56 @@ const Profile = () => {
         {error && <Banner type="error">{error}</Banner>}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Name Fields */}
-          <div className="flex flex-col md:flex-row gap-4">
-            <TextInput
-              label="First Name"
-              defaultValue="John" // Replace with the actual user's data
-              error={errors.first_name?.message}
-              {...register("first_name", {
-                required: "First Name is required",
-              })}
-              disabled={!isEditing} // Disable when not in editing mode
-            />
-            <TextInput
-              label="Last Name"
-              defaultValue="Doe" // Replace with the actual user's data
-              error={errors.last_name?.message}
-              {...register("last_name", { required: "Last Name is required" })}
-              disabled={!isEditing}
-            />
-          </div>
 
-          {/* Email Field */}
-          <TextInput
-            label="Email"
-            error={errors.email?.message}
-            {...register("email", {
-              required: "Email is required",
-              pattern: {
-                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                message: "Invalid email format",
-              },
-            })}
-            disabled={!isEditing} // Disable when not editing
-          />
+          {isCustomer && (
+            <div className="flex flex-col md:flex-row gap-4">
+              {isOrganization ? (
+                <TextInput
+                  label="Business Name"
+                  error={errors.first_name?.message}
+                  {...register("organization_details.business_name", {
+                    required: "First Name is required",
+                  })}
+                  disabled={!isEditing} // Disable when not in editing mode
+                />
+              ) : (
+                <>
+                  <TextInput
+                    label="First Name"
+                    error={errors.first_name?.message}
+                    {...register("individual_details.first_name", {
+                      required: "First Name is required",
+                    })}
+                    disabled={!isEditing} // Disable when not in editing mode
+                  />
+                  <TextInput
+                    label="Last Name"
+                    error={errors.last_name?.message}
+                    {...register("individual_details.last_name", {
+                      required: "Last Name is required",
+                    })}
+                    disabled={!isEditing}
+                  />
+                </>
+              )}
+            </div>
+          )}
 
           {/* Contact Field */}
-          <TextInput
-            label="Contact Number"
-            error={errors.contact?.message}
-            {...register("contact", {
-              required: "Contact number is required",
-              pattern: {
-                value: /^(0|0094|\+94)(7\d{8}|6\d{8})$/,
-                message: "Invalid contact number format",
-              },
-            })}
-            disabled={!isEditing}
-          />
+          {isCustomer && (
+            <TextInput
+              label="Contact Number"
+              error={errors.contact?.message}
+              {...register("contact", {
+                required: "Contact number is required",
+                pattern: {
+                  value: /^(0|0094|\+94)(7\d{8}|6\d{8})$/,
+                  message: "Invalid contact number format",
+                },
+              })}
+              disabled={!isEditing}
+            />
+          )}
 
           {/* Password Field */}
           <TextInput
@@ -135,18 +172,6 @@ const Profile = () => {
               },
             })}
             disabled={!isEditing} // Disable password change when not editing
-          />
-
-          {/* Status Field (non-editable for the user) */}
-          <Select
-            label="Status"
-            defaultValue={ActiveStatus.ACTIVE}
-            {...register("status")}
-            disabled={true} // Make status field read-only
-            options={[
-              { value: ActiveStatus.ACTIVE, label: "Active" },
-              { value: ActiveStatus.INACTIVE, label: "Inactive" },
-            ]}
           />
 
           {/* Buttons */}
