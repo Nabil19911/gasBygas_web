@@ -15,7 +15,10 @@ import useApiFetch from "../../hooks/useApiFetch";
 import { getUserProfile } from "../../store/selectors/profileSelector";
 import { useAppDispatch, useAppSelector } from "../../store/store";
 import RolesEnum from "../../constant/rolesEnum";
-import { fetchCustomerProfileDetail } from "../../store/silces/profileSlice";
+import {
+  fetchCustomerProfileDetail,
+  fetchEmployeeProfileDetail,
+} from "../../store/silces/profileSlice";
 import ICustomer from "../../type/ICustomer";
 import CustomerTypeEnum from "../../constant/customerTypeEnum";
 import IEmployee from "../../type/IEmployee";
@@ -39,12 +42,14 @@ const Profile = () => {
   } = useForm<Partial<ICustomer & IEmployee>>();
 
   const [isEditing, setIsEditing] = useState(false); // State to toggle between edit and view mode
-
+  const isCustomer = profile?.role === RolesEnum.CUSTOMER;
+  const isOrganization =
+    profile?.business_type === CustomerTypeEnum.ORGANIZATION;
   const onSubmit: SubmitHandler<Partial<ICustomer & IEmployee>> = async (
     data
   ) => {
     let saveData;
-    if (data.role === RolesEnum.CUSTOMER) {
+    if (isCustomer) {
       saveData =
         profile?.business_type === CustomerTypeEnum.INDIVIDUAL
           ? {
@@ -78,7 +83,11 @@ const Profile = () => {
       } as IEmployee;
     }
     await postData(saveData);
-    await dispatch(fetchCustomerProfileDetail(data.email!));
+    await dispatch(
+      isCustomer
+        ? (fetchCustomerProfileDetail(data.email!) as any)
+        : fetchEmployeeProfileDetail(data.email!)
+    );
 
     navigate(-1);
   };
@@ -93,10 +102,6 @@ const Profile = () => {
       reset(profile);
     }
   }, [profile]);
-
-  const isCustomer = profile?.role === RolesEnum.CUSTOMER;
-  const isOrganization =
-    profile?.business_type === CustomerTypeEnum.ORGANIZATION;
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
