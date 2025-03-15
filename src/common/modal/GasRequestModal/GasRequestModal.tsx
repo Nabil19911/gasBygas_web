@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import GasRequestTypeEnum from "../../../constant/gasRequestTypeEnum";
-import gasTypeOption from "../../../constant/gasTypeOptions";
+// import gasTypeOption from "../../../constant/gasTypeOptions";
 import GasTypeEnum from "../../../constant/gasTypesEnum";
 import RolesEnum from "../../../constant/rolesEnum";
 import { requestTypeOptions } from "../../../constant/selectOptions";
@@ -20,6 +20,7 @@ import {
 import { Button, Radio, Select } from "../../ui-components/form-fields";
 import LoadingSpinner from "../../ui-components/loadingSpinner";
 import Modal from "../../ui-components/modal/Modal";
+import useGetGasTypes from "../../../hooks/useGetGasTypes";
 
 interface IGasRequestModalProps {
   user: Partial<ICustomer>;
@@ -43,6 +44,18 @@ const GasRequestModal = ({
     });
 
   const { data: outlets } = useGetOutlets();
+  const { data: gasTypeData } = useGetGasTypes();
+
+  const gasTypeOption = useMemo(() => {
+    if (!gasTypeData) {
+      return [];
+    }
+
+    return gasTypeData.map((gasType) => ({
+      label: `${gasType.name} - ${gasType.description} - LKR ${gasType.price}`,
+      value: gasType._id!,
+    }));
+  }, [gasTypeData]);
 
   const outletOptions = useMemo(() => {
     if (!outlets) {
@@ -96,6 +109,14 @@ const GasRequestModal = ({
           <CardDescription>Fill in the Stock details below.</CardDescription>
         </CardHeader>
         <CardContent>
+          {hasNotGasRequestEnabled && (
+            <Banner type="warning">
+              This outlet is not enabled for requests.
+            </Banner>
+          )}
+          {outletOptions.length === 0 && (
+            <Banner type="info">No Outlets available</Banner>
+          )}
           {error && <Banner type="error">{error}</Banner>}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <Select
@@ -115,9 +136,18 @@ const GasRequestModal = ({
               {...register("gas.type", {
                 required: "Please select a gas type",
               })}
+              selected={gasTypeData[0]?.name}
+              disabled={outletOptions.length === 0}
+            />
+            {/* <Radio
+              label="Select Gas Type"
+              options={gasTypeOption}
+              {...register("gas.type", {
+                required: "Please select a gas type",
+              })}
               selected={gasTypeOption[0].value}
               disabled={hasNotGasRequestEnabled}
-            />
+            /> */}
             <Select
               label="Outlet"
               error={errors.outletId?.message}
